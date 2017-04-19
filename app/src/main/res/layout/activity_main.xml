@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="false">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+     <!--LinearLayout Question 1: -->
+        <LinearLayout
+            android:id="@+id/layout_Q1"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="vertical">
+        <!--Textview header Q1-->
+            <TextView
+                android:id="@+id/header_Q1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Q1"
+                android:textSize="@dimen/xlarge" />
+            <!--LinearLayout as Checkbox ViewGroup -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/A11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onCheckBoxClicked_A11"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A11"
+                    android:textSize="@dimen/small" />
+
+                <CheckBox
+                    android:id="@+id/A12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onCheckBoxClicked_A12"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A12"
+                    android:textSize="@dimen/small" />
+
+                <CheckBox
+                    android:id="@+id/A13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onCheckBoxClicked_A13"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A13"
+                    android:textSize="@dimen/small" />
+
+                <CheckBox
+                    android:id="@+id/A14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onCheckBoxClicked_A14"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A14"
+                    android:textSize="@dimen/small" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Question1"
+                android:textSize="@dimen/xlarge" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="scroll up^"
+                android:textSize="@dimen/large" />
+        </LinearLayout>
+
+     <!--LinearLayout Question 2: -->
+        <LinearLayout
+            android:id="@+id/layout_Q2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <!--Textview header Q2-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Q2"
+                android:textSize="@dimen/xlarge" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:hint="@string/H2"
+                android:inputType="textAutoComplete"   />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Question2"
+                android:textSize="@dimen/xlarge" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="scroll up^"
+                android:textSize="@dimen/large" />
+        </LinearLayout>
+
+     <!--LinearLayout Question 3: -->
+        <LinearLayout
+            android:id="@+id/layout_Q3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="vertical">
+            <!--Textview header Q3-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Q3"
+                android:textSize="@dimen/xlarge" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:onClick="onRadioGroupClicked_A3">
+
+                <RadioButton
+                    android:id="@+id/Q31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A31"
+                    android:onClick="onRadioButtonClicked_A31"/>
+                <RadioButton
+                    android:id="@+id/Q32"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A32"
+                    android:onClick="onRadioButtonClicked_A32"/>
+                <RadioButton
+                    android:id="@+id/Q33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:text="@string/A33"
+                    android:onClick="onRadioButtonClicked_A33"/>
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Question3"
+                android:textSize="@dimen/xlarge" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="scroll up^"
+                android:textSize="@dimen/large" />
+        </LinearLayout>
+
+     <!--LinearLayout Question 4: -->
+        <LinearLayout
+            android:id="@+id/layout_Q4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="vertical">
+            <!--Textview header Q4-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Q4"
+                android:textSize="@dimen/xlarge" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/small_margin"
+                android:orientation="vertical"
+                android:hint="@string/H4"
+                android:inputType="textMultiLine"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="@string/Question4"
+                android:textSize="@dimen/xlarge" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/small"
+                android:text="scroll up^"
+                android:textSize="@dimen/large" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
