@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * This method sets the height of a LinearLayout (xml-named "linearLayoutIdName")
-     * to dip height of the device screen.
+     * to dp-height of the device screen.
+     * with no ScrollView it would be not needed, all Question layouts would have equal heights by "match_parent".
      */
     private void SetLinearLayoutHeight(String linearLayoutIdName) {
 
@@ -70,35 +71,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
-
-//      Gets linearLayout of linearLayoutIdName
-//     LinearLayout linearLayout = (LinearLayout)findViewById(getResources().getIdentifier(linearLayoutIdName, "id", getPackageName()));
-// Gets the linearLayout LayoutParams that allow to resize the linearLayout
-
-
-//      DisplayMetrics displayMetrics = new DisplayMetrics();
-
-
-
-
-
-
-
-
-//LayoutParams layoutParams = container.linearLayout.getLayoutParams();
-// LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(container.getLayoutParams().width = width);
-//  linearLayout.setLayoutParams(
-//LayoutParams layoutParams = linearLayout.getLayoutParams();
-//LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams()
-//LayoutParams layoutParams = (LayoutParams)(LayoutParams.WRAP_CONTENT, 50));
-// linearLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, 50));
-
-//   RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-// layoutParams.height = 100;
-//linearLayout.setLayoutParams();
-
-// textView.setText(newText);
-
-//Display display = getActivity().getWindowManager().getDefaultDisplay();
-
-
