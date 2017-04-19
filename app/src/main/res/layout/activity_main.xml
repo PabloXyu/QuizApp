@@ -16,7 +16,7 @@
             android:id="@+id/layout_Q1"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:layout_margin="@dimen/small_margin"
+            android:background="@color/colorOdd"
             android:orientation="vertical">
         <!--Textview header Q1-->
             <TextView
@@ -95,8 +95,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/colorEven"
             android:orientation="vertical">
-            <!--Textview header Q2-->
+         <!--Textview header Q2-->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -135,7 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="@dimen/small_margin"
+            android:background="@color/colorOdd"
             android:orientation="vertical">
             <!--Textview header Q3-->
             <TextView
@@ -199,7 +200,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="@dimen/small_margin"
+            android:background="@color/colorEven"
             android:orientation="vertical">
             <!--Textview header Q4-->
             <TextView
