@@ -1,20 +1,28 @@
 package com.example.android.quizapp;
 
-import android.content.res.TypedArray;
+
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import static java.security.AccessController.getContext;
-
+import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
+import static com.example.android.quizapp.MainActivity.Constants.SECONDS_WELCOME;
 
 public class MainActivity extends AppCompatActivity {
 
     class Constants {
-        public static final int NUM_QUESTIONS = 4;
+        public static final int NUMBER_OF_QUESTIONS = 4;
+        public static final int SECONDS_WELCOME = 2;
     }
 
 
@@ -57,17 +65,51 @@ public class MainActivity extends AppCompatActivity {
         linearLayout.setLayoutParams(layoutParams);
     }
 
+    /**
+     * This method changes ActionBar Theme due to the question number.
+     * Changes "Quiz App" title to "Question #i".
+     * Changes ActionBar background color due to question-layout color (colorOdd|colorEven) due to question number.
+     */
+    private void SetActionBarForQuiz() {
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorOdd))); // getColor : API level 23 (minimum is 15)
+     // actionBar.setTitle("Question #1"+":"); //for question #1.
+        actionBar.setTitle(getString(R.string.Q1)+":");
+        // defining actionBar as textView and setting its color to BLACK:
+        actionBar.getTitle();
+        SpannableString spannableString = new SpannableString(actionBar.getTitle());
+        spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, actionBar.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getSupportActionBar().setTitle(spannableString);
+
+    }
+
+
+    //????
+    private void SetActionBarForWelcome() {
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+
+        for (int i=SECONDS_WELCOME; i>=0; i--) {
+            actionBar.setTitle("Quiz App:    the quiz will start in "+ i +" sec.");
+            SystemClock.sleep(1000);
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SetLinearLayoutHeight("layout_Q1");
-        SetLinearLayoutHeight("layout_Q2");
-        SetLinearLayoutHeight("layout_Q3");
-        SetLinearLayoutHeight("layout_Q4");
-
+        //  SetLinearLayoutHeight for : "layout_Q1", "layout_Q2" ... "layout_Q4"
+        for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {SetLinearLayoutHeight("layout_Q"+i);}
+        SetActionBarForQuiz();
     }
 
+//????
+   // @Override
+   // public void onStart(){
+   //     super.onStart();
+   //     SetActionBarForWelcome();
+   // }
 
 }

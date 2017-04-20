@@ -6,10 +6,10 @@
     <string name="Q3">"Question #3"</string>
     <string name="Q4">"Question #4"</string>
 
-    <string name="Question1">"Choose all the examples of types of carbohydrates."</string>
+    <string name="Question1">"Which of\u00A0the\u00A0substances listed above are carbohydrates?"</string>
     <string name="Question2">"What is the biggest object in our Solar System?"</string>
-    <string name="Question3">"How old is the Universe?"</string>
-    <string name="Question4">"What is the name of the natural satelite of the Earth?</string>
+    <string name="Question3">"How old is the\u00A0Universe?"</string>
+    <string name="Question4">"What is the name of the natural satelite of\u00A0the\u00A0Earth?</string>
 
     <string name="A11">"galactose"</string>
     <string name="A12">"fructose"</string>
@@ -17,7 +17,7 @@
     <string name="A14">"maltose"</string>
     <string name="A1r">"All substances are carbohydrates."</string>
 
-    <string name="H2">"Type here the answer #2"</string>
+    <string name="H2">"Please type here the answer"</string>
     <string name="A21">"the Sun"</string>
     <string name="A22">"Sun"</string>
     <string name="A2r">"the Sun"</string>
@@ -27,7 +27,7 @@
     <string name="A33">"130 billions"</string>
     <string name="A3r">"13 billions (Answer #2)"</string>
 
-    <string name="H4">"Type here the answer #4"</string>
+    <string name="H4">"Please type here the answer"</string>
     <string name="A41">"the Moon"</string>
     <string name="A42">"Moon"</string>
     <string name="A4r">"the Moon"</string>
