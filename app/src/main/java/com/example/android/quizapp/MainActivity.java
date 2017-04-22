@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
         // linearLayoutHeight counted:
         int linearLayoutHeight = displayHeight - actionBarHeight - statusBarHeight;
 
-        //printOnTextView("header_Q1",""+linearLayoutHeight+", "+displayHeight+", "+actionBarHeight+", "+statusBarHeight);
-        // ^ above: to see instead of "Question #1" title the heights of: Question Layout, displayWindow, actionBar, statusBar.
-
         // linearLayoutHeight set:
         LinearLayout linearLayout=(LinearLayout)findViewById(getResources().getIdentifier(linearLayoutIdName,"id",getPackageName()));
         android.view.ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
@@ -67,49 +64,51 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * This method changes ActionBar Theme due to the question number.
-     * Changes "Quiz App" title to "Question #i".
-     * Changes ActionBar background color due to question-layout color (colorOdd|colorEven) due to question number.
+     * Changes "Quiz App" title to "Quiz App / Question #n".
+     * Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
      */
     private void SetActionBarForQuiz() {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorOdd))); // getColor : API level 23 (minimum is 15)
-     // actionBar.setTitle("Question #1"+":"); //for question #1.
-        actionBar.setTitle(getString(R.string.Q1)+":");
-        // defining actionBar as textView and setting its color to BLACK:
+    //  I have to do sth with dat in the future - warning-incompability when the version is older.
+
+
+     // actionBar.setTitle("Quiz App / Question #1"+":");             //for question #1.
+        actionBar.setTitle("Quiz App / "+getString(R.string.Q1)+":");
+
+        // defining actionBar as textView to set its color to BLACK:
         actionBar.getTitle();
         SpannableString spannableString = new SpannableString(actionBar.getTitle());
         spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, actionBar.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         getSupportActionBar().setTitle(spannableString);
-
     }
 
-
-    //????
-    private void SetActionBarForWelcome() {
-
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-
-        for (int i=SECONDS_WELCOME; i>=0; i--) {
-            actionBar.setTitle("Quiz App:    the quiz will start in "+ i +" sec.");
-            SystemClock.sleep(1000);
-        }
-
+    /**
+     * This method checks vertical position of Q-layout in the scrollView
+     *
+     *
+     */
+   /** private void SpotQuestionLayoutVertPos() {
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = rootScrollView.getScrollY(); // For ScrollView
+                int scrollX = rootScrollView.getScrollX(); // For HorizontalScrollView
+                // DO SOMETHING WITH THE SCROLL COORDINATES
+            }
+        });
     }
+    **/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //  SetLinearLayoutHeight for : "layout_Q1", "layout_Q2" ... "layout_Q4"
+
+        //  SetLinearLayoutHeight for : "layout_Q1", "layout_Q2" ... "layout_Q4" to fit each Q-layout equally in the screen.
         for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {SetLinearLayoutHeight("layout_Q"+i);}
         SetActionBarForQuiz();
+        //SpotQuestionLayoutVertPos();
     }
-
-//????
-   // @Override
-   // public void onStart(){
-   //     super.onStart();
-   //     SetActionBarForWelcome();
-   // }
 
 }

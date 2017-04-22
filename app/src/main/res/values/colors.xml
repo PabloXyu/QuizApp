@@ -6,4 +6,27 @@
 
     <color name="colorEven">#FFD6D7</color>
     <color name="colorOdd">#C0D6E4</color>
+
+    <color name="t0">#F000</color>
+
+    <color name="t01">#C0D6E4</color>
+    <color name="t02">#C0D6E4</color>
+    <color name="t03">#C0D6E4</color>
+    <color name="t04">#C0D6E4</color>
+    <color name="t05">#C0D6E4</color>
+
+    <color name="t001">#FF4000</color>
+    <color name="t002">#33B5E5</color>
+    <color name="t003">#FFFF8800</color>
+    <color name="t004">#006400</color>
+    <color name="t005">#4BDC62</color>
+
+
+
+    <color name="t06">#</color>
+    <color name="t07">#</color>
+    <color name="t08">#</color>
+    <color name="t09">#</color>
+    <color name="t10">#</color>
+    <color name="t1">#</color>
 </resources>

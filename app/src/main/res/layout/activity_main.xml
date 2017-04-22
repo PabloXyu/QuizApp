@@ -1,126 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fillViewport="false">
+    android:fillViewport="false"
+    android:orientation="vertical">
 
+<!-- LinearLayout as "Einzelkind" of the ScrollView -->
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-     <!--LinearLayout Question 1: -->
+    <!-- LinearLayout Question 1: -->
         <LinearLayout
+            android:focusable="false"
+            android:clickable="true"
+            android:focusableInTouchMode="true"
+
             android:id="@+id/layout_Q1"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="1dp"
+            android:paddingLeft="@dimen/margin"
+            android:paddingRight="@dimen/margin"
             android:background="@color/colorOdd"
+            android:gravity="center"
             android:orientation="vertical">
-        <!--Textview header Q1-->
+
+        <!--  paddingLeft  defines the distance between checkbox square and the checkbox title    -->
+        <!-- LinearLayout incuding All 2 DoubleCheckBoxes: (horizontal orientation for the device in Landscape Mode) -->
+        <!-- TableLayout :setting equal col widht: stretchColumns="*" to TableLayout root and layout_width="0dp" to its children.-->
+                <TableLayout
+                    android:paddingLeft="@dimen/xxlarge_margin"
+                    android:background="@color/t01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:stretchColumns="*"
+                    android:orientation="vertical">
+
+                    <!-- LinearLayout Vertical Doublecheckbox Answers: A11 & A12 -->
+                    <TableRow
+                        android:background="@color/t02"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/colorPrimary"
+                            android:id="@+id/A11"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:onClick="onCheckBoxClicked_A11"
+                            android:paddingLeft="@dimen/margin"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A11"/>
+                        <CheckBox
+                            android:background="@color/colorPrimaryDark"
+                            android:id="@+id/A12"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:onClick="onCheckBoxClicked_A12"
+                            android:paddingLeft="@dimen/margin"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A12"/>
+                    </TableRow>
+                    <!-- LinearLayout Vertical Doublecheckbox Answers: A13 & A14 -->
+                    <TableRow
+                        android:background="@color/t03"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/colorPrimary"
+                            android:id="@+id/A13"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:onClick="onCheckBoxClicked_A13"
+                            android:paddingLeft="@dimen/margin"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A13"/>
+                        <CheckBox
+                            android:background="@color/colorPrimaryDark"
+                            android:id="@+id/A14"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:onClick="onCheckBoxClicked_A14"
+                            android:paddingLeft="@dimen/margin"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A14"/>
+                    </TableRow>
+                </TableLayout>
+
             <TextView
-                android:id="@+id/header_Q1"
+                android:background="@color/t04"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@string/Q1"
-                android:textSize="@dimen/xlarge" />
-            <!--LinearLayout as Checkbox ViewGroup -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="2"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/A11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onCheckBoxClicked_A11"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A11"
-                    android:textSize="@dimen/small" />
-
-                <CheckBox
-                    android:id="@+id/A12"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onCheckBoxClicked_A12"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A12"
-                    android:textSize="@dimen/small" />
-
-                <CheckBox
-                    android:id="@+id/A13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onCheckBoxClicked_A13"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A13"
-                    android:textSize="@dimen/small" />
-
-                <CheckBox
-                    android:id="@+id/A14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onCheckBoxClicked_A14"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A14"
-                    android:textSize="@dimen/small" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
+                android:layout_weight="0"
+                android:paddingBottom="@dimen/large"
+                android:paddingTop="@dimen/large"
                 android:text="@string/Question1"
                 android:textSize="@dimen/xlarge" />
 
-            <TextView
+            <ImageView
+                android:background="@color/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="scroll up^"
+                android:gravity="center"
+                android:src="@mipmap/ic_vertical_align_top_black_24dp"
                 android:textSize="@dimen/large" />
         </LinearLayout>
 
-     <!--LinearLayout Question 2: -->
+        <!--LinearLayout Question 2: -->
         <LinearLayout
+
             android:id="@+id/layout_Q2"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="1dp"
             android:background="@color/colorEven"
             android:orientation="vertical">
-         <!--Textview header Q2-->
-            <TextView
+            <!--Textview header Q2-->
+            <!--TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="@string/Q2"
-                android:textSize="@dimen/xlarge" />
+                android:textSize="@dimen/xlarge" /-->
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_gravity="center_horizontal"
-                android:orientation="vertical"
-                android:hint="@string/H2"
-                android:inputType="textAutoComplete"   />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
                 android:layout_weight="1"
+                android:hint="@string/H2"
+                android:inputType="text"
+                android:orientation="vertical" />
+
+            <TextView
+                android:background="@color/t05"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/Question2"
                 android:textSize="@dimen/xlarge" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -130,61 +159,66 @@
                 android:textSize="@dimen/large" />
         </LinearLayout>
 
-     <!--LinearLayout Question 3: -->
+        <!--LinearLayout Question 3: -->
         <LinearLayout
             android:id="@+id/layout_Q3"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="1dp"
             android:background="@color/colorOdd"
-            android:orientation="vertical">
+            android:orientation="vertical"
+
+            android:paddingLeft="@dimen/xlarge_margin"
+            android:paddingRight="@dimen/large_margin">
             <!--Textview header Q3-->
-            <TextView
+            <!--TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="@string/Q3"
-                android:textSize="@dimen/xlarge" />
+                android:textSize="@dimen/xlarge" /-->
 
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_gravity="center_horizontal"
-                android:orientation="vertical"
-                android:onClick="onRadioGroupClicked_A3">
+                android:layout_weight="1"
+                android:onClick="onRadioGroupClicked_A3"
+                android:orientation="vertical">
 
                 <RadioButton
                     android:id="@+id/Q31"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked_A31"
                     android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A31"
-                    android:onClick="onRadioButtonClicked_A31"/>
+                    android:text="@string/A31" />
+
                 <RadioButton
                     android:id="@+id/Q32"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked_A32"
                     android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A32"
-                    android:onClick="onRadioButtonClicked_A32"/>
+                    android:text="@string/A32" />
+
                 <RadioButton
                     android:id="@+id/Q33"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="onRadioButtonClicked_A33"
                     android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A33"
-                    android:onClick="onRadioButtonClicked_A33"/>
+                    android:text="@string/A33" />
             </RadioGroup>
 
             <TextView
+                android:background="@android:color/holo_green_light"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/Question3"
                 android:textSize="@dimen/xlarge" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -194,39 +228,43 @@
                 android:textSize="@dimen/large" />
         </LinearLayout>
 
-     <!--LinearLayout Question 4: -->
+        <!--LinearLayout Question 4: -->
         <LinearLayout
             android:id="@+id/layout_Q4"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="1dp"
             android:background="@color/colorEven"
-            android:orientation="vertical">
+            android:orientation="vertical"
+
+            android:paddingLeft="@dimen/xlarge_margin"
+            android:paddingRight="@dimen/large_margin">
             <!--Textview header Q4-->
-            <TextView
+            <!--TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="@string/Q4"
-                android:textSize="@dimen/xlarge" />
+                android:textSize="@dimen/xlarge" /-->
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/small_margin"
-                android:orientation="vertical"
-                android:hint="@string/H4"
-                android:inputType="textMultiLine"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
                 android:layout_weight="1"
+                android:hint="@string/H4"
+                android:inputType="textMultiLine"
+                android:orientation="vertical" />
+
+            <TextView
+                android:background="@android:color/holo_green_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/Question4"
                 android:textSize="@dimen/xlarge" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -6,11 +6,12 @@
     <string name="Q3">"Question #3"</string>
     <string name="Q4">"Question #4"</string>
 
-    <string name="Question1">"Which of\u00A0the\u00A0substances listed above are carbohydrates?"</string>
-    <string name="Question2">"What is the biggest object in our Solar System?"</string>
+    <string name="Question1">"Which of\u00A0the\u00A0substances listed above are\u00A0carbohydrates?"</string>
+    <string name="Question2">"What is the\u00A0biggest object in\u00A0our Solar System?"</string>
     <string name="Question3">"How old is the\u00A0Universe?"</string>
-    <string name="Question4">"What is the name of the natural satelite of\u00A0the\u00A0Earth?</string>
+    <string name="Question4">"What is the\u00A0name of\u00A0the\u00A0natural satelite of\u00A0the\u00A0Earth?"</string>
 
+    <string name="H1">"You can choose more than one answer"</string>
     <string name="A11">"galactose"</string>
     <string name="A12">"fructose"</string>
     <string name="A13">"surcrose"</string>
