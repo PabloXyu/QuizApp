@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/t0A"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll_view"
     android:layout_width="match_parent"
@@ -7,13 +8,17 @@
     android:fillViewport="false"
     android:orientation="vertical">
 
-<!-- LinearLayout as "Einzelkind" of the ScrollView -->
+<!-- LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
+<!-- LinearLayout: all Q-LinearLayouts have 1dp height, the real height is defined OnClick in SetLinearLayoutHeight -->
     <LinearLayout
+        android:background="@color/t09"
+        android:id="@+id/parent_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
     <!-- LinearLayout Question 1: -->
         <LinearLayout
+            android:background="@color/t06"
             android:focusable="false"
             android:clickable="true"
             android:focusableInTouchMode="true"
@@ -23,30 +28,31 @@
             android:layout_height="1dp"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
-            android:background="@color/colorOdd"
+
             android:gravity="center"
             android:orientation="vertical">
 
-        <!--  paddingLeft  defines the distance between checkbox square and the checkbox title    -->
-        <!-- LinearLayout incuding All 2 DoubleCheckBoxes: (horizontal orientation for the device in Landscape Mode) -->
+        <!-- paddingLeft  moves  checkbox TableLayout square right to center horizontally  -->
+        <!-- paddingLeft (xxlarge_margin=48dp) value will be changed to higher value for Landscape mode -->
+        <!-- TableLayout: used for 2x2 checkboxes -->
         <!-- TableLayout :setting equal col widht: stretchColumns="*" to TableLayout root and layout_width="0dp" to its children.-->
-                <TableLayout
-                    android:paddingLeft="@dimen/xxlarge_margin"
+            <TableLayout
                     android:background="@color/t01"
+                    android:paddingLeft="@dimen/xxlarge_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="45"
                     android:stretchColumns="*"
                     android:orientation="vertical">
 
-                    <!-- LinearLayout Vertical Doublecheckbox Answers: A11 & A12 -->
+                <!-- TableRow for answers: A11 & A12 -->
                     <TableRow
                         android:background="@color/t02"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
                         <CheckBox
-                            android:background="@color/colorPrimary"
+                            android:background="@color/t08"
                             android:id="@+id/A11"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -56,7 +62,7 @@
                             android:textSize="@dimen/large"
                             android:text="@string/A11"/>
                         <CheckBox
-                            android:background="@color/colorPrimaryDark"
+                            android:background="@color/t07"
                             android:id="@+id/A12"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -66,14 +72,15 @@
                             android:textSize="@dimen/large"
                             android:text="@string/A12"/>
                     </TableRow>
-                    <!-- LinearLayout Vertical Doublecheckbox Answers: A13 & A14 -->
+
+                <!-- TableRow for answers: A13 & A14 -->
                     <TableRow
                         android:background="@color/t03"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
                         <CheckBox
-                            android:background="@color/colorPrimary"
+                            android:background="@color/t07"
                             android:id="@+id/A13"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -83,7 +90,7 @@
                             android:textSize="@dimen/large"
                             android:text="@string/A13"/>
                         <CheckBox
-                            android:background="@color/colorPrimaryDark"
+                            android:background="@color/t08"
                             android:id="@+id/A14"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -96,24 +103,62 @@
                 </TableLayout>
 
             <TextView
-                android:background="@color/t04"
+                android:background="@color/t0B"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_weight="0"
+                android:layout_height="0dp"
+                android:layout_weight="10"
                 android:paddingBottom="@dimen/large"
-                android:paddingTop="@dimen/large"
+                android:gravity="center"
+                android:text="@string/H1"
+                android:textSize="@dimen/small" />
+            <TextView
+                android:background="@color/t04"
+                android:id="@+id/Question1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="20"
+                android:gravity="center"
                 android:text="@string/Question1"
                 android:textSize="@dimen/xlarge" />
 
-            <ImageView
-                android:background="@color/colorAccent"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:src="@mipmap/ic_vertical_align_top_black_24dp"
-                android:textSize="@dimen/large" />
+    <!--That LinearLayout is a scroll up button -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:id="@+id/button_Q1"
+                style="?android:attr/buttonStyle"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="@dimen/margin"
+                android:layout_margin="@dimen/margin"
+                android:onClick="scroll_up_next_Q1">
+
+
+
+                <TextView
+                    android:background="@color/colorOdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/xsmall_margin"
+                    android:text="@string/scrollup_P"
+                    android:textColor="#000"
+                    android:textSize="@dimen/small" />
+                <ImageView
+                    android:background="@color/t0C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:src="@mipmap/ic_vertical_align_top_black_24dp"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!--LinearLayout Question 2: -->

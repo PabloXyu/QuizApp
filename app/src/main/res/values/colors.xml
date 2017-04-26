@@ -1,24 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--    colors.xml includes test view background colors to check the app layout 
+        Every view has own android:background="@color/tXX"  in first line
+        That also helps to find views by colors in xml :)
+        https://www.random.org/colors/hex
+        http://www.computerhope.com/htmcolor.htm -->
+
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorEven">#FFD6D7</color>
     <color name="colorOdd">#C0D6E4</color>
+    <color name="colorEven">#FFD6D7</color>
 
-    <color name="t0">#F000</color>
+    <color name="RedPigColorLogo">#da1b5b</color>
 
-    <color name="t01">#C0D6E4</color>
-    <color name="t02">#C0D6E4</color>
-    <color name="t03">#C0D6E4</color>
-    <color name="t04">#C0D6E4</color>
-    <color name="t05">#C0D6E4</color>
 
-    <color name="t001">#FF4000</color>
-    <color name="t002">#33B5E5</color>
-    <color name="t003">#FFFF8800</color>
-    <color name="t004">#006400</color>
-    <color name="t005">#4BDC62</color>
+    <color name="t00">#C0D6E4</color>
+
+    <!-- real -->
+    <color name="t001">#C0D6E4</color>
+    <color name="t002">#C0D6E4</color>
+    <color name="t003">#C0D6E4</color>
+    <color name="t004">#C0D6E4</color>
+    <color name="t005">#C0D6E4</color>
+    <color name="t006">#C0D6E4</color>
+    <color name="t007">#C0D6E4</color>
+    <color name="t008">#C0D6E4</color>
+    <color name="t009">#C0D6E4</color>
+    <color name="t00A">#C0D6E4</color>
+    <color name="t00C">#C0D6E4</color>
+    <color name="t00D">#C0D6E4</color>
+    <color name="t00E">#C0D6E4</color>
+    <color name="t00F">#C0D6E4</color>
+
+    <!-- test -->
+    <color name="t01">#FF4000</color>
+    <color name="t02">#33B5E5</color>
+    <color name="t03">#fa9602</color>
+    <color name="t04">#006400</color>
+    <color name="t05">#c8e0fb</color>
+    <color name="t06">#52a4b4</color>
+    <color name="t07">#3F51B5</color>
+    <color name="t08">#de215d</color>
+    <color name="t09">#dde22f</color>
+    <color name="t0A">#735313</color>
+    <color name="t0B">#4BDC62</color>
+    <color name="t0C">#fbdcf8</color>
+    <color name="t0D">#f43f59</color>
+    <color name="t0E">#1b9b2e</color>
+    <color name="t0F">#baa622</color>
 
 </resources>
