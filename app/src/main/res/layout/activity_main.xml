@@ -1,324 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/t0A"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scroll_view"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="false"
     android:orientation="vertical">
 
-<!-- LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
-<!-- LinearLayout: all Q-LinearLayouts have 1dp height, the real height is defined OnClick in SetLinearLayoutHeight -->
+<!-- LinearLayout is a scroll up button in the bottom of the screen -->
     <LinearLayout
         android:background="@color/t09"
-        android:id="@+id/parent_layout"
-        android:layout_width="match_parent"
+        style="?android:attr/buttonStyle"
+        android:onClick="scroll_up"
+        android:id="@+id/button"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <!-- LinearLayout Question 1: -->
-        <LinearLayout
-            android:background="@color/t06"
-            android:focusable="false"
-            android:clickable="true"
-            android:focusableInTouchMode="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:paddingLeft="@dimen/margin"
+        android:paddingTop="@dimen/small_margin"
+        android:layout_margin="@dimen/margin"
+        android:orientation="horizontal">
+        <TextView
+        android:background="@color/t0B"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/scrollup_P"
+        android:paddingBottom="@dimen/small_margin"
 
-            android:id="@+id/layout_Q1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:paddingLeft="@dimen/margin"
-            android:paddingRight="@dimen/margin"
+        android:textColor="#000"
+        android:textSize="@dimen/small" />
+        <ImageView
+            android:background="@color/t0F"
+            android:layout_width="@dimen/xxlarge_margin"
+            android:layout_height="@dimen/xxxlarge_margin"
+            android:scaleType="fitXY"
+            android:paddingBottom="@dimen/margin"
+            android:paddingLeft="@dimen/small_margin"
+            android:paddingRight="@dimen/small_margin"
 
+            android:layout_gravity="center"
             android:gravity="center"
+            android:src="@mipmap/ic_vertical_align_top_black_24dp"/>
+    </LinearLayout>
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
+        android:orientation="vertical">
+
+    <!-- LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
+    <!-- LinearLayout: all Q-LinearLayouts have 1dp height, the real height is defined OnClick in SetLinearLayoutHeight -->
+        <LinearLayout
+            android:background="@color/t09"
+            android:id="@+id/parent_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
-
-        <!-- paddingLeft  moves  checkbox TableLayout square right to center horizontally  -->
-        <!-- paddingLeft (xxlarge_margin=48dp) value will be changed to higher value for Landscape mode -->
-        <!-- TableLayout: used for 2x2 checkboxes -->
-        <!-- TableLayout :setting equal col widht: stretchColumns="*" to TableLayout root and layout_width="0dp" to its children.-->
-            <TableLayout
-                    android:background="@color/t01"
-                    android:paddingLeft="@dimen/xxlarge_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="45"
-                    android:stretchColumns="*"
-                    android:orientation="vertical">
-
-                <!-- TableRow for answers: A11 & A12 -->
-                    <TableRow
-                        android:background="@color/t02"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <CheckBox
-                            android:background="@color/t08"
-                            android:id="@+id/A11"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="left"
-                            android:onClick="onCheckBoxClicked_A11"
-                            android:paddingLeft="@dimen/margin"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A11"/>
-                        <CheckBox
-                            android:background="@color/t07"
-                            android:id="@+id/A12"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="left"
-                            android:onClick="onCheckBoxClicked_A12"
-                            android:paddingLeft="@dimen/margin"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A12"/>
-                    </TableRow>
-
-                <!-- TableRow for answers: A13 & A14 -->
-                    <TableRow
-                        android:background="@color/t03"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <CheckBox
-                            android:background="@color/t07"
-                            android:id="@+id/A13"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="left"
-                            android:onClick="onCheckBoxClicked_A13"
-                            android:paddingLeft="@dimen/margin"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A13"/>
-                        <CheckBox
-                            android:background="@color/t08"
-                            android:id="@+id/A14"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="left"
-                            android:onClick="onCheckBoxClicked_A14"
-                            android:paddingLeft="@dimen/margin"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A14"/>
-                    </TableRow>
-                </TableLayout>
-
-            <TextView
-                android:background="@color/t0B"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="10"
-                android:paddingBottom="@dimen/large"
-                android:gravity="center"
-                android:text="@string/H1"
-                android:textSize="@dimen/small" />
-            <TextView
-                android:background="@color/t04"
-                android:id="@+id/Question1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="20"
-                android:gravity="center"
-                android:text="@string/Question1"
-                android:textSize="@dimen/xlarge" />
-
-    <!--That LinearLayout is a scroll up button -->
+        <!-- LinearLayout Question 1: -->
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:id="@+id/button_Q1"
-                style="?android:attr/buttonStyle"
+
+
+                android:background="@color/t06"
+                android:focusable="false"
                 android:clickable="true"
-                android:focusable="true"
-                android:paddingBottom="@dimen/margin"
-                android:layout_margin="@dimen/margin"
-                android:onClick="scroll_up_next_Q1">
+                android:focusableInTouchMode="true"
 
-
-
-                <TextView
-                    android:background="@color/colorOdd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/xsmall_margin"
-                    android:text="@string/scrollup_P"
-                    android:textColor="#000"
-                    android:textSize="@dimen/small" />
-                <ImageView
-                    android:background="@color/t0C"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerInside"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:src="@mipmap/ic_vertical_align_top_black_24dp"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!--LinearLayout Question 2: -->
-        <LinearLayout
-
-            android:id="@+id/layout_Q2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorEven"
-            android:orientation="vertical">
-            <!--Textview header Q2-->
-            <!--TextView
+                android:id="@+id/layout_Q1"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="@string/Q2"
-                android:textSize="@dimen/xlarge" /-->
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:hint="@string/H2"
-                android:inputType="text"
-                android:orientation="vertical" />
-
-            <TextView
-                android:background="@color/t05"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/Question2"
-                android:textSize="@dimen/xlarge" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="scroll up^"
-                android:textSize="@dimen/large" />
-        </LinearLayout>
-
-        <!--LinearLayout Question 3: -->
-        <LinearLayout
-            android:id="@+id/layout_Q3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorOdd"
-            android:orientation="vertical"
-
-            android:paddingLeft="@dimen/xlarge_margin"
-            android:paddingRight="@dimen/large_margin">
-            <!--Textview header Q3-->
-            <!--TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="@string/Q3"
-                android:textSize="@dimen/xlarge" /-->
-
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:onClick="onRadioGroupClicked_A3"
+                android:layout_height="1dp"
+                android:paddingLeft="@dimen/margin"
+                android:paddingRight="@dimen/margin"
+                android:gravity="bottom"
                 android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/Q31"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onRadioButtonClicked_A31"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A31" />
+            <!-- paddingLeft  moves  checkbox TableLayout square right to center horizontally  -->
+            <!-- paddingLeft (xxlarge_margin=48dp) value will be changed to higher value for Landscape mode -->
+            <!-- TableLayout: used for 2x2 checkboxes -->
+            <!-- TableLayout :setting equal col widht: stretchColumns="*" to TableLayout root and layout_width="0dp" to its children.-->
+                <TableLayout
+                        android:background="@color/t01"
 
-                <RadioButton
-                    android:id="@+id/Q32"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onRadioButtonClicked_A32"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A32" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:paddingLeft="@dimen/margin"
+                        android:paddingRight="@dimen/margin"
+                        android:layout_gravity="center"
 
-                <RadioButton
-                    android:id="@+id/Q33"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onRadioButtonClicked_A33"
-                    android:paddingLeft="@dimen/xlarge_margin"
-                    android:text="@string/A33" />
-            </RadioGroup>
 
-            <TextView
-                android:background="@android:color/holo_green_light"
+                        android:shrinkColumns="*"
+                        android:orientation="vertical">
+
+                    <!-- TableRow for answers: A11 & A12 -->
+                        <TableRow
+                            android:background="@color/t03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="2">
+                            <CheckBox
+                                android:background="@color/t08"
+                                android:id="@+id/A11"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:onClick="onCheckBoxClicked_A11"
+                                android:layout_marginRight="@dimen/margin"
+
+                                android:textSize="@dimen/large"
+                                android:text="@string/A11"/>
+                            <View
+                                android:background="@color/t0C"
+                                android:layout_height="match_parent"
+                                android:layout_width="@dimen/xlarge_margin"/>
+                            <CheckBox
+                                android:background="@color/t07"
+                                android:id="@+id/A12"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+
+                                android:onClick="onCheckBoxClicked_A12"
+                                android:textSize="@dimen/large"
+                                android:text="@string/A12"/>
+                        </TableRow>
+
+                    <!-- TableRow for answers: A13 & A14 -->
+                        <TableRow
+                            android:background="@color/t02"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="0dp"
+                            android:layout_weight="3">
+                            <CheckBox
+                                android:background="@color/t07"
+                                android:id="@+id/A13"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:onClick="onCheckBoxClicked_A13"
+                                android:layout_marginRight="@dimen/margin"
+                                android:textSize="@dimen/large"
+                                android:text="@string/A13"/>
+                            <View
+                                android:background="@color/t09"
+                                android:layout_height="match_parent"
+                                android:layout_width="@dimen/xlarge_margin"/>
+                            <CheckBox
+                                android:background="@color/t08"
+                                android:id="@+id/A14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+
+                                android:onClick="onCheckBoxClicked_A14"
+                                android:textSize="@dimen/large"
+                                android:text="@string/A14"/>
+                        </TableRow>
+                    <TextView
+                        android:background="@color/t0B"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="3"
+
+                        android:gravity="center"
+                        android:layout_gravity="bottom"
+                        android:text="@string/H1"
+                        android:textSize="@dimen/small" />
+
+                </TableLayout>
+
+                <TextView
+                    android:background="@color/t04"
+                    android:id="@+id/Question1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:paddingTop="@dimen/margin"
+                    android:paddingBottom="@dimen/margin"
+                    android:gravity="center"
+                    android:text="@string/Question1"
+                    android:textSize="@dimen/xlarge" />
+
+        <!--That LinearLayout WAS a scroll up button -->
+                <View
+                    android:background="@color/t08"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bottom_view_height"
+
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
+
+            <!--LinearLayout Question 2: -->
+            <LinearLayout
+
+                android:id="@+id/layout_Q2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/Question3"
-                android:textSize="@dimen/xlarge" />
+                android:layout_height="1dp"
+                android:background="@color/colorEven"
+                android:orientation="vertical">
+                <!--Textview header Q2-->
+                <!--TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Q2"
+                    android:textSize="@dimen/xlarge" /-->
 
-            <TextView
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:hint="@string/H2"
+                    android:inputType="text"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:background="@color/t05"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Question2"
+                    android:textSize="@dimen/xlarge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="scroll up^"
+                    android:textSize="@dimen/large" />
+            </LinearLayout>
+
+            <!--LinearLayout Question 3: -->
+            <LinearLayout
+                android:id="@+id/layout_Q3"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="scroll up^"
-                android:textSize="@dimen/large" />
+                android:layout_height="1dp"
+                android:background="@color/colorOdd"
+                android:orientation="vertical"
+
+                android:paddingLeft="@dimen/xlarge_margin"
+                android:paddingRight="@dimen/large_margin">
+                <!--Textview header Q3-->
+                <!--TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Q3"
+                    android:textSize="@dimen/xlarge" /-->
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:onClick="onRadioGroupClicked_A3"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/Q31"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked_A31"
+                        android:paddingLeft="@dimen/xlarge_margin"
+                        android:text="@string/A31" />
+
+                    <RadioButton
+                        android:id="@+id/Q32"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked_A32"
+                        android:paddingLeft="@dimen/xlarge_margin"
+                        android:text="@string/A32" />
+
+                    <RadioButton
+                        android:id="@+id/Q33"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="onRadioButtonClicked_A33"
+                        android:paddingLeft="@dimen/xlarge_margin"
+                        android:text="@string/A33" />
+                </RadioGroup>
+
+                <TextView
+                    android:background="@android:color/holo_green_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Question3"
+                    android:textSize="@dimen/xlarge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="scroll up^"
+                    android:textSize="@dimen/large" />
+            </LinearLayout>
+
+            <!--LinearLayout Question 4: -->
+            <LinearLayout
+                android:id="@+id/layout_Q4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorEven"
+                android:orientation="vertical"
+
+                android:paddingLeft="@dimen/xlarge_margin"
+                android:paddingRight="@dimen/large_margin">
+                <!--Textview header Q4-->
+                <!--TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Q4"
+                    android:textSize="@dimen/xlarge" /-->
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/small_margin"
+                    android:layout_weight="1"
+                    android:hint="@string/H4"
+                    android:inputType="textMultiLine"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:background="@android:color/holo_green_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/Question4"
+                    android:textSize="@dimen/xlarge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:padding="@dimen/small"
+                    android:text="scroll up^"
+                    android:textSize="@dimen/large" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <!--LinearLayout Question 4: -->
-        <LinearLayout
-            android:id="@+id/layout_Q4"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorEven"
-            android:orientation="vertical"
-
-            android:paddingLeft="@dimen/xlarge_margin"
-            android:paddingRight="@dimen/large_margin">
-            <!--Textview header Q4-->
-            <!--TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="@string/Q4"
-                android:textSize="@dimen/xlarge" /-->
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:hint="@string/H4"
-                android:inputType="textMultiLine"
-                android:orientation="vertical" />
-
-            <TextView
-                android:background="@android:color/holo_green_light"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/Question4"
-                android:textSize="@dimen/xlarge" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/small"
-                android:text="scroll up^"
-                android:textSize="@dimen/large" />
-        </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</RelativeLayout>

@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.v("Mainactivity","Name: "+ "(x: "+xyCoordinates[0]+", y: "+xyCoordinates[1]+")" );
 
-        printOnTextView("Question1" , "left: "+ location[0]+", top: "+ location[1]);
+       // printOnTextView("Question1" , "left: "+ location[0]+", top: "+ location[1]);
 
 
         //BEGIN actionBar:

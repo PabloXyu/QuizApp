@@ -33,6 +33,7 @@
     <string name="A42">"Moon"</string>
     <string name="A4r">"the Moon"</string>
 
-    <string name="scrollup_P">"NEXT QUESTION"</string>
-    <string name="scrollup_L">"SCROLL UP OR PRESS THE BUTTON FOR THE NEXT QUESTION"</string>
+    <string name="scrollup_P1">"NEXT QUESTION"</string>
+    <string name="scrollup_P">"SUBMIT THE ANSWER"</string>
+    <string name="scrollup_L">"SUBMIT THE ANSWER FOR THE NEXT QUESTION"</string>
 </resources>

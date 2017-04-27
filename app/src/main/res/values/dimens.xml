@@ -18,5 +18,8 @@
     <dimen name="xlarge">32sp</dimen>
     <dimen name="xxlarge">48sp</dimen>
     <dimen name="xxxlarge">56sp</dimen>
+
     <dimen name="circle">115dp</dimen>
+    <dimen name="bottom_view_height">96dp</dimen>
+    "96dp
 </resources>
