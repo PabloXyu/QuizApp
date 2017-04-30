@@ -5,47 +5,47 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-<!-- LinearLayout is a scroll up button in the bottom of the screen -->
+<!-- LinearLayout is a static submit_button in the bottom-center of the screen -->
     <LinearLayout
         android:background="@color/t09"
         style="?android:attr/buttonStyle"
-        android:onClick="scroll_up"
-        android:id="@+id/button"
-        android:clickable="true"
-        android:focusable="true"
+        android:id="@+id/submit_button"
+        android:onClick="SubmitAnswer"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
+        android:layout_margin="@dimen/margin"
         android:paddingLeft="@dimen/margin"
         android:paddingTop="@dimen/small_margin"
-        android:layout_margin="@dimen/margin"
-        android:orientation="horizontal">
+        android:clickable="true"
+        android:focusable="true">
         <TextView
-        android:background="@color/t0B"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/scrollup_P"
-        android:paddingBottom="@dimen/small_margin"
-
-        android:textColor="#000"
-        android:textSize="@dimen/small" />
-        <ImageView
-            android:background="@color/t0F"
-            android:layout_width="@dimen/xxlarge_margin"
-            android:layout_height="@dimen/xxxlarge_margin"
-            android:scaleType="fitXY"
-            android:paddingBottom="@dimen/margin"
-            android:paddingLeft="@dimen/small_margin"
-            android:paddingRight="@dimen/small_margin"
-
+            android:background="@color/t0B"
+            android:id="@+id/button_text_id"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:src="@mipmap/ic_vertical_align_top_black_24dp"/>
+            android:paddingBottom="@dimen/small_margin"
+            android:text="@string/button_text_P"
+            android:textSize="@dimen/small"/>
+        <ImageView
+            android:background="@color/t0F"
+            android:src="@mipmap/ic_vertical_align_top_black_24dp"
+            android:layout_width="@dimen/xxlarge_margin"
+            android:layout_height="@dimen/xxxlarge_margin"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingLeft="@dimen/small_margin"
+            android:paddingRight="@dimen/small_margin"
+            android:paddingBottom="@dimen/margin"
+            android:scaleType="fitXY"/>
     </LinearLayout>
+<!-- ScrollView contains N vertical Q-layouts each, of equal height for each Q-layout -->
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -54,150 +54,159 @@
         android:orientation="vertical">
 
     <!-- LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
-    <!-- LinearLayout: all Q-LinearLayouts have 1dp height, the real height is defined OnClick in SetLinearLayoutHeight -->
+    <!-- LinearLayout: all Q-Layouts have 1dp height, the real height is defined OnCreate/SetLinearLayoutHeight -->
         <LinearLayout
             android:background="@color/t09"
             android:id="@+id/parent_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <!-- LinearLayout Question 1: -->
+        <!-- LinearLayout question 1: -->
             <LinearLayout
-
-
                 android:background="@color/t06"
-                android:focusable="false"
-                android:clickable="true"
-                android:focusableInTouchMode="true"
-
                 android:id="@+id/layout_Q1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:gravity="bottom"
                 android:paddingLeft="@dimen/margin"
                 android:paddingRight="@dimen/margin"
-                android:gravity="bottom"
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:focusable="false"
                 android:orientation="vertical">
 
             <!-- paddingLeft  moves  checkbox TableLayout square right to center horizontally  -->
-            <!-- paddingLeft (xxlarge_margin=48dp) value will be changed to higher value for Landscape mode -->
-            <!-- TableLayout: used for 2x2 checkboxes -->
-            <!-- TableLayout :setting equal col widht: stretchColumns="*" to TableLayout root and layout_width="0dp" to its children.-->
+            <!-- paddingLeft (margin=16dp) value will be changed to higher value for Landscape mode -->
+            <!-- Q1-Layout = from Top to Bottom: (TableLayout)checkBoxLayout  + HintLayout + questionLayout (Text) -->
+            <!-- CheckBoxLayout: 1x4 for Portrait, 2x2 for Landscape. INFO: MainActivity, Method: changeParamsDueToOrientation()-->
                 <TableLayout
-                        android:background="@color/t01"
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="5"
-                        android:paddingLeft="@dimen/margin"
-                        android:paddingRight="@dimen/margin"
-                        android:layout_gravity="center"
-
-
-                        android:shrinkColumns="*"
-                        android:orientation="vertical">
-
-                    <!-- TableRow for answers: A11 & A12 -->
-                        <TableRow
-                            android:background="@color/t03"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="2">
-                            <CheckBox
-                                android:background="@color/t08"
-                                android:id="@+id/A11"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:onClick="onCheckBoxClicked_A11"
-                                android:layout_marginRight="@dimen/margin"
-
-                                android:textSize="@dimen/large"
-                                android:text="@string/A11"/>
-                            <View
-                                android:background="@color/t0C"
-                                android:layout_height="match_parent"
-                                android:layout_width="@dimen/xlarge_margin"/>
-                            <CheckBox
-                                android:background="@color/t07"
-                                android:id="@+id/A12"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-
-                                android:onClick="onCheckBoxClicked_A12"
-                                android:textSize="@dimen/large"
-                                android:text="@string/A12"/>
-                        </TableRow>
-
-                    <!-- TableRow for answers: A13 & A14 -->
-                        <TableRow
-                            android:background="@color/t02"
-                            android:layout_width="match_parent"
-
-                            android:layout_height="0dp"
-                            android:layout_weight="3">
-                            <CheckBox
-                                android:background="@color/t07"
-                                android:id="@+id/A13"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:onClick="onCheckBoxClicked_A13"
-                                android:layout_marginRight="@dimen/margin"
-                                android:textSize="@dimen/large"
-                                android:text="@string/A13"/>
-                            <View
-                                android:background="@color/t09"
-                                android:layout_height="match_parent"
-                                android:layout_width="@dimen/xlarge_margin"/>
-                            <CheckBox
-                                android:background="@color/t08"
-                                android:id="@+id/A14"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-
-                                android:onClick="onCheckBoxClicked_A14"
-                                android:textSize="@dimen/large"
-                                android:text="@string/A14"/>
-                        </TableRow>
-                    <TextView
-                        android:background="@color/t0B"
+                    android:background="@color/t01"
+                    android:id="@+id/chkBoxTable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/xlarge_margin"
+                    android:paddingRight="@dimen/xlarge_margin"
+                    android:stretchColumns="*"
+                    android:collapseColumns="1"
+                    android:orientation="vertical">
+                <!-- TableRow#0 for answers: A11 & A12L -->
+                    <TableRow
+                        android:background="@color/t03"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="3"
-
-                        android:gravity="center"
-                        android:layout_gravity="bottom"
-                        android:text="@string/H1"
-                        android:textSize="@dimen/small" />
-
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/t08"
+                            android:id="@+id/A11"
+                            android:onClick="onCheckBoxClicked_A11"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A11"/>
+                        <CheckBox
+                            android:background="@color/t07"
+                            android:id="@+id/A12L"
+                            android:onClick="onCheckBoxClicked_A12"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A12"/>
+                    </TableRow>
+                <!-- TableRow#1 for answers: A13 & A14L -->
+                    <TableRow
+                        android:background="@color/t02"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/t07"
+                            android:id="@+id/A13"
+                            android:onClick="onCheckBoxClicked_A13"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A13"/>
+                        <CheckBox
+                            android:background="@color/t08"
+                            android:id="@+id/A14L"
+                            android:onClick="onCheckBoxClicked_A14"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A14"/>
+                    </TableRow>
+                <!-- TableRow#2 for answer: A12P (repeated for Portrait Mode, for Landscape mode not used)-->
+                    <TableRow
+                        android:background="@color/t03"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/t08"
+                            android:id="@+id/A12P"
+                            android:onClick="onCheckBoxClicked_A12"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A12"/>
+                    </TableRow>
+                <!-- TableRow#3 for answer: A14P (repeated for Portrait Mode, for Landscape mode not used)-->
+                    <TableRow
+                        android:background="@color/t02"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <CheckBox
+                            android:background="@color/t07"
+                            android:id="@+id/A14P"
+                            android:onClick="onCheckBoxClicked_A14"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A14"/>
+                    </TableRow>
                 </TableLayout>
-
+                <!--HintText-->
+                <TextView
+                    android:background="@color/t0B"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="@string/H1"
+                    android:textSize="@dimen/small" />
+                <!--questionText-->
                 <TextView
                     android:background="@color/t04"
-                    android:id="@+id/Question1"
+                    android:id="@+id/questionTextView_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="3"
+                    android:gravity="center"
                     android:paddingTop="@dimen/margin"
                     android:paddingBottom="@dimen/margin"
-                    android:gravity="center"
-                    android:text="@string/Question1"
+                    android:text="@string/question_text1_P"
                     android:textSize="@dimen/xlarge" />
-
-        <!--That LinearLayout WAS a scroll up button -->
+                <!--Empty background for qSubmit_button-->
                 <View
                     android:background="@color/t08"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/bottom_view_height"
-
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"/>
             </LinearLayout>
 
-            <!--LinearLayout Question 2: -->
+            <!--LinearLayout question 2: -->
             <LinearLayout
 
                 android:id="@+id/layout_Q2"
@@ -228,7 +237,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/Question2"
+                    android:text="@string/question_text2"
                     android:textSize="@dimen/xlarge" />
 
                 <TextView
@@ -240,7 +249,7 @@
                     android:textSize="@dimen/large" />
             </LinearLayout>
 
-            <!--LinearLayout Question 3: -->
+            <!--LinearLayout question 3: -->
             <LinearLayout
                 android:id="@+id/layout_Q3"
                 android:layout_width="match_parent"
@@ -297,7 +306,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/Question3"
+                    android:text="@string/question_text3"
                     android:textSize="@dimen/xlarge" />
 
                 <TextView
@@ -309,7 +318,7 @@
                     android:textSize="@dimen/large" />
             </LinearLayout>
 
-            <!--LinearLayout Question 4: -->
+            <!--LinearLayout question 4: -->
             <LinearLayout
                 android:id="@+id/layout_Q4"
                 android:layout_width="match_parent"
@@ -343,7 +352,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/Question4"
+                    android:text="@string/question_text4"
                     android:textSize="@dimen/xlarge" />
 
                 <TextView
