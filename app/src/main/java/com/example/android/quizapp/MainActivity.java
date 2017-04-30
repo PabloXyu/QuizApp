@@ -120,35 +120,69 @@ public class MainActivity extends AppCompatActivity {
      *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12">
      *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14">
      *
-     *  Portrait default    <android:CollapseColumns="1">
+     *  0. Portrait default (xml): (BEFORE CHANGE TO LANDSCAPE)
+     *  -----------------------------------------------------------------
      *
-     *  TableRow # = int indexOfChild(TableLayout)
+     * 0A. All columns are shrunk and all tableLayout granchildren have layout_width="wrap_content".
+     * 0B. All tableRows have the same height weight, to have equal horizontal spacing.
      *
-     *  changing to Landscape:
-     *  -    uncollapse   column  #1
-     *  -    remove      tableRow #2
-     *  -    remove      tableRow #3
-     * which means removing views
+     *   This helps "1x4"-portrait-mode table nice horizontal alignment in the center of the screen.
      *
-     *    //(setVisibility(GONE) id: chkBoxTableRow2_A12P & chkBoxTableRow2_A14P
+     *
+     *  1. changing to Landscape: Placement of columns in the table
+     *  -----------------------------------------------------------
+     *                                                     #TableRow = int indexOfChild(TableLayout)
+     *  1A. unhide        column   #1
+     *  1B. remove        tableRow #2  (tableLayout.getChildAt(2))
+     *  1C. remove        tableRow #3  (tableLayout.getChildAt(3))
+     *
+     *  #TableRow = int indexOfChild(TableLayout)
+     *
+     *
+     *  2. changing to Landscape: Alignment of columns in the table
+     *  -----------------------------------------------------------
+     *
+     * Two shrunk columns of chkBoxes/rButtons are too close to each other.
+     * Smart left column (#0)alignment is needed.
+     *
+     *      |<----m---------|<---------A-------->|<--B-->|---------m---->|
+     *      |<------------------  Q-layout width = W  ------------------>|   A= 1st Col #0
+     *         d=(W-A-B)/3                                                   B= 2nd Col #1
+     *      |<---d-|<---------A-------->|<--d-->|<------->|<--B-->|-d--->|   W= Q-layout width
+     *
+     *      |<----n------|<-----------A+d---------->|<--B-->|------n---->|
+     *
+     *       A += d; new width of A (first column); A = A + d;
+     *       newWidth = (2A-B-W)/3
+     *
+     *      CheckBoxes A11&A13 have to have set newWidth
+     *
      *
      */
     private void changeTableLayoutToLandscape(String tableLayout_id_name){
         TableLayout tableLayout = (TableLayout)findViewById(getResources().getIdentifier( tableLayout_id_name, "id", getPackageName() ) );
-        tableLayout.setColumnCollapsed(1,false);
-        tableLayout.getChildAt(2).setVisibility(tableLayout.getChildAt(2).GONE);
-        tableLayout.getChildAt(3).setVisibility(tableLayout.getChildAt(3).GONE);
-        //int x =tableLayout.getWidth()/2;
-        //tableLayout.ColumnStyles[0].Width = 200;
-        //tableLayout.getLayoutParams().width = tableLayout.getWidth()/2;
-        //tableLayout.removeViewAt(2);
-        //tableLayout.removeViewAt(3);
+        // 1. Placement of columns in the table:
+        tableLayout.setColumnCollapsed(1,false);                                //unhide column   #1
+        tableLayout.getChildAt(2).setVisibility(tableLayout.getChildAt(2).GONE);//remove tableRow #2
+        tableLayout.getChildAt(3).setVisibility(tableLayout.getChildAt(3).GONE);//remove tableRow #3
+        // 2. Alignment of columns in the table:
 
-        // private   void setColumnCollapsed (int columnIndex, boolean isCollapsed){};
+        View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
+        // the width of that view is the same as all childrens' of Q-layout.
+        //int newWidth  = (2*tableLayout.getChildAt(0).getWidth() - tableLayout.getChildAt(1).getWidth() - view.getWidth())/3;
+        int newWidth  = (2*(tableLayout.getChildAt(0).getWidth() + tableLayout.getChildAt(1).getWidth()) + view.getWidth()/3;
+        //  newWidth  = (2A-B-W)/3;
 
 
 
+       // LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(15,50);
+       //tableLayout.setLayoutParams(layoutParams);
+
+      //  LinearLayout.LayoutParams layoutParams
+
+        //tableLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams())));
     }
+
 
     /**
      * .Method
@@ -185,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = (TextView)findViewById( getResources().getIdentifier( textView_id_name, "id", getPackageName() ) );
         textView.setText( getResources().getIdentifier( text_name, "string", getPackageName() ) );
     }
+
 
     /**
      * . Method
