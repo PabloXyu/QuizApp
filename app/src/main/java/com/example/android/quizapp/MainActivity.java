@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** List of Private Methods (alphabetically):
-     **********************************************************************************************
+     *========================= List of Private Methods (alphabetically): ==========================
+     *
      * . changeParamsDueToOrientation()
      * . changeTableLayoutToLandscape()
      * . isOrientationLandscape()
@@ -53,16 +54,39 @@ public class MainActivity extends AppCompatActivity {
      * . setLayoutsDims()
      * . setTextSizeOnTextView()
      *
-     ======================================= ViewGroupTree: ========================================
+     *====================================== ViewGroupTree: ========================================
      *
      * View Class: (RelativeLayout)     (ScrollView)      (LinearLayout)     (LinearLayout)
-     * view_id:     root_layout ---|---> scroll_view ----> parent_layout ---|---> layout_Q1
-     *                             |                                        |---> layout_Q2
-     *                             |---> submit_button                      ...............
-     *                                  (LinearLayout)                      ...............
-     *                                                                      |---> layout_Qn
-     *            n = NUMBER_OF_QUESTIONS                                                ^
-     *                                          THAT IS Question Layout|QLayout|Q-Layout:^
+     * view_id:    "root_layout" --|---> scroll_view ----> parent_Qlayout ---|---> Qlayout_1
+     *                             |                                         |---> Qlayout_2
+     *                             |---> submit_button                       ...............
+     *                                  (LinearLayout)                       ...............
+     *                                                                       |---> Qlayout_n
+     *            n = NUMBER_OF_QUESTIONS                                                  ^
+     *                                            THAT IS Question Layout/QLayout/Q-Layout:^
+     *
+     *==============================================================================================
+     *================================== Q-Layout Structure: =======================================
+     *
+     *
+     *  # |childView#|common name       |View Class          |Qlayout_N (xml-view name)
+     * ---------------------------------------------------------------------------------------------
+     *  1.|   0|    0|QuestionView      |TableLayout/EditText|chkbox_table/rbutton_table/edit_text_N
+     *  2.|   1|    -|HintView          |TextView            |hint_view_N   (optional)
+     *  3.|   2|    1|QuestionTextView  |TextView            |question_textview_N
+     *  4.|   3|    2|EmptyView         |View                |empty_view_N
+     *  5.|   -|    -|SubmitButtonLayout|LinearLayout        |submit_button (logical)
+     *        ^     ^
+     *        |     |
+     *        |     ----with HintViews optionally existing in all Q-Layouts.                [1]
+     *        ----------with HintViews existing in all Q-Layouts that optionally are GONE.  [2]
+     *
+     *        TODO: OPTION CHOSEN: [1] OR [2] ?
+     *
+     * EmptyView has fixed dimensions as background to SubmitButtonLayout.
+     * QuestionView: CheckBox TableLayout, RadioButton TableLayout or EditText.
+     *
+     *==============================================================================================
      */
 
 
@@ -73,24 +97,17 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void changeParamsDueToOrientation() {
-    /******************************* Q-Layout Logical Structure:***********************************
-     *
-     *  0. SubmitButtonLayout [xml: submit_button]              (not in "physical" layout in )
-     *  1. CheckBoxLayout/RadioButtonLayout
-     *  2. HintLayout (optional)
-     *  3. QuestionTextLayout [xml: questionTextView_N]             N= 1,2 ... NUMBER_OF_QUESTIONS
-     *  4. EmptyLayout (the same dim background fit with SubmitButton)
-     **********************************************************************************************
-     */
+        // SEE:^^^ Q-Layout Structure
+
     //  if the device is rotated to Landscape Mode
         if (isOrientationLandscape()) {
-            printTextNameOnTextView("button_text_id","button_text_L");       //0. SubmitButton
+            printTextNameOnTextView("button_text_id","button_text_L");        //5. SubmitButtonLayout
          // ^ longer button text
             changeTableLayoutToLandscape("chkbox_table");                     //1. CheckBoxLayout
          // ^ [SEE METHOD DESCRIPTION]
-            setTextSizeOnTextView("question_textview_1","xlarge");            //3. QuestionTextLayout
+            setTextSizeOnTextView("question_textview_1","xlarge");            //3. QuestionTextView
         //  ^ setText to xlarge
-            printTextNameOnTextView("question_textview_1","question_text1_L");//3. QuestionTextLayout
+            printTextNameOnTextView("question_textview_1","question_text1_L");//3. QuestionTextView
          // ^ longer question text
         };
     }
@@ -104,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param tableLayout_id_name      // layout xml: android:id="@+id/tableLayout_id_name"
      *
-     *  tableLayout xml names: chkbox_table, rButtonTable
+     *  TableLayout names[xml]: (CheckBoxTable)[chkbox_table], (RadioButtonTable)[rbutton_table]
      *  -------------------------------------------------------------------------------------------
      *
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
@@ -142,12 +159,12 @@ public class MainActivity extends AppCompatActivity {
      *
      *  2. changing to Landscape: Alignment of columns in the table
      *  -----------------------------------------------------------
-     *                                 
+     *
      *   THAT IS PERFORMED IN setLayoutsDims()
      *
      * Two shrunk columns of chkBoxes/rButtons are too close to each other,
      * the table is vertically centered.
-     * 
+     *
      * Smart left column (#0) alignment is needed.
      *
      *      |<----m---------|<---------A-------->|<--B-->|---------m---->|
@@ -158,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
      *      |<----n------|<-----------A+d---------->|<--B-->|------n---->|
      *
      *       A += d; new width of A (first column); A = A + d;
-     * 
+     *
      *  newWidth = (2A-B-W)/3
      *
      *  All 2 chkBoxes/rButtons A11&A13 belonging to col#0 have to have newWidth set.
@@ -243,14 +260,15 @@ public class MainActivity extends AppCompatActivity {
      * Q-layout uses background ColorOdd|ColorEven depending on the number of question.
      * !!! Method works fine if NUMBER_OF_QUESTIONS<10 !!!
      *
-     * @param linearLayoutIdName   // = "layout_Qn" where  n=1,2,3...(NUMBER_OF_QUESTIONS)
+     * @param linearLayoutIdName   // = "Qlayout_n" where  n=1,2,3...(NUMBER_OF_QUESTIONS)
      */
     private void setActionBarForQLayout(String linearLayoutIdName) {
 
         char questionNumber = linearLayoutIdName.charAt(8); //    |012345678| 8 = 9th char
-        //   ^ works only when n<10 (one-digit number)            |layout_Qn|
+        //   ^ works only when n<10 (one-digit number)            |Qlayout_n|
         //     getting Question number from linearLayoutIdName    |        ^| gets n =1,2...
 
+        // TODO: 1. Gets location of Q-layout in scrollview/display window.
         LinearLayout qLayout = (LinearLayout) findViewById(getResources().getIdentifier(linearLayoutIdName, "id", getPackageName()));
         ScrollView scrollView = (ScrollView) findViewById(getResources().getIdentifier("scroll_view", "id", getPackageName()));
 
@@ -262,16 +280,18 @@ public class MainActivity extends AppCompatActivity {
         //int xyCoordinates[] = {0, 0};
         //qLayout.getLocationOnScreen(int[] xyCoordinates);
 
+        //Log.v("Mainactivity","Name: "+ "(x: "+xyCoordinates[0]+", y: "+xyCoordinates[1]+")" );
+
+        // printOnTextView("Question1" , "left: "+ location[0]+", top: "+ location[1]);
+
+
         int[] location = new int[2];
         qLayout.getLocationOnScreen(location);
         Log.d("UWAGA!","left: "+ location[0]+", top: "+ location[1]);
 
+        // 2. Action Bar
 
-
-        //Log.v("Mainactivity","Name: "+ "(x: "+xyCoordinates[0]+", y: "+xyCoordinates[1]+")" );
-
-       // printOnTextView("Question1" , "left: "+ location[0]+", top: "+ location[1]);
-
+        // 2a. setting ActionBar title font&colour
 
         //BEGIN actionBar:
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -283,6 +303,9 @@ public class MainActivity extends AppCompatActivity {
 
      // Color by spannable, later or never here :)
 
+        // 2b. setting ActionBar background colour
+
+
         //Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
         if ((questionNumber & 1) == 0)
     //  if questionNumber is even
@@ -291,7 +314,8 @@ public class MainActivity extends AppCompatActivity {
         else
     //  else actionBar has colorOdd
         { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorOdd)));  }
-        //END actionBar:
+
+        // TODO: 3b setting ActionBar background colour with opacity
     };
 
 
@@ -300,9 +324,9 @@ public class MainActivity extends AppCompatActivity {
      * setAllQLayoutsDims calls setLayoutsDims for all Q-layouts
      */
      private void setAllQLayoutsDims() {
-        for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {setLayoutsDims("layout_Q"+i);}
+        for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {setLayoutsDims("Qlayout_"+i);}
 
-     // Q-layout view Id is "layout_Qn" where  n=1,2,3...(NUMBER_OF_QUESTIONS)
+     // Q-layout view Id is "Qlayout_n" where  n=1,2,3...(NUMBER_OF_QUESTIONS)
     }
 
 
@@ -368,13 +392,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         setAllQLayoutsDims();
 
 // till here ok
 // working on:
         changeParamsDueToOrientation();
-        setActionBarForQLayout("layout_Q1");
+        setActionBarForQLayout("Qlayout_1");
 
     }
 

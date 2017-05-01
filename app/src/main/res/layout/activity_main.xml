@@ -60,16 +60,17 @@
     <!-- LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
         <LinearLayout
             android:background="@color/t09"
-            android:id="@+id/parent_layout"
+            android:id="@+id/parent_Qlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin">
-<!--        <LinearLayout/> is Q-Layout #1: (TableLayout)chkbox_table,(TextView)hintText,(TextView)question_textview_1,(View)emptyView -->
+<!--        <LinearLayout/>:  Q-Layout #1: description in MainActivity.java -->
+
             <LinearLayout
                 android:background="@color/t06"
-                android:id="@+id/layout_Q1"
+                android:id="@+id/Qlayout_1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:gravity="bottom"
@@ -78,7 +79,7 @@
                 android:focusable="false"
                 android:orientation="vertical">
 
-            <!-- CheckBoxLayout: 1x4 for Portrait, 2x2 for Landscape. INFO: MainActivity, Method: changeTableLayoutToLandscape()-->
+<!--            <TableLayout/> is <CheckBoxTable/>: 1x4 for Portrait, 2x2 for Landscape. INFO: changeTableLayoutToLandscape() -->
                 <TableLayout
                     android:background="@color/t01"
                     android:id="@+id/chkbox_table"
@@ -175,6 +176,7 @@
                 <!--hintText-->
                 <TextView
                     android:background="@color/t0B"
+                    android:id="@+id/hint_view_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -182,7 +184,7 @@
                     android:gravity="center"
                     android:text="@string/H1"
                     android:textSize="@dimen/small" />
-                <!--questionText-->
+                <!--questionTextview-->
                 <TextView
                     android:background="@color/t04"
                     android:id="@+id/question_textview_1"
@@ -197,7 +199,7 @@
                 <!--emptyView as background for qSubmit_button-->
                 <View
                     android:background="@color/t08"
-                    android:id="@+id/empty_view"
+                    android:id="@+id/empty_view_1"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/bottom_view_height"
@@ -208,7 +210,7 @@
             <!--LinearLayout question 2: -->
             <LinearLayout
 
-                android:id="@+id/layout_Q2"
+                android:id="@+id/Qlayout_2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/colorEven"
@@ -250,7 +252,7 @@
 
             <!--LinearLayout question 3: -->
             <LinearLayout
-                android:id="@+id/layout_Q3"
+                android:id="@+id/Qlayout_3"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/colorOdd"
@@ -319,7 +321,7 @@
 
             <!--LinearLayout question 4: -->
             <LinearLayout
-                android:id="@+id/layout_Q4"
+                android:id="@+id/Qlayout_4"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/colorEven"
