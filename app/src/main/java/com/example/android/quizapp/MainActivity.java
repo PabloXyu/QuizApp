@@ -29,8 +29,9 @@ import android.widget.TextView;
 import java.lang.reflect.Method;
 
 import static android.R.attr.numColumns;
+import static android.R.attr.width;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
-import static com.example.android.quizapp.R.id.chkBoxTable;
+import static com.example.android.quizapp.R.id.chkbox_table;
 import static com.example.android.quizapp.R.string.Q1;
 
 
@@ -42,15 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     /** List of Private Methods (alphabetically):
      **********************************************************************************************
-     * . changeParamsDueToOrientation
-     * . changeTableLayoutToLandscape
-     * . isOrientationLandscape
-     * . printTextOnTextView
-     * . printTextNameOnTextView
-     * . setActionBarForQLayout
-     * . setAllQLayoutsHeight
-     * . setLinearLayoutHeight
-     * . setTextSizeOnTextView
+     * . changeParamsDueToOrientation()
+     * . changeTableLayoutToLandscape()
+     * . isOrientationLandscape()
+     * . printTextOnTextView()
+     * . printTextNameOnTextView()
+     * . setActionBarForQLayout()
+     * . setAllQLayoutsDims()
+     * . setLayoutsDims()
+     * . setTextSizeOnTextView()
      *
      ======================================= ViewGroupTree: ========================================
      *
@@ -74,23 +75,23 @@ public class MainActivity extends AppCompatActivity {
     private void changeParamsDueToOrientation() {
     /******************************* Q-Layout Logical Structure:***********************************
      *
-     * 0. SubmitButtonLayout [xml: submit_button]              (not in "physical" layout in )
+     *  0. SubmitButtonLayout [xml: submit_button]              (not in "physical" layout in )
      *  1. CheckBoxLayout/RadioButtonLayout
      *  2. HintLayout (optional)
-     *  3. QuestionTextLayout [xml: questionTextView_1] N= 1,2...NUMBER_OF_QUESTIONS
-     *  4. EmptyLayout (same dimensions to fit with SubmitButton)
+     *  3. QuestionTextLayout [xml: questionTextView_N]             N= 1,2 ... NUMBER_OF_QUESTIONS
+     *  4. EmptyLayout (the same dim background fit with SubmitButton)
      **********************************************************************************************
      */
+    //  if the device is rotated to Landscape Mode
         if (isOrientationLandscape()) {
-      //if the device is rotated to Landscape Mode
             printTextNameOnTextView("button_text_id","button_text_L");       //0. SubmitButton
          // ^ longer button text
-            changeTableLayoutToLandscape("chkBoxTable");                     //1. CheckBoxLayout
+            changeTableLayoutToLandscape("chkbox_table");                     //1. CheckBoxLayout
          // ^ [SEE METHOD DESCRIPTION]
-            setTextSizeOnTextView("questionTextView_1","xlarge");            //3. QuestionTextLayout
+            setTextSizeOnTextView("question_textview_1","xlarge");            //3. QuestionTextLayout
         //  ^ setText to xlarge
-            printTextNameOnTextView("questionTextView_1","question_text1_L");//3. QuestionTextLayout
-         // ^ shorter question text
+            printTextNameOnTextView("question_textview_1","question_text1_L");//3. QuestionTextLayout
+         // ^ longer question text
         };
     }
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param tableLayout_id_name      // layout xml: android:id="@+id/tableLayout_id_name"
      *
-     *  tableLayout xml names: chkBoxTable, rButtonTable
+     *  tableLayout xml names: chkbox_table, rButtonTable
      *  -------------------------------------------------------------------------------------------
      *
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
@@ -117,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
      *
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
      *
-     *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12">
-     *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14">
+     *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
+     *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
      *
      *  0. Portrait default (xml): (BEFORE CHANGE TO LANDSCAPE)
      *  -----------------------------------------------------------------
@@ -141,9 +142,13 @@ public class MainActivity extends AppCompatActivity {
      *
      *  2. changing to Landscape: Alignment of columns in the table
      *  -----------------------------------------------------------
+     *                                 
+     *   THAT IS PERFORMED IN setLayoutsDims()
      *
-     * Two shrunk columns of chkBoxes/rButtons are too close to each other.
-     * Smart left column (#0)alignment is needed.
+     * Two shrunk columns of chkBoxes/rButtons are too close to each other,
+     * the table is vertically centered.
+     * 
+     * Smart left column (#0) alignment is needed.
      *
      *      |<----m---------|<---------A-------->|<--B-->|---------m---->|
      *      |<------------------  Q-layout width = W  ------------------>|   A= 1st Col #0
@@ -153,9 +158,10 @@ public class MainActivity extends AppCompatActivity {
      *      |<----n------|<-----------A+d---------->|<--B-->|------n---->|
      *
      *       A += d; new width of A (first column); A = A + d;
-     *       newWidth = (2A-B-W)/3
+     * 
+     *  newWidth = (2A-B-W)/3
      *
-     *      CheckBoxes A11&A13 have to have set newWidth
+     *  All 2 chkBoxes/rButtons A11&A13 belonging to col#0 have to have newWidth set.
      *
      *
      */
@@ -167,13 +173,21 @@ public class MainActivity extends AppCompatActivity {
         tableLayout.getChildAt(3).setVisibility(tableLayout.getChildAt(3).GONE);//remove tableRow #3
         // 2. Alignment of columns in the table:
 
-        View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
+       // View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
         // the width of that view is the same as all childrens' of Q-layout.
         //int newWidth  = (2*tableLayout.getChildAt(0).getWidth() - tableLayout.getChildAt(1).getWidth() - view.getWidth())/3;
-        int newWidth  = (2*(tableLayout.getChildAt(0).getWidth() + tableLayout.getChildAt(1).getWidth()) + view.getWidth()/3;
+        //int newWidth  = 2*  ((tableLayout.getChildAt(0).getWidth() +
+               //             tableLayout.getChildAt(1).getWidth()
+               //             ) +
+                 //           view.getWidth())/3;
         //  newWidth  = (2A-B-W)/3;
 
+        int width0=tableLayout.getChildAt(0).getMeasuredWidth();
+        int width1=tableLayout.getChildAt(1).getMeasuredWidth();
 
+        //Log.d("DIMS:",newWidth+"");
+        Log.d("DIMS:",width0+"");
+        Log.d("DIMS:",width1+"");
 
        // LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(15,50);
        //tableLayout.setLayoutParams(layoutParams);
@@ -262,18 +276,12 @@ public class MainActivity extends AppCompatActivity {
         //BEGIN actionBar:
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
-     // actionBar.setTitle("Quiz App / Question #1"+":");                 //example      //    for question #1.
+     // actionBar.setTitle("Quiz App / Question #1"+":");                 //example for question #1.
      // actionBar.setTitle("Quiz App / "+getString(R.string.Q1)+":");     // strings.xml , unfortunatelly cannot use layout string dynamically.                    //[1]                                                     //[1]
         actionBar.setTitle(Html.fromHtml("<font color='#000000'>"+"Quiz App / Question #"+ questionNumber +":</font>")); //deprecated in API 24, but still works:) //[2]
      // actionBar.setTitle("Quiz App / Question #"+ questionNumber +":");  // this works perfect, but does not changes the color of actionBarTitle to BLACK        //[3]
 
-        // if actionBar.setTitle[2] is not O.K., use actionBar.setTitle[1] then "spannable" for actionBarTitle colour.
-
-        // changes the color of actionBarTitle to BLACK
-        //actionBar.getTitle();
-        //SpannableString spannableString = new SpannableString(actionBar.getTitle());
-        //spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, actionBar.getTitle().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //getSupportActionBar().setTitle(spannableString);
+     // Color by spannable, later or never here :)
 
         //Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
         if ((questionNumber & 1) == 0)
@@ -289,37 +297,42 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * . Method
-     * setAllQLayoutsHeight calls setLinearLayoutHeight for all Q-layouts
+     * setAllQLayoutsDims calls setLayoutsDims for all Q-layouts
      */
-     private void setAllQLayoutsHeight() {
-        for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {setLinearLayoutHeight("layout_Q"+i);}
-     // Q-layout view Id ^is "layout_Qn" where  n=1,2,3...(NUMBER_OF_QUESTIONS)  ^
+     private void setAllQLayoutsDims() {
+        for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {setLayoutsDims("layout_Q"+i);}
+
+     // Q-layout view Id is "layout_Qn" where  n=1,2,3...(NUMBER_OF_QUESTIONS)
     }
 
 
     /**
      * . Method
-     * setLinearLayoutHeight sets the height of a the LinearLayout to dp-height of the device screen.
+     * setLayoutsDims sets the height of a the LinearLayout to dp-height of the device screen.
      * With no ScrollView it would be not needed, all Q-Layouts would have equal heights by "match_parent".
      *
      * @param linearLayoutIdName   //  (xml-named "linearLayoutIdName")
      */
-    private void setLinearLayoutHeight(String linearLayoutIdName) {
+    private void setLayoutsDims(String linearLayoutIdName) {
 
-        // displayHeight (PixelSize) counted:
+        //  ALL DIMENSION VALUES IN PIXELS
+
+        // displayHeight & displayWidth of the screen counted:
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int displayHeight = displayMetrics.heightPixels;
 
-        // actionBarHeight counted:
+        int displayHeight = displayMetrics.heightPixels;
+        int displayWidth  = displayMetrics.widthPixels;
+
+        // actionBarHeight counted (the top of the screen):
         TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
         int actionBarHeight = getResources().getDimensionPixelSize(typedValue.resourceId);
 
-        // statusBarHeight counted:
+        // statusBarHeight counted (the bottom of the screen):
         int statusBarHeight = getResources().getDimensionPixelSize(getResources().getIdentifier("status_bar_height", "dimen", "android"));
 
-        // linearLayoutHeight counted:
+        // linearLayoutHeight calculated:
         int linearLayoutHeight = displayHeight - actionBarHeight - statusBarHeight;
 
         // linearLayoutHeight set:
@@ -342,10 +355,10 @@ public class MainActivity extends AppCompatActivity {
      *  The values of dimen_name in "dimens.xml" are int, but can be float.
      */
     private void setTextSizeOnTextView(String textView_id_name, String dimen_name) {
-        TextView textView = (TextView)findViewById(getResources().getIdentifier( textView_id_name, "id", getPackageName() ) );
+        TextView textView = (TextView)findViewById(  getResources().getIdentifier( textView_id_name,"id",getPackageName() )  );
 
         String x = getString(getResources().getIdentifier( dimen_name, "dimen", getPackageName() ));// format "#0.0sp"
-        x = x.substring(0,x.length()-2); // get rids of last two "sp" chars //                      // format "#0.0"
+        x = x.substring(0,x.length()-2); // gets rid of last two chars ("sp")                       // format "#0.0"
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, Float.parseFloat(x));                      //converted to float
     }
 
@@ -355,7 +368,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setAllQLayoutsHeight();
+        
+        setAllQLayoutsDims();
 
 // till here ok
 // working on:

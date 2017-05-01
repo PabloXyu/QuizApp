@@ -36,5 +36,5 @@
     <string name="A4r">"the Moon"</string>
 
     <string name="button_text_P">"SUBMIT THE ANSWER"</string>
-    <string name="button_text_L">"READY FOR NEXT QUESTION?  PRESS TO SUBMIT THE ANSWER"</string>
+    <string name="button_text_L">"READY FOR THE NEXT QUESTION?  PRESS TO SUBMIT THE ANSWER"</string>
 </resources>
