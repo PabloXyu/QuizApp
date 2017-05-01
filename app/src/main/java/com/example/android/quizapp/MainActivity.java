@@ -29,6 +29,7 @@ import android.widget.TextView;
 import java.lang.reflect.Method;
 
 import static android.R.attr.numColumns;
+import static android.R.attr.opacity;
 import static android.R.attr.width;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
 import static com.example.android.quizapp.R.id.chkbox_table;
@@ -85,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
      *
      * EmptyView has fixed dimensions as background to SubmitButtonLayout.
      * QuestionView: CheckBox TableLayout, RadioButton TableLayout or EditText.
-     *
      *==============================================================================================
      */
 
@@ -121,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param tableLayout_id_name      // layout xml: android:id="@+id/tableLayout_id_name"
      *
-     *  TableLayout names[xml]: (CheckBoxTable)[chkbox_table], (RadioButtonTable)[rbutton_table]
-     *  -------------------------------------------------------------------------------------------
+     *==============================================================================================
+     *  TABLELAYOUT names[xml]: (CheckBoxTable)[chkbox_table], (RadioButtonTable)[rbutton_table]
+     *  --------------------------------------------------------------------------------------------
      *
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
      *
@@ -137,30 +138,31 @@ public class MainActivity extends AppCompatActivity {
      *
      *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
      *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
+     *==============================================================================================
      *
      *  0. Portrait default (xml): (BEFORE CHANGE TO LANDSCAPE)
-     *  -----------------------------------------------------------------
+     *  -------------------------------------------------------
      *
-     * 0A. All columns are shrunk and all tableLayout granchildren have layout_width="wrap_content".
-     * 0B. All tableRows have the same height weight, to have equal horizontal spacing.
+     *  0A. All columns are shrunk and all tableLayout granchildren have layout_width="wrap_content".
+     *  0B. All tableRows have the same height weight, to have equal horizontal spacing.
      *
      *   This helps "1x4"-portrait-mode table nice horizontal alignment in the center of the screen.
      *
      *
      *  1. changing to Landscape: Placement of columns in the table
      *  -----------------------------------------------------------
-     *                                                     #TableRow = int indexOfChild(TableLayout)
+     *
+     *  #TableRow = int indexOfChild(TableLayout)
+     *
      *  1A. unhide        column   #1
      *  1B. remove        tableRow #2  (tableLayout.getChildAt(2))
      *  1C. remove        tableRow #3  (tableLayout.getChildAt(3))
-     *
-     *  #TableRow = int indexOfChild(TableLayout)
      *
      *
      *  2. changing to Landscape: Alignment of columns in the table
      *  -----------------------------------------------------------
      *
-     *   THAT IS PERFORMED IN setLayoutsDims()
+     *  THAT IS PERFORMED IN setLayoutsDims():
      *
      * Two shrunk columns of chkBoxes/rButtons are too close to each other,
      * the table is vertically centered.
@@ -184,14 +186,21 @@ public class MainActivity extends AppCompatActivity {
      */
     private void changeTableLayoutToLandscape(String tableLayout_id_name){
         TableLayout tableLayout = (TableLayout)findViewById(getResources().getIdentifier( tableLayout_id_name, "id", getPackageName() ) );
+
         // 1. Placement of columns in the table:
+
         tableLayout.setColumnCollapsed(1,false);                                //unhide column   #1
         tableLayout.getChildAt(2).setVisibility(tableLayout.getChildAt(2).GONE);//remove tableRow #2
         tableLayout.getChildAt(3).setVisibility(tableLayout.getChildAt(3).GONE);//remove tableRow #3
+
         // 2. Alignment of columns in the table:
 
-       // View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
+        tableLayout.setColumnStretchable(1,true);
+        //unhide column   #1
+
+        // View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
         // the width of that view is the same as all childrens' of Q-layout.
+
         //int newWidth  = (2*tableLayout.getChildAt(0).getWidth() - tableLayout.getChildAt(1).getWidth() - view.getWidth())/3;
         //int newWidth  = 2*  ((tableLayout.getChildAt(0).getWidth() +
                //             tableLayout.getChildAt(1).getWidth()
@@ -268,14 +277,15 @@ public class MainActivity extends AppCompatActivity {
         //   ^ works only when n<10 (one-digit number)            |Qlayout_n|
         //     getting Question number from linearLayoutIdName    |        ^| gets n =1,2...
 
-        // TODO: 1. Gets location of Q-layout in scrollview/display window.
         LinearLayout qLayout = (LinearLayout) findViewById(getResources().getIdentifier(linearLayoutIdName, "id", getPackageName()));
         ScrollView scrollView = (ScrollView) findViewById(getResources().getIdentifier("scroll_view", "id", getPackageName()));
+
+        // TODO: 1. Gets location of Q-layout in scrollview/display window.
 
         //scrollView.updateViewLayout(qLayout, scrollView);
 
 
-       // qLayout.forceLayout();
+        // qLayout.forceLayout();
 
         //int xyCoordinates[] = {0, 0};
         //qLayout.getLocationOnScreen(int[] xyCoordinates);
@@ -293,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 2a. setting ActionBar title font&colour
 
-        //BEGIN actionBar:
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
      // actionBar.setTitle("Quiz App / Question #1"+":");                 //example for question #1.
@@ -306,7 +315,8 @@ public class MainActivity extends AppCompatActivity {
         // 2b. setting ActionBar background colour
 
 
-        //Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
+    //  Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
+
         if ((questionNumber & 1) == 0)
     //  if questionNumber is even
         { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorEven))); }
@@ -315,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
     //  else actionBar has colorOdd
         { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorOdd)));  }
 
-        // TODO: 3b setting ActionBar background colour with opacity
+// TODO: // 3b. setting ActionBar background colour with opacity
     };
 
 
