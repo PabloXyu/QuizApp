@@ -36,7 +36,7 @@
     <color name="t00B">#C0D6E4</color>
     <color name="t00F">#C0D6E4</color>
 
-    <!-- test -->
+
     <color name="t01">#FF4000</color>
     <color name="t02">#33B5E5</color>
     <color name="t03">#fa9602</color>
@@ -45,13 +45,13 @@
     <color name="t06">#52a4b4</color>
     <color name="t07">#3F51B5</color>
     <color name="t08">#de215d</color>
+    <color name="t09">#dde22f</color>
     <color name="t0A">#735313</color>
+    <color name="t0B">#1b9b2e</color>
     <color name="t0C">#b8807d</color>
     <color name="t0D">#f43f59</color>
     <color name="t0E">#4BDC62</color>
-
-    <color name="t09">#dde22f</color>
-    <color name="t0B">#1b9b2e</color>
     <color name="t0F">#05c4ef</color>
+
 
 </resources>

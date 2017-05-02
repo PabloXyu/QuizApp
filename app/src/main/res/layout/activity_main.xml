@@ -5,9 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+<!--  test colours: <android:background="@color/t0N"/> as 1st attribute in every View            -->
+<!--  WILL BE REMOVED AFTER FINAL DESIGN APPROVAL.                                               -->
+<!--  test colours: ScrollView affects Android Studio IDE "Design"                               -->
+
 <!-- ALL DESCENDANTS WITH DIMENSIONS "@dimen/one_dp" ARE LINES                                   -->
 <!-- ALL DESCENDANTS WITH DIMENSIONS  "1dp" HAVE DIMS SET IN MainActivity:setLayoutsDims()       -->
 <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CHECK METHOD NAME WHEN FINISHED^^^^^^^^^^^^^^^    -->
+
 
 <!-- LinearLayout is a static submit_button in the bottom-center of the display screen           -->
     <LinearLayout
@@ -79,7 +84,8 @@
                 android:focusable="false"
                 android:orientation="vertical">
 
-<!--            <TableLayout/> is <CheckBoxTable/>: 1x4 for Portrait, 2x2 for Landscape. INFO: changeTableLayoutToLandscape() -->
+<!--            <TableLayout/>  is <CheckBoxTable/>: 1x4 for Portrait, 2x2 for Landscape.        -->
+<!--                            INFO: changeTableLayoutToLandscape()                             -->
                 <TableLayout
                     android:background="@color/t01"
                     android:id="@+id/chkbox_table"

@@ -31,10 +31,17 @@ import java.lang.reflect.Method;
 import static android.R.attr.numColumns;
 import static android.R.attr.opacity;
 import static android.R.attr.width;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
 import static com.example.android.quizapp.R.id.chkbox_table;
 import static com.example.android.quizapp.R.string.Q1;
 
+/**
+ * Pawel Zygmunciak
+ * QuizApp Android Basics Udacity UE scholarship (Project (3/10))
+ * Started:               12.04.2017
+ * Estimated finish time: 04.05.2017
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,6 +94,22 @@ public class MainActivity extends AppCompatActivity {
      * EmptyView has fixed dimensions as background to SubmitButtonLayout.
      * QuestionView: CheckBox TableLayout, RadioButton TableLayout or EditText.
      *==============================================================================================
+     *======== TableLayout (CheckBoxTable)[chkbox_table], (RadioButtonTable)[rbutton_table] ========
+     *
+     *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
+     *
+     *    TableRow# |0:  |1:  |<--Column
+     *    ---------------------           1x4:    2x2:
+     *        0:    |A11 |A12L|               P       LL
+     *        1:    |A13 |A14L|               P  (or) LL
+     *        2:    |A12P|                    P
+     *        3:    |A14P|                    P
+     *
+     *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
+     *
+     *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
+     *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
+     *==============================================================================================
      */
 
 
@@ -122,35 +145,44 @@ public class MainActivity extends AppCompatActivity {
      * @param tableLayout_id_name      // layout xml: android:id="@+id/tableLayout_id_name"
      *
      *==============================================================================================
-     *  TABLELAYOUT names[xml]: (CheckBoxTable)[chkbox_table], (RadioButtonTable)[rbutton_table]
-     *  --------------------------------------------------------------------------------------------
-     *
-     *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
-     *
-     *    TableRow# |0:  |1:  |<--Column
-     *    ---------------------           1x4:    2x2:
-     *        0:    |A11 |A12L|               P       LL
-     *        1:    |A13 |A14L|               P  (or) LL
-     *        2:    |A12P|                    P
-     *        3:    |A14P|                    P
+     *    CheckBoxTable)[chkbox_table],                    (RadioButtonTable)[rbutton_table]
+     *    --------------------------------------------------------------------------------------------
+     *    TableRow# |0:  |1:  |<--Column                    TableRow# |0:  |1:  |<--Column
+     *    ---------------------           1x4:    2x2:      ---------------------
+     *        0:    |A11 |A12L|               P       LL        0:    |A31 |A32L|   
+     *        1:    |A13 |A14L|               P  (or) LL        1:    |A33 |A34L|       
+     *        2:    |A12P|                    P                 2:    |A32P|           
+     *        3:    |A14P|                    P                 3:    |A34P|        
      *
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
      *
      *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
      *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
+     *                                 
+     *   A32P & A32L        <android:onClick="onCheckBoxClicked_A32"/>
+     *   A34P & A34L        <android:onClick="onCheckBoxClicked_A34"/>
      *==============================================================================================
      *
-     *  0. Portrait default (xml): (BEFORE CHANGE TO LANDSCAPE)
-     *  -------------------------------------------------------
+     *  0. Portrait default (defined in ativity_main.xml): (BEFORE CHANGE TO LANDSCAPE)
+     *  -------------------------------------------------------------------------------
      *
-     *  0A. All columns are shrunk and all tableLayout granchildren have layout_width="wrap_content".
+     *  0A. All columns are shrunk and all tableLayout granchildren have layout_width="wrap_content"
      *  0B. All tableRows have the same height weight, to have equal horizontal spacing.
+     *  0C. All two columns are shrunk. The table is vertically centered.
      *
-     *   This helps "1x4"-portrait-mode table nice horizontal alignment in the center of the screen.
+     *  This helps "1x4"-portrait-mode table nice vertical alignment in the center of the screen.
+     *
+     *  when columns are shrunk, it is needed to getWidth of A & B
+     *  by displayMetrics  in  setLayoutsDims() BEFORE changing to Landscape.
+     *
+     *      |<aaaaaaaaaaaaaaaaa/>| Col #0 text
+     *      |<bbbb/>|              Col #1 text
+     *
+     *      |<aaaaaaaaaaaaaaaaa/>|<bbbb/>| both columns shrinked.
      *
      *
-     *  1. changing to Landscape: Placement of columns in the table
-     *  -----------------------------------------------------------
+     *  1. Changing to Landscape: Placement of columns and rows in the table
+     *  --------------------------------------------------------------------
      *
      *  #TableRow = int indexOfChild(TableLayout)
      *
@@ -159,68 +191,104 @@ public class MainActivity extends AppCompatActivity {
      *  1C. remove        tableRow #3  (tableLayout.getChildAt(3))
      *
      *
-     *  2. changing to Landscape: Alignment of columns in the table
+     *  2. Changing to Landscape: Alignment of columns in the table
      *  -----------------------------------------------------------
      *
-     *  THAT IS PERFORMED IN setLayoutsDims():
+     *  The table is vertically centered.
+     *  Two shrunk columns of chkBoxes/rButtons like in Portrait Mode are too close to each other,
+     *  Smart left column (#1) alignment is needed:
      *
-     * Two shrunk columns of chkBoxes/rButtons are too close to each other,
-     * the table is vertically centered.
+     *  when columns are shrunk, it is needed to getWidth of A & B
+     *  by displayMetrics  in  setLayoutsDims() BEFORE changing to Landscape.
      *
-     * Smart left column (#0) alignment is needed.
      *
-     *      |<----m---------|<---------A-------->|<--B-->|---------m---->|
-     *      |<------------------  Q-layout width = W  ------------------>|   A= 1st Col #0
-     *         d=(W-A-B)/3                                                   B= 2nd Col #1
-     *      |<---d-|<---------A-------->|<--d-->|<------->|<--B-->|-d--->|   W= Q-layout width
+     *         |<aaaaaaaaaaaaaaaaa/>| Col #0 text
+     *         |<bbbb/>|              Col #1 text
      *
-     *      |<----n------|<-----------A+d---------->|<--B-->|------n---->|
+     *         before Portrait-->Landscape:
      *
-     *       A += d; new width of A (first column); A = A + d;
+     *         |<aaaaaaaaaaaaaaaaa/>|<bbbb/>| both columns shrinked.
      *
-     *  newWidth = (2A-B-W)/3
+     *  In setLayoutsDims():
+     *  A-text' & B-text width are calculated when both columns are shrunk.
      *
-     *  All 2 chkBoxes/rButtons A11&A13 belonging to col#0 have to have newWidth set.
+     *  AFTER stretching col #0:
+     *
+     *         |<------------------ <Q-layout width = W/> --------------->|
+     *         |stretched-----------------------------------------|-shrunk|
+     *         |<-------------------------------------------------------->|   A= 1st Col #0
+     *         |<----------------------<col_0/>-----------------/>|<col_1>|   B= 2nd Col #1
+     *         |<-------------------------------------------------------->|
+     *         |<aaaaaaaaaaaaaaaaa/>|---------------------------->|<bbbb/>|   3m+A+B=W, TODO:find m
+     *
+     *  AFTER setting newWidth to col #0:
+     *
+     *         |<------------------ <Q-layout width = W/> --------------->|
+     *                   |<----------<col_0/>---------/>|<col_1>|
+     *         |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbb/>|<-- m ---|
+     *
      *
      *
      */
     private void changeTableLayoutToLandscape(String tableLayout_id_name){
         TableLayout tableLayout = (TableLayout)findViewById(getResources().getIdentifier( tableLayout_id_name, "id", getPackageName() ) );
-
-        // 1. Placement of columns in the table:
-
+    /**
+     *  1. Placement of columns in the table:
+     *  -----------------------------------------------------------
+     *
+     *  #TableRow = int indexOfChild(TableLayout)
+     *
+     *  1A. unhide        column   #1
+     *  1B. remove        tableRow #2  (tableLayout.getChildAt(2))
+     *  1C. remove        tableRow #3  (tableLayout.getChildAt(3))
+     */
         tableLayout.setColumnCollapsed(1,false);                                //unhide column   #1
         tableLayout.getChildAt(2).setVisibility(tableLayout.getChildAt(2).GONE);//remove tableRow #2
         tableLayout.getChildAt(3).setVisibility(tableLayout.getChildAt(3).GONE);//remove tableRow #3
-
-        // 2. Alignment of columns in the table:
-
-        tableLayout.setColumnStretchable(1,true);
-        //unhide column   #1
-
-        // View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
-        // the width of that view is the same as all childrens' of Q-layout.
-
-        //int newWidth  = (2*tableLayout.getChildAt(0).getWidth() - tableLayout.getChildAt(1).getWidth() - view.getWidth())/3;
-        //int newWidth  = 2*  ((tableLayout.getChildAt(0).getWidth() +
-               //             tableLayout.getChildAt(1).getWidth()
-               //             ) +
-                 //           view.getWidth())/3;
-        //  newWidth  = (2A-B-W)/3;
-
-        int width0=tableLayout.getChildAt(0).getMeasuredWidth();
-        int width1=tableLayout.getChildAt(1).getMeasuredWidth();
-
-        //Log.d("DIMS:",newWidth+"");
-        Log.d("DIMS:",width0+"");
-        Log.d("DIMS:",width1+"");
-
-       // LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(15,50);
-       //tableLayout.setLayoutParams(layoutParams);
-
-      //  LinearLayout.LayoutParams layoutParams
-
-        //tableLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams())));
+    /**
+     *  2. changing to Landscape: Alignment of columns in the table
+     *  -----------------------------------------------------------
+     *
+     * Two shrunk columns of chkBoxes/rButtons are too close to each other,
+     * the table is vertically centered.
+     * Smart left column (#1) alignment is needed: it is stretched. Right col is shrunk.
+     */
+     // tableLayout.setColumnStretchable(0,true);                      // 1st column (#1) streched
+     /**
+     * THEN, the width of col#1 is set in  setLayoutsDims():
+     *
+     */
+    /**
+     *      |<aaaaaaaaaaaaaaaaa/>| Col #0 text
+     *      |<bbbb/>|              Col #1 text
+     *
+     *      |<-------------------------------------------------------/>|
+     *      |stretched-A---------------------------------------|Bshrunk|
+     *      |<------------------ <Q-layout width = W/> --------------->|   A= 1st Col #0
+     *      |<----------------------<col_0/>-----------------/>|<col_1>|   B= 2nd Col #1
+     *      |<aaaaaaaaaaaaaaaaa/>|---------------------------->|<bbbb/>|
+     *      |<-------------------------------------------------------->|
+     *
+     *  AFTER setting newWidth to col #0:
+     *
+     *      |<------------------ <Q-layout width = W/> --------------->|
+     *                |<----------<col_0/>---------/>|<col_1>|
+     *      |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbb/>|<-- m ---|
+     *
+     *      3m+A+B=W
+     *
+     *      |<------------------ <Q-layout width = W/> --------------->|
+     *                |<----------<col_0/>---------/>|<col_1>|
+     *      |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbb/>|<-- m ---|
+     *                |<----------- <new A --------/>|<oldB/>|
+     *
+     *  All 2 chkBoxes/rButtons A11&A13 belonging to col#0 have to have newWidth set.
+     *
+     *    TableRow# |0:     |1:  |<--Column
+     *    --------------------- --
+     *        0:    |<A11/> |A12L|          id: A11 or A31      A1 = CheckBoxTable
+     *        1:    |<A13/> |A14L|          id: A13 or A33      A3 = RadioButtonTable
+     */
     }
 
 
@@ -310,12 +378,12 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setTitle(Html.fromHtml("<font color='#000000'>"+"Quiz App / Question #"+ questionNumber +":</font>")); //deprecated in API 24, but still works:) //[2]
      // actionBar.setTitle("Quiz App / Question #"+ questionNumber +":");  // this works perfect, but does not changes the color of actionBarTitle to BLACK        //[3]
 
-     // Color by spannable, later or never here :)
+     // TODO: Color by spannable, later or never here :), anyway, it works :)
 
         // 2b. setting ActionBar background colour
 
 
-    //  Changes ActionBar background color due to question-layout color/number (colorOdd|colorEven).
+    //  TODO: Changes ActionBar background color due to Q-layout color/number (colorOdd|colorEven).
 
         if ((questionNumber & 1) == 0)
     //  if questionNumber is even
@@ -325,13 +393,13 @@ public class MainActivity extends AppCompatActivity {
     //  else actionBar has colorOdd
         { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorOdd)));  }
 
-// TODO: // 3b. setting ActionBar background colour with opacity
+    // TODO: // 3b. setting ActionBar background colour with opacity
     };
 
 
     /**
      * . Method
-     * setAllQLayoutsDims calls setLayoutsDims for all Q-layouts
+     * setAllQLayoutsDims calls setLayoutsDims() for all Q-layouts
      */
      private void setAllQLayoutsDims() {
         for(int i=1; i<=NUMBER_OF_QUESTIONS; i++) {setLayoutsDims("Qlayout_"+i);}
@@ -349,14 +417,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setLayoutsDims(String linearLayoutIdName) {
 
-        //  ALL DIMENSION VALUES IN PIXELS
+     // ALL DIMENSION VALUES IN PIXELS
+        
+     // 1. Calculation of the Q-layout Height (N vertical views vertically in scrollview:
+     // ---------------------------------------------------------------------------------  
+     // View-weight method not possible: scrollView must have one child, Q-layouts are grandchildren.
 
         // displayHeight & displayWidth of the screen counted:
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         int displayHeight = displayMetrics.heightPixels;
-        int displayWidth  = displayMetrics.widthPixels;
 
         // actionBarHeight counted (the top of the screen):
         TypedValue typedValue = new TypedValue();
@@ -366,14 +437,79 @@ public class MainActivity extends AppCompatActivity {
         // statusBarHeight counted (the bottom of the screen):
         int statusBarHeight = getResources().getDimensionPixelSize(getResources().getIdentifier("status_bar_height", "dimen", "android"));
 
-        // linearLayoutHeight calculated:
-        int linearLayoutHeight = displayHeight - actionBarHeight - statusBarHeight;
+        // qLayoutHeight calculated:
+        int qLayoutHeight = displayHeight - actionBarHeight - statusBarHeight;
 
-        // linearLayoutHeight set:
+     // 2. Setting the Q-layout Height (N vertical views vertically in scrollview:
+     // --------------------------------------------------------------------------
         LinearLayout linearLayout=(LinearLayout)findViewById(getResources().getIdentifier(linearLayoutIdName,"id",getPackageName()));
         android.view.ViewGroup.LayoutParams layoutParams = linearLayout.getLayoutParams();
-        layoutParams.height = linearLayoutHeight;
+        layoutParams.height = qLayoutHeight;
         linearLayout.setLayoutParams(layoutParams);
+
+     // 2. Calculation of the Q-layout Dims for Landscape Mode:
+     // -------------------------------------------------------
+        if (isOrientationLandscape()) {
+
+         // 2.1 Calculation the Width od Q-layout
+            int W  = displayMetrics.widthPixels;
+
+        };
+
+
+        /** 2.2 TableLayout: Calculation of the TableLayout' Columns Width for Landscape Mode:
+         *  ------------------------------------------------------------------------------
+         *
+         *         |<aaaaaaaaaaaaaaaaa/>|<bbbb/>| both columns shrinked.
+         *
+         *     In setLayoutsDims():
+         *      A-text' & B-text width are calculated when both columns are shrunk.
+         *
+         *      AFTER stretching col #0:
+         *
+         *         |<------------------ <Q-layout width = W/> --------------->|
+         *         |stretched-----------------------------------------|-shrunk|
+         *         |<-------------------------------------------------------->|   A= 1st Col #0
+         *         |<----------------------<col_0/>-----------------/>|<col_1>|   B= 2nd Col #1
+         *         |<-------------------------------------------------------->|
+         *         |<aaaaaaaaaaaaaaaaa/>|---------------------------->|<bbbb/>|   3m+A+B=W, TODO:find m
+         *
+         *  AFTER setting newWidth to col #0:
+         *
+         *         |<------------------ <Q-layout width = W/> --------------->|
+         *                   |<----------<col_0/>---------/>|<col_1>|
+         *         |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbb/>|<-- m ---|
+         *
+         *
+         *
+         *
+         *
+         */
+        //unhide column   #1
+
+        // View view = findViewById(getResources().getIdentifier( "empty_view", "id", getPackageName() ) );
+        // the width of that view is the same as all childrens' of Q-layout.
+
+        //int newWidth  = (2*tableLayout.getChildAt(0).getWidth() - tableLayout.getChildAt(1).getWidth() - view.getWidth())/3;
+        //int newWidth  = 2*  ((tableLayout.getChildAt(0).getWidth() +
+        //             tableLayout.getChildAt(1).getWidth()
+        //             ) +
+        //           view.getWidth())/3;
+        //  newWidth  = (2A-B-W)/3;
+
+        //int width0=tableLayout.getChildAt(0).getMeasuredWidth();
+        // int width1=tableLayout.getChildAt(1).getMeasuredWidth();
+
+        //Log.d("DIMS:",newWidth+"");
+        // Log.d("DIMS:",width0+"");
+        //Log.d("DIMS:",width1+"");
+
+        // LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(15,50);
+        //tableLayout.setLayoutParams(layoutParams);
+
+        //  LinearLayout.LayoutParams layoutParams
+
+        //tableLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams())));
     }
 
 
