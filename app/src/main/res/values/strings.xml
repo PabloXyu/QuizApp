@@ -13,13 +13,14 @@
     <string name="question_text4">"What is the\u00A0name of\u00A0the\u00A0natural satellite of\u00A0the\u00A0Earth?"</string>
 
     <string name="H1">"You can choose more than one answer."</string>
+    <string name="H2">"Please type the answer"</string>
+
     <string name="A11">"galactose"</string>
     <string name="A12">"fructose"</string>
     <string name="A13">"surcrose"</string>
     <string name="A14">"maltose"</string>
     <string name="A1r">"All substances are carbohydrates."</string>
 
-    <string name="H2">"Please type here the answer"</string>
     <string name="A21">"the Sun"</string>
     <string name="A22">"Sun"</string>
     <string name="A2r">"the Sun"</string>
@@ -30,7 +31,6 @@
     <string name="A34">"13 millions"</string>
     <string name="A3r">"13 billions (Answer #2)"</string>
 
-    <string name="H4">"Please type the answer..."</string>
     <string name="A41">"the Moon"</string>
     <string name="A42">"Moon"</string>
     <string name="A4r">"the Moon"</string>
