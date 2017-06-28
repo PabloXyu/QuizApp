@@ -552,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
                                                     ResourcesCompat.getColor(getResources(),R.color.colorOdd, null),    // between colorEven & colorOdd
                                                     triangleWave                                                        // proportionally to triangleWave = <0;1>
                                     )
-                                    ,qlayoutTitle(questionNo)   //+" :"+String.format("%.2f",triangleWave)              // "Quiz App: Question #N
+                                    ,qlayoutTitle(questionNo)   +" :"+String.format("%.2f",triangleWave)              // "Quiz App: Question #N
                 );
                 // TODO: use RelativePos: to remember scrollview state when orientation is changed.
 
