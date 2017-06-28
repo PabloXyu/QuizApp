@@ -1,19 +1,27 @@
 <resources>
     <string name="app_name">Quiz App</string>
 
+    <string name="Q0">"Welcome!   "</string>
     <string name="Q1">"Question #1"</string>
     <string name="Q2">"Question #2"</string>
     <string name="Q3">"Question #3"</string>
     <string name="Q4">"Question #4"</string>
 
+    <string name="question_text0">"Welcome to the Quiz App!\r\n\r\n\r\nPlease answer four questions below:"</string>
     <string name="question_text1_P">"Which of\u00A0the\u00A0substances listed above are\u00A0carbohydrates?"</string>
     <string name="question_text1_L">"Which of\u00A0the\u00A0substances are\u00A0carbohydrates?"</string>
-    <string name="question_text2">"What is the\u00A0biggest object in\u00A0our Solar System?"</string>
+    <string name="question_text2">"What is the\u00A0biggest celestial object in\u00A0our Solar System?\r\n\r\n\r\n"</string>
     <string name="question_text3">"How old is the\u00A0Universe?"</string>
-    <string name="question_text4">"What is the\u00A0name of\u00A0the\u00A0natural satellite of\u00A0the\u00A0Earth?"</string>
+    <string name="question_text4">"What is the\u00A0name of\u00A0the\u00A0natural satellite of\u00A0the\u00A0Earth?\r\n"</string>
 
     <string name="H1">"You can choose more than one answer."</string>
     <string name="H2">"Please type the answer"</string>
+
+    <string name="A01">"A01"</string>
+    <string name="A02">"A02"</string>
+    <string name="A03">"A03"</string>
+    <string name="A04">"A04"</string>
+    <string name="answer_text0">"answer_text0"</string>
 
     <string name="A11">"galactose"</string>
     <string name="A12">"fructose"</string>
@@ -35,6 +43,12 @@
     <string name="A42">"Moon"</string>
     <string name="A4r">"the Moon"</string>
 
-    <string name="button_text_P">"SUBMIT THE ANSWER"</string>
-    <string name="button_text_L">"READY FOR THE NEXT QUESTION?  PRESS TO SUBMIT THE ANSWER"</string>
+    <string name="button_text_blocked_P">"SCROLL UP"</string>
+    <string name="button_text_blocked_L">"PLEASE SCROLL UP TO THE NEXT QUESTION"</string>
+    <string name="button_text_active_P">"SUBMIT THE ANSWER"</string>
+    <string name="button_text_active_L">"READY FOR THE NEXT QUESTION? PRESS TO SUBMIT THE ANSWER"</string>
+    <string name="button_text_lastq_P">"SUBMIT THE ANSWER"</string>
+    <string name="button_text_lastq_L">"READY TO SEE QUIZ RESULTS? SUBMIT THE LAST ANSWER"</string>
+    <string name="button_text_end_P">"SEE THE RESULTS"</string>
+    <string name="button_text_end_L">"PLEASE SEE THE YOUR QUIZ RESULTS"</string>
 </resources>

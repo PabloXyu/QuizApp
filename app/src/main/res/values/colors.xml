@@ -4,14 +4,14 @@
         That also helps to find views by colors in xml :)
         https://www.random.org/colors/hex
         http://www.computerhope.com/htmcolor.htm -->
-
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#000</color>
+    <color name="actionBarText">@color/colorPrimaryDark</color>
+    <color name="colorPrimary">@color/colorEven</color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorOdd">#C0D6E4</color>
-    <color name="colorEven">#FFD6D7</color>
+    <color name="colorEven">#C0D6E4</color>
+    <color name="colorOdd">#FFD6D7</color>
 
     <color name="RedPigColorLogo">#da1b5b</color>
 
