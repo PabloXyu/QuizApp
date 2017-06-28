@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import android.support.v7.app.ActionBar;
 
+import static android.os.Build.VERSION_CODES.N;
 import static com.example.android.quizapp.R.id.button_text_id;
 import static com.example.android.quizapp.R.id.chkbox_table;
 import static com.example.android.quizapp.R.id.parent_of_qlayouts;
@@ -543,15 +544,19 @@ public class MainActivity extends AppCompatActivity {
                 int questionNo =(int)Math.floor((scrollView.getScrollY()+emptyBottomViewHeightPx)/theHeight);// #question depending on the scrollview position
                 float questionFloat = (float)scrollView.getScrollY()/theHeight;                  //  <0;N> "continuous question number"  N=number of questions
                 float relativePos =   (float)scrollView.getScrollY()/theHeight/theDenominator;                      // relativePos = <0;1> (relative position)
-                float triangleWave = 1-Math.abs((questionFloat%2) - 1);                      // = 1-|(x mod 2)-1| :::: 0 for Odd, 1 for Even but continuously.
+                float triangleWave = questionFloat-(int)Math.floor(questionFloat);      // = x -floor(x)
+                float sawWave = 1-Math.abs((questionFloat%2) - 1);                      // = 1-|(x mod 2)-1| :::: 0 for Odd, 1 for Even but continuously.
 
                 setActionBarParams( 0,                                                                                  // text color = #00000000 = black
                                     colourBetween(  ResourcesCompat.getColor(getResources(),R.color.colorEven, null),   // set background color
                                                     ResourcesCompat.getColor(getResources(),R.color.colorOdd, null),    // between colorEven & colorOdd
                                                     triangleWave                                                        // proportionally to triangleWave = <0;1>
                                     )
-                                    ,qlayoutTitle(questionNo)                                                           // "Quiz App: Question #N
+                                    ,qlayoutTitle(questionNo)   //+" :"+String.format("%.2f",triangleWave)              // "Quiz App: Question #N
                 );
+                // TODO: use RelativePos: to remember scrollview state when orientation is changed.
+
+
             }
         });
     }
