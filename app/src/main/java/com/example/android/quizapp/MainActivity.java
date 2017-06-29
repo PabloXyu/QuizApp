@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.SensorManager;
+import android.support.annotation.IdRes;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,12 +14,16 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -25,14 +31,29 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
+import static android.R.attr.orientation;
+import static android.R.attr.width;
 import static android.os.Build.VERSION_CODES.N;
+import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_DISABLE;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_INVISIBLE;
 import static com.example.android.quizapp.R.id.button_text_id;
 import static com.example.android.quizapp.R.id.chkbox_table;
 import static com.example.android.quizapp.R.id.parent_of_qlayouts;
 import static com.example.android.quizapp.R.id.question_textview_1;
 import static com.example.android.quizapp.R.id.rbutton_table;
+import static com.example.android.quizapp.R.id.submit_button;
 import static com.example.android.quizapp.R.layout.activity_main;
+import static com.example.android.quizapp.R.mipmap.ic_vertical_align_top_black_24dp;
+import static com.example.android.quizapp.R.string.button_text_active_L;
+import static java.lang.Boolean.TRUE;
 
 /**
  *      TODO: SUBMIT BUTTON MUST DISSAPEAR WHEN TEXT ENTERED AND KEYBOARD APPEARS
@@ -51,7 +72,7 @@ import static com.example.android.quizapp.R.layout.activity_main;
  */
 public class MainActivity extends AppCompatActivity {
     class Constants {
-        public static final int NO_OF_QUESTIONS = 4;
+        public static final int NUMBER_OF_QUESTIONS = 4;
         public static final int SUBMIT_BUTTON_DISABLE = 0;
         public static final int SUBMIT_BUTTON_ACTIVE = 1;
         public static final int SUBMIT_BUTTON_INVISIBLE = 2;
@@ -542,20 +563,29 @@ public class MainActivity extends AppCompatActivity {
              public void onScrollChanged() {
 
                 int questionNo =(int)Math.floor((scrollView.getScrollY()+emptyBottomViewHeightPx)/theHeight);// #question depending on the scrollview position
-                float questionFloat = (float)scrollView.getScrollY()/theHeight;                  //  <0;N> "continuous question number"  N=number of questions
-                float relativePos =   (float)scrollView.getScrollY()/theHeight/theDenominator;                      // relativePos = <0;1> (relative position)
-                float triangleWave = questionFloat-(int)Math.floor(questionFloat);      // = x -floor(x)
-                float sawWave = 1-Math.abs((questionFloat%2) - 1);                      // = 1-|(x mod 2)-1| :::: 0 for Odd, 1 for Even but continuously.
+                float questionFloat = (float)scrollView.getScrollY()/theHeight;             //  <0;N> "continuous question number"  N=number of questions
+                float relativePos =   questionFloat/theDenominator;                         // relativePos = <0;1> (relative position)
+                float sawWave = questionFloat-(int)Math.floor(questionFloat);               // = x -floor(x)
+                float triangleWave = 1-Math.abs((questionFloat%2) - 1);                     // = 1-|(x mod 2)-1| :::: 0 for Odd, 1 for Even but continuously.
 
                 setActionBarParams( 0,                                                                                  // text color = #00000000 = black
                                     colourBetween(  ResourcesCompat.getColor(getResources(),R.color.colorEven, null),   // set background color
                                                     ResourcesCompat.getColor(getResources(),R.color.colorOdd, null),    // between colorEven & colorOdd
                                                     triangleWave                                                        // proportionally to triangleWave = <0;1>
                                     )
-                                    ,qlayoutTitle(questionNo)   +" :"+String.format("%.2f",triangleWave)              // "Quiz App: Question #N
+                                    ,qlayoutTitle(questionNo)                                                           // "Quiz App: Question #N
+                                    //+" :"+String.format("%.2f",sawWave)
                 );
-                // TODO: use RelativePos: to remember scrollview state when orientation is changed.
-
+                // Submit Button Appearance Rules
+                if (questionFloat<=0.6f) changeSubmitButtonState(SUBMIT_BUTTON_DISABLE); //"Scroll up" info in "Welcome" Q-layout
+                else {
+                    if ((sawWave<0.95f)&&(sawWave>0.025f)) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //Active button appeares only when Q-layout is well visible.
+                        else
+                            if (questionNo==NUMBER_OF_QUESTIONS)                                             // For the last question:
+                                    changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);         // no arrow image & text changed
+                            else    changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);                           //
+                }
+                if (scrollView.getHeight()!=theHeight) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //button dissapears when keyboard appears
 
             }
         });
@@ -567,63 +597,71 @@ public class MainActivity extends AppCompatActivity {
         // 2 SUBMIT_BUTTON_INVISIBLE
         // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION
         // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED
-        final Button submitButton = (Button)((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
-        if (isDeviceLandscape()){
-            switch (buttonState) {
-                case 0: submitButton.setEnabled(false);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_blocked_L));
-                    break;
-                case 1: submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_active_L));
-                    break;
-                case 2: submitButton.setVisibility(View.GONE);
-                    break;
-                case 3: submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_lastq_L));
-                    break;
-                case 4: submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_active_L));
-                    break;
-                default: submitButton.setEnabled(false);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_end_L));
-                    break;
-            }
-        }else{
-            switch (buttonState) {
-                case 0:
-                    submitButton.setEnabled(false);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_blocked_P));
-                    break;
-                case 1:
+        final LinearLayout submitButton = (LinearLayout)((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
+        final TextView submitButtonText  = (TextView) submitButton.getChildAt(0);
+        final ImageView submitButtonImage  = (ImageView) submitButton.getChildAt(1);
+        int submitButtonPadding=getResources().getDimensionPixelSize(getResources().getIdentifier("margin","dimen", getPackageName()));
+        char oChar;
+        if (isDeviceLandscape()) oChar='L'; else oChar='P';
+        switch (buttonState) {
+            case 0: submitButton.setClickable(false);
                     submitButton.setEnabled(true);
                     submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_active_P));
-                    break;
-                case 2:
+                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
+                    submitButtonText.setText(getResources().getIdentifier("button_text_blocked_"+oChar,"string",getPackageName()));
+                    submitButtonImage.setVisibility(View.VISIBLE);
+                submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
+                break;
+            case 1: submitButton.setClickable(true);
+                    submitButton.setEnabled(true);
+                    submitButton.setVisibility(View.VISIBLE);
+                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
+                    submitButtonText.setText(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
+                    submitButtonImage.setVisibility(View.VISIBLE);
+                submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
+                break;
+            case 2: submitButton.setClickable(false);
+                    submitButton.setEnabled(false);
                     submitButton.setVisibility(View.GONE);
-                    break;
-                case 3:
+                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
+                    submitButtonImage.setVisibility(View.VISIBLE);
+                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
+                break;
+            case 3: submitButton.setClickable(true);
                     submitButton.setEnabled(true);
                     submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_lastq_P));
-                    break;
-                case 4:
-                    submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_active_P));
-                    break;
-                default:
+                    submitButton.setPadding(submitButtonPadding,0,submitButtonPadding,0); // no arrow image
+                    submitButtonText.setText(getResources().getIdentifier("button_text_lastq_"+oChar,"string",getPackageName()));
+                    submitButtonImage.setVisibility(View.GONE); // no arrow image
+                break;
+            case 4: submitButton.setClickable(false);
                     submitButton.setEnabled(false);
                     submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setText(getResources().getString(R.string.button_text_end_P));
-                    break;
-            }
+                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
+                    submitButtonText.setText(getResources().getIdentifier("button_text_end_"+oChar,"string",getPackageName()));
+                    submitButtonImage.setVisibility(View.VISIBLE);
+                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_bottom_black_24dp); //arrow down
+                break;
+        }
+    }
+    private void allQuestionsAnswered() {
+        changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+    }
+    private void setOnClickListenerOnActiveSubmitButton(){
+        // buttonState =
+        // 0 SUBMIT_BUTTON_DISABLE                      (ACTIVE)
+        // 1 SUBMIT_BUTTON_ACTIVE                       (ACTIVE)
+        // 2 SUBMIT_BUTTON_INVISIBLE
+        // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION     (ACTIVE)
+        // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED
+        final LinearLayout submitButton = (LinearLayout)((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
+        final TextView submitButtonText  = (TextView) submitButton.getChildAt(0);
+
+        //char oChar; if (isDeviceLandscape())  oChar='L'; else  oChar='P'; //orientation letter L or P
+        // String  myString = getString(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
+        // All are active which have text "SUBMIT"
+        if (((String) submitButtonText.getText()).contains("SUBMIT")) {
+           //TODO STH:
         }
     }
     @Override
@@ -636,12 +674,21 @@ public class MainActivity extends AppCompatActivity {
                             ResourcesCompat.getColor(getResources(),R.color.colorEven, null),       //sets background color
                             getResources().getString(R.string.Q0) // "Quiz App: Welcome!"
         );
-        Rect rect = calculateAndSetQlayoutDims(); // rect is width & height of every Q-layout.
-        if (isDeviceLandscape()) {setViewDimsOnLandscape(rect);}// tableLayouts width recalculated
-        setScrollViewListener(rect);
+        Rect rect = calculateAndSetQlayoutDims();                   // rect is width & height of every Q-layout.
+        if (isDeviceLandscape()) {setViewDimsOnLandscape(rect);}    // tableLayouts width recalculated
+        setScrollViewListener(rect);                                // Listener On scrollview to calculate its height position and and use it
+        changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+        allQuestionsAnswered();
     }
 }
- /*             int questionNumber=1;
+ /*
+
+       ViewGroup.LayoutParams layoutParams = mDescriptionScrollView.getLayoutParams();
+            layoutParams.height = scrollViewHeight;
+
+rootLayout.getHeight() < rootLayout.getRootView().getHeight() - getStatusBarHeight()
+
+       int questionNumber=1;
                 if ((questionNumber & 1) == 0)
                 //  if questionNumber is even
                 { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorEven))); }

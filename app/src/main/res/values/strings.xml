@@ -47,8 +47,8 @@
     <string name="button_text_blocked_L">"PLEASE SCROLL UP TO THE NEXT QUESTION"</string>
     <string name="button_text_active_P">"SUBMIT THE ANSWER"</string>
     <string name="button_text_active_L">"READY FOR THE NEXT QUESTION? PRESS TO SUBMIT THE ANSWER"</string>
-    <string name="button_text_lastq_P">"SUBMIT THE ANSWER"</string>
-    <string name="button_text_lastq_L">"READY TO SEE QUIZ RESULTS? SUBMIT THE LAST ANSWER"</string>
-    <string name="button_text_end_P">"SEE THE RESULTS"</string>
-    <string name="button_text_end_L">"PLEASE SEE THE YOUR QUIZ RESULTS"</string>
+    <string name="button_text_lastq_P">"SUBMIT THE LAST ANSWER"</string>
+    <string name="button_text_lastq_L">"READY TO SEE THE RESULTS? SUBMIT THE LAST ANSWER"</string>
+    <string name="button_text_end_P">"SCROLL DOWN"</string>
+    <string name="button_text_end_L">"PLEASE SCROLL DOWN TO SEE THE RESULTS"</string>
 </resources>

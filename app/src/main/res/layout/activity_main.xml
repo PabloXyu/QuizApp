@@ -14,13 +14,13 @@
 <!-- ALL DESCENDANTS WITH DIMENSIONS  "1dp" HAVE DIMS SET IN MainActivity:setLayoutsDims()       -->
 <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CHECK METHOD NAME WHEN FINISHED^^^^^^^^^^^^^^^    -->
 
+<!--    android:onClick="SubmitAnswer" -->
 
 <!-- LinearLayout is a static submit_button in the bottom-center of the display screen           -->
     <LinearLayout
         android:background="@color/t09"
         style="?android:attr/buttonStyle"
         android:id="@+id/submit_button"
-        android:onClick="SubmitAnswer"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -8,7 +8,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:windowSoftInputMode="adjustNothing"
-        android:configChanges="orientation"
+        android:configChanges="orientation|keyboardHidden"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
