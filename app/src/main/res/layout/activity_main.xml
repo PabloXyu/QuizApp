@@ -262,8 +262,7 @@
                         <CheckBox
                             android:background="@color/t08"
                             android:id="@+id/A11"
-                            android:clickable="false"
-                            android:onClick="onCheckBoxClicked_A11"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -272,8 +271,7 @@
                         <CheckBox
                             android:background="@color/t07"
                             android:id="@+id/A12L"
-                            android:clickable="false"
-                            android:onClick="onCheckBoxClicked_A12"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -289,8 +287,7 @@
                         <CheckBox
                             android:background="@color/t07"
                             android:id="@+id/A13"
-                            android:onClick="onCheckBoxClicked_A13"
-                            android:clickable="false"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -299,8 +296,7 @@
                         <CheckBox
                             android:background="@color/t08"
                             android:id="@+id/A14L"
-                            android:onClick="onCheckBoxClicked_A14"
-                            android:clickable="false"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -316,8 +312,7 @@
                         <CheckBox
                             android:background="@color/t08"
                             android:id="@+id/A12P"
-                            android:onClick="onCheckBoxClicked_A12"
-                            android:clickable="false"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -333,8 +328,7 @@
                         <CheckBox
                             android:background="@color/t07"
                             android:id="@+id/A14P"
-                            android:onClick="onCheckBoxClicked_A14"
-                            android:clickable="false"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"

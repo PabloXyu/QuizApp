@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +27,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
+
+import static android.R.attr.checked;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION;
@@ -56,22 +60,20 @@ import static com.example.android.quizapp.R.layout.activity_main;
  */
 
 public class MainActivity extends AppCompatActivity {
-    public class Answer{
-        // fields:
-        public int     score;
-        public boolean selected;
+    public  static class Answer {
+        int     score;
+        boolean isSelected;
 
-        // constructor:
-        public Answer (int startScore,boolean startSelected) {
-            score = startScore;
-            selected = startSelected;
+        private Answer( int newScore, boolean newIsSelected) {
+            this.score = newScore;
+            this.isSelected = newIsSelected;
         }
-        // methods:
-        public void      setValue(int newScore){       score=newScore;    }
-        public int       getValue(){            return score;             }
-        public void      select()  {                   selected = true;   }
-        public void    unselect()  {                   selected =false;   }
-        public boolean isSelected(){            return selected;          }
+        public  void    setValue    (int newScore)          {  this.score=newScore;           }
+        public  int     getValue    ()               { return  this.score;                    }
+        public  void    setSelection(boolean newIsSelected) {  this.isSelected=newIsSelected; }
+        public  void      select    ()                      {  this.isSelected = true;        }
+        public  void    unselect    ()                      {  this.isSelected =false;        }
+        public  boolean isSelected  ()               { return  this.isSelected;               }
     }
 
     class Constants {
@@ -81,19 +83,21 @@ public class MainActivity extends AppCompatActivity {
         public static final int SUBMIT_BUTTON_INVISIBLE = 2;
         public static final int SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION = 3;
         public static final int SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED =4;
-                                                                //4 checkboxes
-        public final Answer[] AnswersForQ1 ={new Answer(1,false)
-                                            ,new Answer(1,false)    //all answers for 1 point
-                                            ,new Answer(1,false)
-                                            ,new Answer(1,false)
-        };
-                                                                //4 radiobuttons
-        public final Answer[] AnswersForQ3 ={new Answer(0,false)
-                                            ,new Answer(0,false)
-                                            ,new Answer(3,false)    // 1 answer for 3 points
-                                            ,new Answer(0,false)
-        };
     }
+    //4 checkboxes
+    public static final Answer[] ANSWERS_FOR_Q1 = {
+            new Answer(1, false),
+            new Answer(1, false),
+            new Answer(1, false),
+            new Answer(1, false)
+    };
+    //4 radiobuttons
+    public static final Answer[] ANSWERS_FOR_Q3 = {
+            new Answer(1, false),
+            new Answer(1, false),
+            new Answer(1, false),
+            new Answer(1, false)
+    };
 
     /*====================================== ViewGroupTree: ========================================
      *
@@ -685,39 +689,66 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-     private void setTableLayoutOnListener(int tableLayoutId)   {
-         TableLayout tableLayoutAD = (TableLayout)findViewById(tableLayoutId);
-         // (View) here is for CheckBox or RadioButton
-         final CompoundButton A1  = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(0)).getChildAt(0);
-         final CompoundButton A2L = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(0)).getChildAt(1);
-         final CompoundButton A3  = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(1)).getChildAt(0);
-         final CompoundButton A4L = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(1)).getChildAt(1);
-         final CompoundButton A2P = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(2)).getChildAt(0);
-         final CompoundButton A4P = (CompoundButton)((TableRow)tableLayoutAD.getChildAt(3)).getChildAt(0);
+    public  void onCheckboxClicked(View view) {
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
+        // Compound buttons for Answer #2 & #4  are seen only once in the table
+        // |1|2|     |1|     |1|2|
+        // |3|4| ==> |3|  or |3|4|@Landscape
+        // |2|       |2|
+        // |4|       |4|@Portrait
+        //
+        // Is the checkBox|radioButton now checked/selected?
 
+        // answers N=1..4
+        // answer[N-1] = Nth answer
+        //
+        // Naming convention for answers:
+        //       AQNO
+        // e.g.: A32L: radiobutton for answer #2 (answer[1]) clickable&visible on Landscape.
+        //        ^^^
+        //        |||------ O = orientation : compound button for Portrait or Landscape
+        //        ||------- N = answer number N=1..4, answer[N-1] = Nth answer
+        //        |-------- Q = question number:   1 = checkbox or 3 = radiobutton
 
-         //tableLayoutAD.setOnClickListener(new CompoundButton.OnClickListener() {
-         tableLayoutAD.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View view) {
-                                                  // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
-                                                  // Compound buttons for Answer #2 & #4  are seen only once in the table
-                                                  // |1|2|     |1|     |1|2|
-                                                  // |3|4| ==> |3|  or |3|4|@Landscape
-                                                  // |2|       |2|
-                                                  // |4|       |4|@Portrait
-                                                  //    A2L.setSelected((A2P.isSelected()));
-                                                  //    A2P.setSelected((A2L.isSelected()));
-                                                  //    A4L.setSelected((A4P.isSelected()));
-                                                  //    A4P.setSelected((A4L.isSelected()));
+        Answer[] answer = ANSWERS_FOR_Q1;
+        // Is the  checkBox|radioButton now checked?
+        boolean isSelected = ((CompoundButton) view).isChecked();
 
-                                                  A1.setSelected((A3.isSelected()));
-                                                  A3.setSelected((A1.isSelected()));
-                                              }
-                                          }
+        // Check which checkbox was clicked
+        switch (view.getId()) {
+            case R.id.A11:
+                answer[0].setSelection(isSelected);
+                break;
+            case R.id.A12P:
+                answer[1].setSelection(isSelected);
+                // A12L synchronised with A12P (only one of them is visible):
+                ((CompoundButton)findViewById(R.id.A12L)).setChecked(isSelected);
+                break;
+            case R.id.A12L:
+                answer[1].setSelection(isSelected);
+                // A12P synchronised with A12L (only one of them is visible):
+                ((CompoundButton)findViewById(R.id.A12P)).setChecked(isSelected);
+                break;
+            case R.id.A13:
+                answer[2].setSelection(isSelected);
+                break;
+            case R.id.A14P:
+                answer[3].setSelection(isSelected);
+                // A14L synchronised with A14P (only one of them is visible):
+                ((CompoundButton)findViewById(R.id.A14L)).setChecked(isSelected);
+                break;
+            case R.id.A14L:
+                answer[3].setSelection(isSelected);
+                // A14P synchronised with A14L (only one of them is visible):
+                ((CompoundButton)findViewById(R.id.A14P)).setChecked(isSelected);
+                break;
+        }
+        // This method above works if:
+        // - is public
+        // - returns void
+        // - defines a View as its only parameter (any of compound button that was clicked)
+    }
 
-         )
-     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -734,6 +765,8 @@ public class MainActivity extends AppCompatActivity {
         setScrollViewListener(rect);
         //changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
         //allQuestionsAnswered();
+        onCheckboxClicked(findViewById(R.id.A11));
+        //setTableLayoutOnListener(chkbox_table);
     }
 }
  /*
