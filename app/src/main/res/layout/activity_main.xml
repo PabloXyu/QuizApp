@@ -72,6 +72,129 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin">
+        <!--<LinearLayout/>:  A-Layout #0: description in MainActivity.java -->
+            <LinearLayout
+                android:background="@color/t06"
+                android:visibility="gone"
+                android:id="@+id/Alayout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:gravity="bottom"
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:focusable="false"
+                android:orientation="vertical">
+                <!--<TableLayout/> is <TexViewTable/>: 1x4 for Portrait, 2x2 for Landscape.      -->
+                <!--                 INFO: MainActivity.java                                     -->
+                <TableLayout
+                    android:background="@color/t01"
+                    android:id="@+id/textview_table"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:layout_gravity="center"
+                    android:shrinkColumns="*"
+                    android:collapseColumns="1"
+                    android:orientation="vertical">
+                    <!-- TableRow#0 for answers: A01 & A02L -->
+                    <TableRow
+                        android:background="@color/t03"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:background="@color/t08"
+                            android:id="@+id/A01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A01"/>
+                        <TextView
+                            android:background="@color/t07"
+                            android:id="@+id/A02L"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A02"/>
+                    </TableRow>
+                    <!-- TableRow#1 for answers: A03 & A04L -->
+                    <TableRow
+                        android:background="@color/t02"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:background="@color/t07"
+                            android:id="@+id/A03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A03"/>
+                        <TextView
+                            android:background="@color/t08"
+                            android:id="@+id/A04L"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A04"/>
+                    </TableRow>
+                    <!-- TableRow#2 for answer: A02P (repeated for Portrait Mode, for Landscape mode not used)-->
+                    <TableRow
+                        android:background="@color/t03"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:background="@color/t08"
+                            android:id="@+id/A02P"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A02"/>
+                    </TableRow>
+                    <!-- TableRow#3 for answer: A04P (repeated for Portrait Mode, for Landscape mode not used)-->
+                    <TableRow
+                        android:background="@color/t02"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <TextView
+                            android:background="@color/t07"
+                            android:id="@+id/A04P"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/large"
+                            android:text="@string/A04"/>
+                    </TableRow>
+                </TableLayout>
+                <!--answerTextview-->
+                <TextView
+                    android:background="@color/t04"
+                    android:id="@+id/answer_textview_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/margin"
+                    android:paddingBottom="@dimen/margin"
+                    android:text="@string/answer_text0"
+                    android:textSize="@dimen/xlarge" />
+                <!--emptyView as background for qSubmit_button-->
+                <View
+                    android:background="@color/t08"
+                    android:id="@+id/empty_view_B"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bottom_view_height"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #0: (Welcome Layout), see MainActivity.java -->
             <LinearLayout
                 android:background="@color/t06"
@@ -128,6 +251,7 @@
                     android:layout_gravity="center"
                     android:shrinkColumns="*"
                     android:collapseColumns="1"
+                    android:clickable="true"
                     android:orientation="vertical">
                 <!-- TableRow#0 for answers: A11 & A12L -->
                     <TableRow
@@ -138,6 +262,7 @@
                         <CheckBox
                             android:background="@color/t08"
                             android:id="@+id/A11"
+                            android:clickable="false"
                             android:onClick="onCheckBoxClicked_A11"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -147,6 +272,7 @@
                         <CheckBox
                             android:background="@color/t07"
                             android:id="@+id/A12L"
+                            android:clickable="false"
                             android:onClick="onCheckBoxClicked_A12"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -164,6 +290,7 @@
                             android:background="@color/t07"
                             android:id="@+id/A13"
                             android:onClick="onCheckBoxClicked_A13"
+                            android:clickable="false"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -173,6 +300,7 @@
                             android:background="@color/t08"
                             android:id="@+id/A14L"
                             android:onClick="onCheckBoxClicked_A14"
+                            android:clickable="false"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -189,6 +317,7 @@
                             android:background="@color/t08"
                             android:id="@+id/A12P"
                             android:onClick="onCheckBoxClicked_A12"
+                            android:clickable="false"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -205,6 +334,7 @@
                             android:background="@color/t07"
                             android:id="@+id/A14P"
                             android:onClick="onCheckBoxClicked_A14"
+                            android:clickable="false"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -471,129 +601,6 @@
                 <View
                     android:background="@color/t08"
                     android:id="@+id/empty_view_4B"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/bottom_view_height"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
-        <!--<LinearLayout/>:  A-Layout #0: description in MainActivity.java -->
-            <LinearLayout
-                android:background="@color/t06"
-                android:visibility="gone"
-                android:id="@+id/Alayout"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:gravity="bottom"
-                android:clickable="true"
-                android:focusableInTouchMode="true"
-                android:focusable="false"
-                android:orientation="vertical">
-                <!--<TableLayout/> is <TexViewTable/>: 1x4 for Portrait, 2x2 for Landscape.      -->
-                <!--                 INFO: MainActivity.java                                     -->
-                <TableLayout
-                    android:background="@color/t01"
-                    android:id="@+id/textview_table"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="5"
-                    android:layout_gravity="center"
-                    android:shrinkColumns="*"
-                    android:collapseColumns="1"
-                    android:orientation="vertical">
-                    <!-- TableRow#0 for answers: A01 & A02L -->
-                    <TableRow
-                        android:background="@color/t03"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <TextView
-                            android:background="@color/t08"
-                            android:id="@+id/A01"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A01"/>
-                        <TextView
-                            android:background="@color/t07"
-                            android:id="@+id/A02L"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A02"/>
-                    </TableRow>
-                    <!-- TableRow#1 for answers: A03 & A04L -->
-                    <TableRow
-                        android:background="@color/t02"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <TextView
-                            android:background="@color/t07"
-                            android:id="@+id/A03"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A03"/>
-                        <TextView
-                            android:background="@color/t08"
-                            android:id="@+id/A04L"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A04"/>
-                    </TableRow>
-                    <!-- TableRow#2 for answer: A02P (repeated for Portrait Mode, for Landscape mode not used)-->
-                    <TableRow
-                        android:background="@color/t03"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <TextView
-                            android:background="@color/t08"
-                            android:id="@+id/A02P"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A02"/>
-                    </TableRow>
-                    <!-- TableRow#3 for answer: A04P (repeated for Portrait Mode, for Landscape mode not used)-->
-                    <TableRow
-                        android:background="@color/t02"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1">
-                        <TextView
-                            android:background="@color/t07"
-                            android:id="@+id/A04P"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/large"
-                            android:text="@string/A04"/>
-                    </TableRow>
-                </TableLayout>
-                <!--answerTextview-->
-                <TextView
-                    android:background="@color/t04"
-                    android:id="@+id/answer_textview_0"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/margin"
-                    android:paddingBottom="@dimen/margin"
-                    android:text="@string/answer_text0"
-                    android:textSize="@dimen/xlarge" />
-                <!--emptyView as background for qSubmit_button-->
-                <View
-                    android:background="@color/t08"
-                    android:id="@+id/empty_view_B"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/bottom_view_height"
