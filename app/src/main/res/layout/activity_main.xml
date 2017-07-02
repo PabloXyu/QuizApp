@@ -453,7 +453,7 @@
                         <RadioButton
                             android:background="@color/t08"
                             android:id="@+id/A31"
-                            android:onClick="onRadioButtonClicked_A31"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -462,7 +462,7 @@
                         <RadioButton
                             android:background="@color/t07"
                             android:id="@+id/A32L"
-                            android:onClick="onRadioButtonClicked_A32"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -478,7 +478,7 @@
                         <RadioButton
                             android:background="@color/t07"
                             android:id="@+id/A33"
-                            android:onClick="onRadioButtonClicked_A33"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -487,7 +487,7 @@
                         <RadioButton
                             android:background="@color/t08"
                             android:id="@+id/A34L"
-                            android:onClick="onRadioButtonClicked_A34"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -503,7 +503,7 @@
                         <RadioButton
                             android:background="@color/t08"
                             android:id="@+id/A32P"
-                            android:onClick="onRadioButtonClicked_A32"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -519,7 +519,7 @@
                         <RadioButton
                             android:background="@color/t07"
                             android:id="@+id/A34P"
-                            android:onClick="onRadioButtonClicked_A34"
+                            android:onClick="onCheckboxClicked"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
