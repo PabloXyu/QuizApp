@@ -17,32 +17,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import android.support.v7.app.ActionBar;
-import android.widget.Toast;
 
-import static android.R.attr.x;
+import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_CB_ANSWERS;
+import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_ET_ANSWERS;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_DISABLE;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_INVISIBLE;
-import static com.example.android.quizapp.R.id.A12L;
 import static com.example.android.quizapp.R.id.button_text_id;
 import static com.example.android.quizapp.R.id.chkbox_table;
 import static com.example.android.quizapp.R.id.parent_of_qlayouts;
 import static com.example.android.quizapp.R.id.question_textview_1;
 import static com.example.android.quizapp.R.id.rbutton_table;
 import static com.example.android.quizapp.R.layout.activity_main;
-import static java.security.AccessController.getContext;
 
 /**
  *      TODO: SUBMIT BUTTON MUST DISSAPEAR WHEN TEXT ENTERED AND KEYBOARD APPEARS
@@ -61,45 +61,97 @@ import static java.security.AccessController.getContext;
  */
 
 public class MainActivity extends AppCompatActivity {
-    public  static class Answer {
-        int     score;
-        boolean isSelected;
-
-        private Answer( int newScore, boolean newIsSelected) {
-            this.score = newScore;
-            this.isSelected = newIsSelected;
+    public class Answers {
+        //fields:
+        private int[] score;
+        private boolean[] isSelected;
+        //constructor:
+        public Answers(int[] score, boolean[] isSelected) {
+            this.score = score;
+            this.isSelected = isSelected;
         }
-        public  void    setValue    (int newScore)          {  this.score=newScore;           }
-        public  int     getValue    ()               { return  this.score;                    }
-        public  void    setSelection(boolean newIsSelected) {  this.isSelected=newIsSelected; }
-        public  void      select    ()                      {  this.isSelected = true;        }
-        public  void    unselect    ()                      {  this.isSelected =false;        }
-        public  boolean isSelected  ()               { return  this.isSelected;               }
+        //methods:
+        //getters:
+        public int[]        getScores()                     {return score;}
+        public boolean[]    getSelections()                 {return isSelected;}
+        public int          getScore(       int index)      {return score[index];}
+        public boolean      getSelection(   int index)      {return isSelected[index];}
+        public int          questionScore(){
+            int x = 0;
+            for(int i=0;i<getSelections().length;i++) x=x+(getSelection(i)?1:0)*getScore(i);
+                                                             return x;}
+        //setters:
+        public void         setSelection(   int     index,
+                                            boolean newSelection
+        ){isSelected[index] = newSelection;}
+
+        // sets isSelected=TRUE for Answers[index]
+        // sets for other indexes'  isSelected=FALSE
+        public void         toggleSelection(int    index)
+        {for(int i=0;i<isSelected.length ;i++) setSelection(i,(i==index));}
     }
 
+    public class Question {
+        //fields:
+        private Answers[] answers;
+        //constructor:
+        public Question(Answers[] answers) {
+            this.answers = answers;
+        }
+        //methods:
+        //getters:
+        public Answers      getAnswers(     int index)  {return answers[index];}
+        public int          questionScore(  int index)  {return (answers[index].questionScore());}
+        public int          totalScore()             {
+            int x = 0;
+            for(int i=0;i<NUMBER_OF_QUESTIONS;i++) x=x+questionScore(i);
+            return x;}
+    }
     class Constants {
         public static final int NUMBER_OF_QUESTIONS = 4;
-        public static final int NUMBER_OF_ANSWERS = 4;
+        public static final int NUMBER_OF_ET_ANSWERS = 2; //ET = Edit Text
+        public static final int NUMBER_OF_CB_ANSWERS = 4; //CB = Compound Button
         public static final int SUBMIT_BUTTON_DISABLE = 0;
         public static final int SUBMIT_BUTTON_ACTIVE = 1;
         public static final int SUBMIT_BUTTON_INVISIBLE = 2;
         public static final int SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION = 3;
-        public static final int SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED =4;
+        public static final int SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED = 4;
     }
-    //4 checkboxes
-    public static final Answer[] ANSWERS_FOR_Q1 = {
-            new Answer(1, false),
-            new Answer(1, false),
-            new Answer(1, false),
-            new Answer(1, false)
-    };
-    //4 radiobuttons
-    public static final Answer[] ANSWERS_FOR_Q3 = {
-            new Answer(0, false),
-            new Answer(0, false),
-            new Answer(3, false),  //score, isSelected//
-            new Answer(0, false)
-    };
+    public static final int[] SCORES_Q1 = {1,1,1,1};//4 checkboxes, 4 right answers
+    public static final int[] SCORES_Q2 = {2,2};    //2 right answers editable
+    public static final int[] SCORES_Q3 = {0,0,3,0};//4 radiobuttons, 1 right answer
+    public static final int[] SCORES_Q4 = {2,2};    //2 right answers editable
+
+    /**{@linkplain #initAnswers(int[], int)}
+     *
+     * @param SCORES_Qn
+     * @param NUMBER_OF_xx_ANSWERS
+     * @return
+     *
+     * initiate Answers class table where:
+     * - score is SCORES_Qn table
+     * - all of isSelected table elements are FALSE
+     * Answers.length = NUMBER_OF_xx_ANSWERS
+     * xx= CB|ET  //                                          //ET = Edit Text, CB = Compound Button
+     * n=1..NUMBER_OF_QUESTIONS ; for CB n=1,3 ; for ET n=2,4
+     */
+    public Answers initAnswers(int[] SCORES_Qn,int NUMBER_OF_xx_ANSWERS ) {
+        boolean[] isSelected = new boolean[NUMBER_OF_xx_ANSWERS];
+        for (int i=0; i<NUMBER_OF_xx_ANSWERS; i++) {isSelected[i]=false;}
+        return new Answers(SCORES_Qn,isSelected);
+    }
+    // initialisation of Answers tables filling in with score point values
+    // all isSelected elements set to FALSE.
+    public Answers answerQ1 = initAnswers(SCORES_Q1,NUMBER_OF_CB_ANSWERS);
+    public Answers answerQ2 = initAnswers(SCORES_Q2,NUMBER_OF_ET_ANSWERS);
+    public Answers answerQ3 = initAnswers(SCORES_Q3,NUMBER_OF_CB_ANSWERS);
+    public Answers answerQ4 = initAnswers(SCORES_Q4,NUMBER_OF_ET_ANSWERS);
+
+    public  Answers[] question = {initAnswers(SCORES_Q1,NUMBER_OF_CB_ANSWERS),
+                                  initAnswers(SCORES_Q2,NUMBER_OF_ET_ANSWERS),
+                                  initAnswers(SCORES_Q3,NUMBER_OF_CB_ANSWERS),
+                                  initAnswers(SCORES_Q4,NUMBER_OF_ET_ANSWERS)};
+
 
     /*====================================== ViewGroupTree: ========================================
      *
@@ -111,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
      *                                                                       |---> Qlayout_n
      *            n = NUMBER_OF_QUESTIONS                                                  ^
      *                                            THAT IS Question Layout/QLayout/Q-Layout:^
+     *
+     *  Q-Layout is also Qlayout_0 = W-Layout|A-Layout (Welcome/Answer)
+     *  W/A-Layout is displayed in the scrollview as first one.
      *==============================================================================================
      */
 
@@ -266,11 +321,11 @@ public class MainActivity extends AppCompatActivity {
      *        3:    |A14P|               |    P           |     3:    |A34P|
      *----------------------------------------------------------------------------------------------
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
+    /* TODO: delete the comment below? Replace that with Welcome/Answer Layout?
+    /*   A12P & A12L        <android:onClick="onCheckBoxClicked"/>
+     *   A14P & A14L        <android:onClick="onCheckBoxClicked"/>
      *
-     *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
-     *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
-     *
-     *   A32P & A32L        <android:onClick="onCheckBoxClicked_A32"/>
+     *   A32P & A32L        <android:onClick="onRadioButtonClicked"/>
      *   A34P & A34L        <android:onClick="onCheckBoxClicked_A34"/>
      *==============================================================================================
      *
@@ -292,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
      *
      */
 
-    /*============================ Q-Layouts Quiz Basic Aassumptions================================
+    /*============================ Q-Layouts Quiz Basic Assumptions ================================
      *
      *Q#|CI|Q-L.outId|Answ#|RightAnsw.|PossibleA|W|M  |QuestionView|Q-L grandChild#:|AV|HT|QT|<L-Chng
      *==|==|=========|=====|=======  =|=========|=|===|============|================|==|==|==|
@@ -460,10 +515,10 @@ public class MainActivity extends AppCompatActivity {
         // View measurement to get width (START MEASURING CHILDREN, MEASURE THE PARENT LATER!)
         secondColUpperView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         //see: [THE FORMULA]: variable firstColumnWidthOnLandscape gets value of col_0_Width_P
-        int firstColumnWidthOnLandscape =   (2* firstColUpperViewBD.getMeasuredWidth() -
-                secondColUpperView.getMeasuredWidth() +
-                rect.width()
-        )/3;
+        int firstColumnWidthOnLandscape =   (2* firstColUpperViewBD.getMeasuredWidth()
+                                             -  secondColUpperView.getMeasuredWidth()
+                                             +  rect.width()
+                                            )/3;
 
         // 2. Setting 1st Column Width:
 
@@ -689,57 +744,11 @@ public class MainActivity extends AppCompatActivity {
             // TODO sth
         }
     }
-    //
-    private int countAnswerScores(int questionNumber){
-        int sum = 0;
-        switch (questionNumber){
-            case 1:
-                for( int i=0; i< ANSWERS_FOR_Q1.length ;i++ ) {
-                    sum = sum + (ANSWERS_FOR_Q1[i].getValue()
-                              * (ANSWERS_FOR_Q1[i].isSelected() ? 1:0));
-                }
-                break;
-            case 2:
-                break;
-            case 3:
-                for( int i=0; i< ANSWERS_FOR_Q3.length ;i++ ) {
-                    sum = sum + (ANSWERS_FOR_Q3[i].getValue()
-                              * (ANSWERS_FOR_Q3[i].isSelected() ? 1:0));
-                }
-                break;
-            case 4:
-                break;
-        }
-        return sum;
-    }
 
-
-    // sets isSelected=TRUE in ANSWERS_FOR_Q3[answerIndex]
-    // for other indexes' values sets to isSelected to FALSE
-    private void selectRadioButtonAnswer(int answerIndex){
-        for( int i=0; i< ANSWERS_FOR_Q3.length ;i++ ) {
-            ANSWERS_FOR_Q3[i].setSelection((i==answerIndex));
-        }
-    }
-    // selects the compoundButton of given resource ID and unselects the other siblings.
-    private void toggleCompoundButton(int compoundButtonId) {
-        // finds compoundButton by resource Id.:
-        CompoundButton theCompoundButton = (CompoundButton) findViewById(compoundButtonId);
-        // finds its grandparent view:
-        TableLayout tableLayout = (TableLayout) ((TableRow) theCompoundButton.getParent()).getParent();
-        // Loops search through the grandchildren od the tableLayout:
-        for (int i=0; i<tableLayout.getChildCount(); i++) {
-            TableRow  tableRow = (TableRow) tableLayout.getChildAt(i);
-            for (int j=0; i<tableRow.getChildCount(); j++) {
-                CompoundButton compoundButton = (CompoundButton) tableRow.getChildAt(j);
-                if (compoundButton == theCompoundButton)
-                    compoundButton.setChecked(true);
-                else
-                    compoundButton.setChecked(false);
-            }
-        }
-    }
-    private  void TwinViewSynchroIfChecked(int compoundButtonId) {
+    // sets selection state of the compound button to its counterpart (twin) in other orientation mode
+    // e.g.: when the state of A12L checkbox is changed (/un/checked) in landscape mode,
+    // the same state is set for "twin" checkbox A12P visible in portrait mode.
+    private void twinCompoundButtonSelectionSynchro(View theCompoundButton) {
         // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
         // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
         // but for changing orientation they have to have the same state
@@ -750,10 +759,9 @@ public class MainActivity extends AppCompatActivity {
         // |2|       |2|                      2: (i,j): (2,0)->(0,1)
         // |4|       |4|@Portrait             4: (i,j): (3,0)->(1,1)
         //                                              (i,j)-------->( (i+6)mod 4,(j+3)mod 2 )
+        // METHOD FOR NON-DUPLICATED BUTTONS DOES NOTHING, SO IT CAN BE USED FOR ALL CB'S
         // ------------------------------------------------------------------------------------
-        // finds compoundButton by resource Id.:
-        CompoundButton theCompoundButton = (CompoundButton) findViewById(compoundButtonId);
-        boolean isSelected = theCompoundButton.isChecked();
+        boolean isSelected = ((CompoundButton)theCompoundButton).isChecked();
         // finds its parent and grandparent view:
         TableRow tableRow = (TableRow) theCompoundButton.getParent();
         TableLayout tableLayout = (TableLayout) tableRow.getParent();
@@ -761,23 +769,31 @@ public class MainActivity extends AppCompatActivity {
         int j = tableRow.indexOfChild(theCompoundButton);
         int i = tableLayout.indexOfChild(tableRow);
 
+        if((i<2) && (j==0)) return; //buttons for answers #1 & #3 don't have duplicates
+
         TableRow tableRowO = (TableRow) tableLayout.getChildAt((i+6)%4);
         CompoundButton theCompoundButtonO = (CompoundButton) tableRowO.getChildAt((j+3)%2);
         theCompoundButtonO.setChecked(isSelected);
-        //((CompoundButton)((TableRow) tableLayout.getChildAt((i+6)%4)).getChildAt((j+3)%2)).setChecked(isSelected);
-        //theCompoundButtonO.setChecked(isSelected);
+    }
 
-
-
-        //((TableRow)tableRow.getChildAt((j+3)%2)).getChildAt((i+6)%4).setChecked(isSelected);
+    private void uncheckOtherRadioButtons(View theRadioButton) {
+        // finds its parent and grandparent view:
+        TableRow tableRow = (TableRow) theRadioButton.getParent();
+        TableLayout tableLayout = (TableLayout) tableRow.getParent();
+        // Loops search through the grandchildren od the tableLayout:
+        TableRow  loopTableRow;
+        RadioButton loopRadioButton;
+        for (int i=0; i<tableLayout.getChildCount(); i++) {
+            loopTableRow = (TableRow) tableLayout.getChildAt(i);
+            for (int j=0; j<loopTableRow.getChildCount(); j++) {
+                 loopRadioButton = (RadioButton) loopTableRow.getChildAt(j);
+                //unchecks all other radioButtons than theRadioButton.
+                loopRadioButton.setChecked((loopRadioButton == theRadioButton));
+            }
+        }
     }
 
     public void onCheckboxClicked(View view) {
-        // "1" or "3": checks which question checkbox or radiobutton.
-        String question = view.getResources().getResourceEntryName(view.getId()).substring(1,2);
-        // Is the  checkBox|radioButton now checked? (FOR SWITCH)
-        boolean isSelected = ((CompoundButton) view).isChecked();
-
         // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
         // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
         // but for changing orientation they have to have the same state
@@ -789,105 +805,67 @@ public class MainActivity extends AppCompatActivity {
         // |4|       |4|@Portrait
         // ------------------------------------------------------------------------------------
 
-        if (question=="1") {                            //Question #1 (checkboxes)
-            // Check which checkbox was clicked
-            switch (view.getId()) {
-                case R.id.A11:
-                    ANSWERS_FOR_Q1[0].setSelection(isSelected);
-                    break;
-                case R.id.A12P:
-                    ANSWERS_FOR_Q1[1].setSelection(isSelected);
-                    //Synchronisation with Landscape button
-                    ((CompoundButton)findViewById(R.id.A12L)).setChecked(isSelected);
-                    break;
-                case A12L:
-                    ANSWERS_FOR_Q1[1].setSelection(isSelected);
-                    //Synchronisation with Portrait button
-                    ((CompoundButton)findViewById(R.id.A12P)).setChecked(isSelected);
-                    break;
-                case R.id.A13:
-                    ANSWERS_FOR_Q1[2].setSelection(isSelected);
-                    break;
-                case R.id.A14P:
-                    ANSWERS_FOR_Q1[3].setSelection(isSelected);
-                    //Synchronisation with Landscape button
-                    ((CompoundButton)findViewById(R.id.A14L)).setChecked(isSelected);
-                    break;
-                case R.id.A14L:
-                    ANSWERS_FOR_Q1[3].setSelection(isSelected);
-                    //Synchronisation with Portrait button
-                    ((CompoundButton)findViewById(R.id.A12P)).setChecked(isSelected);
-                    break;
-            }
+        // Is the view now checked?
+        boolean isSelected = ((CheckBox) view).isChecked();
+        //Toast.makeText(
+        //        getApplicationContext(),
+        //        "You "+ (isSelected ? "":"un")+"selected \""+
+        //                ((CompoundButton) view).getText()+
+        //                "\" answer",
+        //        Toast.LENGTH_SHORT
+        //).show();
+
+        // Check which checkbox was clicked
+        switch (view.getId()) {
+            case R.id.A11:  answerQ1.setSelection(0,isSelected);break;
+            case R.id.A12P: answerQ1.setSelection(1,isSelected);break;
+            case R.id.A12L: answerQ1.setSelection(1,isSelected);break;
+            case R.id.A13:  answerQ1.setSelection(2,isSelected);break;
+            case R.id.A14P: answerQ1.setSelection(3,isSelected);break;
+            case R.id.A14L: answerQ1.setSelection(3,isSelected);break;
+            // The method onCheckboxClicked() above works if:
+            // - is public
+            // - returns void
+            // - defines a View as its only parameter (any of compound button that was clicked)
         }
-        else {                                       //Question #3 (radiobuttons)
-            // Check which radiobutton was clicked
-            switch (view.getId()) {
-                case R.id.A31:
-                    selectRadioButtonAnswer(0);
-                    toggleCompoundButton(view.getId());
-                    break;
-                case R.id.A32P:
-                    selectRadioButtonAnswer(1);
-                    toggleCompoundButton(view.getId());
-                    //Synchronisation with Landscape button
-                    TwinViewSynchroIfChecked(view.getId());
-                    break;
-                case R.id.A32L:
-                    selectRadioButtonAnswer(1);
-                    toggleCompoundButton(view.getId());
-                    //Synchronisation with Portrait button
-                    TwinViewSynchroIfChecked(view.getId());
-                    break;
-                case R.id.A33:
-                    selectRadioButtonAnswer(2);
-                    toggleCompoundButton(view.getId());
-                    break;
-                case R.id.A34P:
-                    selectRadioButtonAnswer(3);
-                    toggleCompoundButton(view.getId());
-                    //Synchronisation with Landscape button
-                    TwinViewSynchroIfChecked(view.getId());
-                    break;
-                case R.id.A34L:
-                    selectRadioButtonAnswer(3);
-                    toggleCompoundButton(view.getId());
-                    //Synchronisation with Portrait button
-                    TwinViewSynchroIfChecked(view.getId());
-                    break;
-            }
+        //Synchronisation with twin button (see method description)
+        twinCompoundButtonSelectionSynchro(view);
+    }
+    public void onRadioButtonClicked(View view) {
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
+        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
+        // but for changing orientation they have to have the same state
+        // (there is 4 answers, but 6 compound buttons)
+        // ------------------------------------------------------------------------------------
+        // |1|2|     |1|     |1|2|
+        // |3|4| ==> |3|  or |3|4|@Landscape
+        // |2|       |2|
+        // |4|       |4|@Portrait
+        // ------------------------------------------------------------------------------------
+
+        // Is the view now checked?
+        boolean isSelected = ((RadioButton) view).isChecked();
+        // Check which radiobutton was clicked
+        uncheckOtherRadioButtons(view);
+        switch (view.getId()) {
+            case R.id.A31:  answerQ3.toggleSelection(0);break;
+            case R.id.A32P: answerQ3.toggleSelection(1);break;
+            case R.id.A32L: answerQ3.toggleSelection(1);break;
+            case R.id.A33:  answerQ3.toggleSelection(2);break;
+            case R.id.A34P: answerQ3.toggleSelection(3);break;
+            case R.id.A34L: answerQ3.toggleSelection(3);break;
+            // Unfortunately setup of the RadioGroup on TableLayout including RadioButtons is impossible. :(
+            // RadioButtons here are grandchildren of layout.
+
+            // The method onCheckboxClicked() above works if:
+            // - is public
+            // - returns void
+            // - defines a View as its only parameter (any of compound button that was clicked)
         }
+        //Synchronisation with twin button (see method description)
+        twinCompoundButtonSelectionSynchro(view);
     }
 
-        // Unfortunately setup of the RadioGroup on TableLayout including RadioButtons is impossible. :(
-
-        // The method onCheckboxClicked() above works if:
-        // - is public
-        // - returns void
-        // - defines a View as its only parameter (any of compound button that was clicked)
-    private void onCompoundButtonClicked(int numberOfQuestion) {
-        // Is the checkBox|radioButton now checked/selected?
-
-        // answers N=1..4
-        // answer[N-1] = Nth answer
-        //
-        // Naming convention for answers:
-        //       AQNO
-        // e.g.: A32L: radiobutton for answer #2 (answer[1]) clickable&visible on Landscape.
-        //        ^^^
-        //        |||------ O = orientation : compound button for Portrait or Landscape
-        //        ||------- N = answer number N=1..4, answer[N-1] = Nth answer
-        //        |-------- Q = question number:   1 = checkbox or 3 = radiobutton
-
-        switch (numberOfQuestion) {
-            case 1:
-                onCheckboxClicked(findViewById(R.id.A11)); //checkbox
-                break;
-            case 3:
-                onCheckboxClicked(findViewById(R.id.A31)); //radiobutton
-                break;
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -904,8 +882,8 @@ public class MainActivity extends AppCompatActivity {
         setScrollViewListener(rect);
         //changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
         //allQuestionsAnswered();
-        onCompoundButtonClicked(1); // Question #1 checkbox    answer input
-        //onCompoundButtonClicked(3); // Question #3 radiobutton answer input
+        onCheckboxClicked(findViewById(R.id.A11));      // Question #1
+        onRadioButtonClicked(findViewById(R.id.A31));   // Question #3
     }
 }
  /*
