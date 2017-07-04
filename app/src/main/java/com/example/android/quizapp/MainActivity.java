@@ -19,6 +19,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,6 +29,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
 
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_CB_ANSWERS;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_ET_ANSWERS;
@@ -655,6 +657,7 @@ public class MainActivity extends AppCompatActivity {
                                     )
                                     ,qlayoutTitle(questionNo)                                                           // "Quiz App: Question #N
                                     //+" :"+String.format("%.2f",sawWave)
+                                    +" :"+((EditText) findViewById(R.id.edit_text_2)).getText()
                 );
                 // Submit Button Appearance Rules
                 if (questionFloat<=0.6f) changeSubmitButtonState(SUBMIT_BUTTON_DISABLE); //"Scroll up" info in "Welcome" Q-layout
@@ -884,6 +887,9 @@ public class MainActivity extends AppCompatActivity {
         //allQuestionsAnswered();
         onCheckboxClicked(findViewById(R.id.A11));      // Question #1
         onRadioButtonClicked(findViewById(R.id.A31));   // Question #3
+
+        // "1" or "3": checks which question checkbox or radiobutton.
+        Toast.makeText(getApplicationContext(),((EditText) findViewById(R.id.edit_text_2)).getText(),Toast.LENGTH_LONG).show();
     }
 }
  /*
