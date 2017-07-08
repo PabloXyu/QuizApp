@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.text.Html;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -37,14 +39,22 @@ import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUEST
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED;
-import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_DISABLE;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_DISABLED;
+import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_EXIT;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_INVISIBLE;
-import static com.example.android.quizapp.R.id.button_text_id;
 import static com.example.android.quizapp.R.id.chkbox_table;
+import static com.example.android.quizapp.R.id.edit_text_2;
+import static com.example.android.quizapp.R.id.edit_text_4;
 import static com.example.android.quizapp.R.id.parent_of_qlayouts;
 import static com.example.android.quizapp.R.id.question_textview_1;
 import static com.example.android.quizapp.R.id.rbutton_table;
+import static com.example.android.quizapp.R.id.scroll_view;
 import static com.example.android.quizapp.R.layout.activity_main;
+import static com.example.android.quizapp.R.string.button_text_active_P;
+import static com.example.android.quizapp.R.string.button_text_disabled_P;
+import static com.example.android.quizapp.R.string.button_text_end_P;
+import static com.example.android.quizapp.R.string.button_text_exit_P;
+import static com.example.android.quizapp.R.string.button_text_lastq_P;
 
 /**
  *      TODO: SUBMIT BUTTON MUST DISSAPEAR WHEN TEXT ENTERED AND KEYBOARD APPEARS
@@ -93,36 +103,30 @@ public class MainActivity extends AppCompatActivity {
         {for(int i=0;i<isSelected.length ;i++) setSelection(i,(i==index));}
     }
 
-    public class Question {
-        //fields:
-        private Answers[] answers;
-        //constructor:
-        public Question(Answers[] answers) {
-            this.answers = answers;
-        }
-        //methods:
-        //getters:
-        public Answers      getAnswers(     int index)  {return answers[index];}
-        public int          questionScore(  int index)  {return (answers[index].questionScore());}
-        public int          totalScore()             {
-            int x = 0;
-            for(int i=0;i<NUMBER_OF_QUESTIONS;i++) x=x+questionScore(i);
-            return x;}
-    }
     class Constants {
         public static final int NUMBER_OF_QUESTIONS = 4;
         public static final int NUMBER_OF_ET_ANSWERS = 2; //ET = Edit Text
         public static final int NUMBER_OF_CB_ANSWERS = 4; //CB = Compound Button
-        public static final int SUBMIT_BUTTON_DISABLE = 0;
+        public static final int SUBMIT_BUTTON_DISABLED = 0;
         public static final int SUBMIT_BUTTON_ACTIVE = 1;
         public static final int SUBMIT_BUTTON_INVISIBLE = 2;
         public static final int SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION = 3;
         public static final int SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED = 4;
+        public static final int SUBMIT_BUTTON_EXIT = 5;
+
     }
+    private static final String THE_WIDTH  ="$theWidth";
+    private static final String THE_HEIGHT ="$theHeight";
+    private static final String QUESTION_NO="$questionNo";
+    private static final String ANSWERED_QUESTION="$answeredQuestion";
+
     public static final int[] SCORES_Q1 = {1,1,1,1};//4 checkboxes, 4 right answers
     public static final int[] SCORES_Q2 = {2,2};    //2 right answers editable
-    public static final int[] SCORES_Q3 = {0,0,3,0};//4 radiobuttons, 1 right answer
+    public static final int[] SCORES_Q3 = {0,3,0,0};//4 radiobuttons, 1 right answer
     public static final int[] SCORES_Q4 = {2,2};    //2 right answers editable
+    public static final boolean[] INIT_ANSWERED_QUESTION = {false,false,false,false};
+
+    public static final Rect RECT = new Rect(0,0,0,0);
 
     /**{@linkplain #initAnswers(int[], int)}
      *
@@ -148,11 +152,6 @@ public class MainActivity extends AppCompatActivity {
     public Answers answerQ2 = initAnswers(SCORES_Q2,NUMBER_OF_ET_ANSWERS);
     public Answers answerQ3 = initAnswers(SCORES_Q3,NUMBER_OF_CB_ANSWERS);
     public Answers answerQ4 = initAnswers(SCORES_Q4,NUMBER_OF_ET_ANSWERS);
-
-    public  Answers[] question = {initAnswers(SCORES_Q1,NUMBER_OF_CB_ANSWERS),
-                                  initAnswers(SCORES_Q2,NUMBER_OF_ET_ANSWERS),
-                                  initAnswers(SCORES_Q3,NUMBER_OF_CB_ANSWERS),
-                                  initAnswers(SCORES_Q4,NUMBER_OF_ET_ANSWERS)};
 
 
     /*====================================== ViewGroupTree: ========================================
@@ -313,22 +312,22 @@ public class MainActivity extends AppCompatActivity {
      */
 
     /*==============================================================================================
-     *   (CheckBoxTable)[chkbox_table],  |                |(RadioButtonTable)[rbutton_table]
+     * x=1,3 (1:chkbox_table,3:rbutton_table) Q-layout #1&3 | A-layout: textview_table
      *----------------------------------------------------------------------------------------------
-     *    TableRow# |0:  |1:  |<--Column |                | TableRow# |0:  |1:  |<--Column
-     *    ---------------------          |1x4:    2x2:    | ---------------------
-     *        0:    |A11 |A12L|          |    P       LL  |     0:    |A31 |A32L|
-     *        1:    |A13 |A14L|          |    P  (or) LL  |     1:    |A33 |A34L|
-     *        2:    |A12P|               |    P           |     2:    |A32P|
-     *        3:    |A14P|               |    P           |     3:    |A34P|
+     *    TableRow# |0:  |1:  |<--Column ||                 | TableRow# |0:  |1:  |<--Column
+     *    ---------------------          ||1x4:    2x2:     | ---------------------
+     *        0:    |Ax1 |Ax2L|          ||    P       LL   |     0:    |AA1 |SA1 |
+     *        1:    |Ax3 |Ax4L|          ||    P  (or) LL   |     1:    |AA2 |SA2 |
+     *        2:    |Ax2P|               ||    P            |     2:    |AA3 |SA3 |
+     *        3:    |Ax4P|               ||    P            |     3:    |AA4 |SA4 |
      *----------------------------------------------------------------------------------------------
      *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
-    /* TODO: delete the comment below? Replace that with Welcome/Answer Layout?
+    /*
     /*   A12P & A12L        <android:onClick="onCheckBoxClicked"/>
      *   A14P & A14L        <android:onClick="onCheckBoxClicked"/>
      *
      *   A32P & A32L        <android:onClick="onRadioButtonClicked"/>
-     *   A34P & A34L        <android:onClick="onCheckBoxClicked_A34"/>
+     *   A34P & A34L        <android:onClick="onRadioButtonClicked"/>
      *==============================================================================================
      *
      *
@@ -378,12 +377,12 @@ public class MainActivity extends AppCompatActivity {
      * @see #isDeviceLandscape()                                                @returns boolean
      * @see #printTextOnTextView(String textView_id_name, String text)
      * @see #printTextNameOnTextView(String textView_id_name, String text_name)
-     * @see #calculateAndSetQlayoutDims()                                                      @returns Rect
+     * @see #calculateAndSetQlayoutDims()                                                      @returns $rect
      * @see #setMyActionBar(String linearLayoutIdName)
      * @see #setAllViewDims()
-     * @see #setTableLayoutOnLandscape(String tableLayout_id_name, Rect rect)
+     * @see #setTableLayoutOnLandscape(String tableLayout_id_name, $rect $rect)
      * @see #setTextSizeOnTextView(String textView_id_name, String dimen_name)
-     * @see #setViewDimsOnLandscape(Rect rect)
+     * @see #setViewDimsOnLandscape($rect $rect)
      */
 
     /**{@linkplain #isDeviceLandscape
@@ -394,36 +393,16 @@ public class MainActivity extends AppCompatActivity {
         return (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT);
     }
 
-     /**{@linkplain #printTextOnTextView prints the "text" of a TextView
-     }
-     * @param textView_id_name     <android:id="@+id/textView_id_name">
-     * @param text                 text to display
-     */
-    private void printTextOnTextView(String textView_id_name, String text) {
-        TextView textView = (TextView)findViewById( getResources().getIdentifier( textView_id_name, "id", getPackageName() ) );
-        textView.setText(text);
-    }
-
-    /**{@linkplain #printTextNameOnTextView prints the textName from string Resources
-     }
-     * @param textView_id      // layout xml: <android:id="@+id/textView_id_name">
-     * @param text_name             // string xml: <string name="text_name">="text"</string>
-     */
-    private void printTextNameOnTextView(int textView_id, String text_name) {
-        TextView textView = (TextView)findViewById(textView_id);
-        textView.setText( getResources().getIdentifier( text_name, "string", getPackageName() ) );
-    }
-
     /**{@linkplain #calculateAndSetQlayoutDims() calculates and sets dimensions for a all Q-layouts in scrollView}
      *
      *  A weight method for proportional children under ScrollView not possible.
      *  ScrollView must have one child, Q-layouts (of the same size) are grandchildren.
      *  After calculation equal height for each Q-layout is set. 
-     *  Later, the width of Q-layout in Rect is used to set othe views values in landscape mode. 
+     *  Later, the width of Q-layout in $rect is used to set othe views values in landscape mode. 
      */
     private Rect calculateAndSetQlayoutDims() {
         //
-        // 1.: Rect (0,
+        // 1.: $rect (0,
         // 2.:       0,
         // 3.:       Q-layout width,
         // 4.:       Q-layout height)
@@ -459,15 +438,14 @@ public class MainActivity extends AppCompatActivity {
         return new  Rect(0,0, qLayoutWidth, qLayoutHeight);
     }
 
-
-    /**{@linkplain #setTableLayoutOnLandscape(int, Rect)}
-     * the argument is Resource ID of the tableLayout and Q-layout width in rect.
+    /**{@linkplain #setTableLayoutOnLandscape(int, Rect)
+     * the argument is Resource ID of the tableLayout and Q-layout width in $rect.
      * calculates and sets new value of 1st column width.
      * unhides 2nd column of the table
      * removes 3rd and 4th row
      * That makes table dim as 1x4 --> 2x2
      */
-    private void setTableLayoutOnLandscape(int tableLayoutId, Rect rect) {
+    private void setTableLayoutOnLandscape(int tableLayoutId, Rect $rect) {
          /*
          * equation for m: (see: 2. WHEN IN LANDSCAPE MODE : Alignment of columns in the table.)
          *
@@ -519,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
         //see: [THE FORMULA]: variable firstColumnWidthOnLandscape gets value of col_0_Width_P
         int firstColumnWidthOnLandscape =   (2* firstColUpperViewBD.getMeasuredWidth()
                                              -  secondColUpperView.getMeasuredWidth()
-                                             +  rect.width()
+                                             +  $rect.width()
                                             )/3;
 
         // 2. Setting 1st Column Width:
@@ -541,46 +519,22 @@ public class MainActivity extends AppCompatActivity {
         tableLayoutAD.getChildAt(3).setVisibility(tableLayoutAD.getChildAt(3).GONE);
     }
 
-    /**{@linkplain #setTextSizeOnTextView sets the textView text size to value of dimen_name.
-     *
-     *  THE VALUE of dimen_name IN dimens.xml MUST BE IN SCALED PIXEL !!!
-     *
-     * @param textView_id_name      // layout xml: <android:id="@+id/textView_id_name">
-     * @param dimen_name            // dimen xml:  <dimen name="dimen_name">"#0.0sp"</dimen>
-     *
-     *  The values of dimen_name in "dimens.xml" are int, but can be float.
-     */
-    private void setTextSizeOnTextView(int textView_id, String dimen_name) {
-        TextView textView = (TextView)findViewById(textView_id);
-
-        String x = getString(getResources().getIdentifier( dimen_name, "dimen", getPackageName() ));// format "#0.0sp"
-        x = x.substring(0,x.length()-2); // gets rid of last two chars ("sp")                       // format "#0.0"
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, Float.parseFloat(x));                      //converted to float
-    }
-
     /**{@linkplain #setViewDimsOnLandscape(Rect)}  , OnCreate setups parameters for Q-layouts,
      * if device orientation is in landscape mode.
      }
-     * @param rect // (A11_width1, A31_width, Q-layout_width, Q-layout_height)
-     *  Ax1 WIDTHS IN PORTRAIT MODE !!!
      */
-    private void setViewDimsOnLandscape(Rect rect){
-        // IN ORDER OF APPERANCE IN ROOT LAYOUT:
-        //                                              Q-Layout Structure -------|
-        //                                                         Q-Layout----> Q.V. childView:
-        //                                                                     =========================
-        setTableLayoutOnLandscape(chkbox_table,rect);                    //1.1. CheckBoxLayout
-        //  ^ [SEE METHOD DESCRIPTION]
-        setTextSizeOnTextView(question_textview_1,"xlarge");             //1.3. QuestionTextView
-        //  ^ setText to xlarge
-        printTextNameOnTextView(question_textview_1,"question_text1_L"); //1.3. QuestionTextView
-        //  ^ longer question text
-        printTextNameOnTextView(button_text_id,"button_text_blocked_L"); //1.5. SubmitButtonLayout
-        //  ^ longer button text
-        setTableLayoutOnLandscape(rbutton_table,rect);                   //3.1. CheckBoxLayout
-        //  ^ [SEE METHOD DESCRIPTION]
-    }
 
+    private void setViewDimsOnLandscape(Rect $rect){
+        // IN ORDER OF APPERANCE IN ROOT LAYOUT:
+        //                                                Q-Layout Structure -------|
+        //                                                Q-Layout--------------> Q.V. childView:
+        //                                                ==============================================
+        setTableLayoutOnLandscape(chkbox_table,$rect);                           //1.1. CheckBoxLayout
+        setTableLayoutOnLandscape(rbutton_table,$rect);                          //3.1. RadioButtonLayout
+        //  ^ [SEE METHOD DESCRIPTION]
+        TextView questionTextView1 =(TextView)findViewById(question_textview_1);//1.3. QuestionTextView
+        questionTextView1.setText(R.string.question_text1_L);
+    }
 
     /**{@linkplain #setActionBarParams(int, int, String)}
      * sets text&background color of the actionBar, adds in titleBar to AppName Q-layout name like:
@@ -600,8 +554,10 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setTitle(Html.fromHtml(htmlText));
         actionBar.setBackgroundDrawable(new ColorDrawable(backgroundColor));
     }
-    private int colourBetween(int color0, int color1, float propotion){
+    private int colourBetween(int color0_ResId, int color1_ResId, float propotion){
         //calculates the colour between color0 and color1 depending on propotion  and gives integer value of colour between.
+        int color0 = ResourcesCompat.getColor(getResources(),color0_ResId, null);
+        int color1 = ResourcesCompat.getColor(getResources(),color1_ResId, null);
         // min propotion=0 ==> colourBetween = color0;
         // max propotion=1 ==> colourBetween = color1;
         return  Color.rgb(  (int)((1-propotion)*Color.red(color0)  + propotion*Color.red(color1)),
@@ -611,21 +567,130 @@ public class MainActivity extends AppCompatActivity {
     }
     private String qlayoutTitle(int questionNo){
         //shows second part of Quiz App title.
-        if (questionNo==0)
-            return getResources().getString(R.string.Q0);
-        else
-            return "Question #"+questionNo;
+        switch (questionNo) {
+            case     0: return getResources().getString(R.string.Q0);
+            case    -1: return getResources().getString(R.string.QA);
+            default   : return "Question #"+questionNo;
+        }
     }
-    private void setScrollViewListener(final Rect rect){
-        // This Listener on scrollview height determines:
+    private int landscapeEnable(int portraitText){
+        // portraitText's entry name ends with "_P", this will change to "_L"
+        final char oChar; // orientation letter character = L|P
+
+        if (isDeviceLandscape()){
+            String s = getResources().getResourceEntryName(portraitText);
+            String landscapeTextString = s.substring(0,s.length()-1)+"L";
+            return getResources().getIdentifier(landscapeTextString,"string",getPackageName());
+        }
+        else  return portraitText;
+    }
+
+    /********** Build-in Listeners: ***************************************************************/
+    //  0.
+    //  1. setScrollViewListener
+    //  2. onCheckboxClicked(View)
+    //  3. onRadioButtonClicked(View)
+    //  4. showSoftKeyboard(View)
+
+
+    public void submitAnswer(View view) {
+        Toast.makeText(getApplicationContext(),"the answer for Question #"+ $questionNo + "\n has been submitted.", Toast.LENGTH_SHORT).show();
+        // Check-in that the question is answered:
+        $answeredQuestion[$questionNo - 1] = true;
+        // submit for Question 2 & 4 (EditText):
+        //if ($questionNo % 2 == 0) {
+        if (true) {
+            String viewStringId = "question_textview_" + $questionNo;
+            EditText editText = (EditText) findViewById(getResources().getIdentifier(viewStringId, "string", getPackageName()));
+           // String inputText = editText.getText().toString();
+
+            View focusedView = getCurrentFocus();
+
+            String IdAsString = focusedView.getResources().getResourceName(focusedView.getId());
+
+            Toast.makeText(getApplicationContext(),IdAsString, Toast.LENGTH_SHORT).show();
+
+            //if (inputText!="") {
+             //   InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+              //  imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            //}
+        }
+
+
+        /*if ($questionNo % 2 == 0) {
+            String viewStringId = "question_textview_" + $questionNo;
+            EditText editText = (EditText) findViewById(getResources().getIdentifier(viewStringId, "string", getPackageName()));
+
+            findViewById(android.R.id.content).setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Utils.hideSoftKeyboard(activity);
+                    return false;
+                }
+            });
+
+            if (editText.requestFocus()) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        }/*
+
+
+/*        LinearLayout submitButton = (LinearLayout) view;
+        EditText editText = (EditText) view;
+          if (editText.requestFocus()) {
+             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                   inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+          }
+
+/*        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        });
+
+        */
+        //editText.clearComposingText();
+        // EditText editText = (EditText) view;
+         //hides the softKeyboard
+//         editText.setFocusable(false);
+  //       editText.setFocusableInTouchMode(true);
+
+
+
+ //       view.setFocusable(false);
+         //view.setEnabled(false);
+        //editText.clearComposingText();
+
+    }
+
+    //Show the Input Method On Demand
+    public void showSoftKeyboard(View view) {
+        if (view.requestFocus()) {
+            InputMethodManager inputMethodManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+            // todo: set verical pos?
+
+            // setScrollViewVerticalPosition(($questionNo-1)*$rect.height());
+        }
+    }
+
+
+    private void setScrollViewListener(final Rect $rect){
+        // This Listener on scrollview's height determines:
         // - color of actionBar
         // - number of question (Q-layout) for test answer process
         // - state of submitButton (active, blocked, invisible etc.)
 
-        // scrollView as a second grandchild of rootView:
-        final ScrollView scrollView = (ScrollView)((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(1);
+        final ScrollView scrollView = (ScrollView) findViewById(scroll_view);
 
-        final int theHeight= rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
+        final int theHeight= $rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
 
         final int visibleQLayoutQuantity = ((LinearLayout)scrollView.getChildAt(0)).getChildCount()- 1; // ONE LESS!
         //from all Q-layouts (W+A + n*Q ) one Welcome, one Answer/(Results), n Questions  (layouts) [n = number of questions]
@@ -641,161 +706,79 @@ public class MainActivity extends AppCompatActivity {
 
         //Setting ScrollView Listener:
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+
+
             @Override
-             public void onScrollChanged() {
-
-                int questionNo =(int)Math.floor((scrollView.getScrollY()+emptyBottomViewHeightPx)/theHeight);// #question depending on the scrollview position
-                float questionFloat = (float)scrollView.getScrollY()/theHeight;             //  <0;N> "continuous question number"  N=number of questions
-                float relativePos =   questionFloat/theDenominator;                         // relativePos = <0;1> (relative position)
-                float sawWave = questionFloat-(int)Math.floor(questionFloat);               // = x -floor(x)
-                float triangleWave = 1-Math.abs((questionFloat%2) - 1);                     // = 1-|(x mod 2)-1| :::: 0 for Odd, 1 for Even but continuously.
-
-                setActionBarParams( 0,                                                                                  // text color = #00000000 = black
-                                    colourBetween(  ResourcesCompat.getColor(getResources(),R.color.colorEven, null),   // set background color
-                                                    ResourcesCompat.getColor(getResources(),R.color.colorOdd, null),    // between colorEven & colorOdd
-                                                    triangleWave                                                        // proportionally to triangleWave = <0;1>
-                                    )
-                                    ,qlayoutTitle(questionNo)                                                           // "Quiz App: Question #N
-                                    //+" :"+String.format("%.2f",sawWave)
-                                    +" :"+((EditText) findViewById(R.id.edit_text_2)).getText()
+            public void onScrollChanged() {
+                $verticalPosition = scrollView.getScrollY();
+                // $questionNo is a question number depending on the scrollview position:
+                // OFFSET: the question number [n] changes to higher number [n+1] earlier
+                // when scrolled up Q[n]-layout have still emptyBottomView visible on the screen top
+                $questionNo =(int)Math.floor(($verticalPosition       // scrollViewHeight
+                                +emptyBottomViewHeightPx  // offset
+                                )/theHeight               // scrollViewVerticalPosition
                 );
-                // Submit Button Appearance Rules
-                if (questionFloat<=0.6f) changeSubmitButtonState(SUBMIT_BUTTON_DISABLE); //"Scroll up" info in "Welcome" Q-layout
+                //    questionFloat = <0;N> "continuous question number" ; N=number of questions =4
+                float questionFloat = (float)$verticalPosition/theHeight;
+                //    relativePos   = <0;1>      (relative Scrollview position)
+                float relativePos   = questionFloat/theDenominator;                  // x=  0...1
+                float sawWave       = questionFloat -(int)Math.floor(questionFloat);// x - floor(x)
+                //    triangleWave  : 0 for Even, 1 for Odd but continuously.
+                float triangleWave  = 1 - Math.abs((questionFloat%2) - 1);       //  1-|(x mod 2)-1|
+                ////////////////////////////////////////////////////////////////////////////////////
+                //  triangleWave:                        //  sawWave:                             //
+                //  ^                                    //  ^                                    //
+                // 1|   1     3     5     7              // 1|   /|   /|   /|   /|                //
+                //  |  /\    /\    /\    /\              //  |  / |  / |  / |  / |  /             //
+                //  | /  \  /  \  /  \  /  \  /          //  | /  | /  | /  | /  | /              //
+                //  |/    \/    \/    \/    \/           //  |/   |/   |/   |/   |/               //
+                // 0|----------------------------->      // 0|----------------------------->      //
+                //  0     2     4|    6     8            //  0    1    2    3    4|               //
+                //                                       //                                       //
+                ////////////////////////////////////////////////////////////////////////////////////
+                float minOdd  = 0.05f;
+                float minEven = 0.15f;
+                float maxOdd  = 0.90f;//for Even Questions (CompoundButton)
+                float maxEven = 0.60f;//for Odd  Questions (EditText)
+
+                float min;      if($questionNo%2 == 0) min=minEven; else min=minOdd;
+                float max;      if($questionNo%2 == 0) max=maxEven; else max=maxOdd;
+
+                boolean isInvisible = (sawWave>min)&&(sawWave<max);
+                boolean disableForWelcome = (questionFloat<=0.9f);
+                boolean theLastQuestion =($questionNo==NUMBER_OF_QUESTIONS);
+                boolean keyboardAppears= ($verticalPosition!=theHeight);
+                //todo: ^ check if needed
+                //  FURTHER TEST CALCULATIONS:
+                String theText = answerQ1.questionScore() +" + "+ answerQ3.questionScore()+ " = " +String.valueOf(answerQ1.questionScore()+ answerQ3.questionScore());
+                //  END OF FURTHER TEST CALCULATIONS:
+
+                setActionBarParams( 0,                                                  // text color = #00000000 = black = 0
+                        colourBetween(R.color.color_even,R.color.color_odd,triangleWave)  // action bar color
+                        ,qlayoutTitle($questionNo)                                      // "Quiz App: Question #N
+                                //+" :"+String.format("%.2f",sawWave)                   // further text
+                                //+" :"+String.format("%.2f",questionFloat)
+                                //+" :"+theText
+                                +" :"+$verticalPosition
+                                +" :"+String.format("%.2f",$dimRatio)
+
+                        //                  ^ LAST LINE FOR SHOW UP VAR ON ACTION BAR (+string)
+                );
+                // Submit Button Appearance Rules:
+                if (disableForWelcome) changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);    //"Scroll up" info in "Welcome" Q-layout
                 else {
-                    if ((sawWave<0.95f)&&(sawWave>0.025f)) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //Active button appeares only when Q-layout is well visible.
-                        else
-                            if (questionNo==NUMBER_OF_QUESTIONS)                                             // For the last question:
-                                    changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);         // no arrow image & text changed
-                            else    changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);                           //
+                    if (isInvisible) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //Active button appeares only when Q-layout is well visible.
+                    else
+                    if (false)
+                        changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);
+                    else
+                        changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
                 }
-                if (scrollView.getHeight()!=theHeight) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //button dissapears when keyboard appears
-                //TODO: sth else ????
+                //if (keyboardAppears) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE);
+                    //TODO: sth else ????
             }
         });
     }
-    private void changeSubmitButtonState(int buttonState){
-        // buttonState =
-        // 0 SUBMIT_BUTTON_DISABLE
-        // 1 SUBMIT_BUTTON_ACTIVE
-        // 2 SUBMIT_BUTTON_INVISIBLE
-        // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION
-        // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED
-        final LinearLayout submitButton = (LinearLayout)((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
-        final TextView submitButtonText  = (TextView) submitButton.getChildAt(0);
-        final ImageView submitButtonImage  = (ImageView) submitButton.getChildAt(1);
-        int submitButtonPadding=getResources().getDimensionPixelSize(getResources().getIdentifier("margin","dimen", getPackageName()));
-        char oChar;
-        if (isDeviceLandscape()) oChar='L'; else oChar='P';
-        switch (buttonState) {
-            case 0: submitButton.setClickable(false);
-                    submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
-                    submitButtonText.setText(getResources().getIdentifier("button_text_blocked_"+oChar,"string",getPackageName()));
-                    submitButtonImage.setVisibility(View.VISIBLE);
-                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
-                break;
-            case 1: submitButton.setClickable(true);
-                    submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
-                    submitButtonText.setText(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
-                    submitButtonImage.setVisibility(View.VISIBLE);
-                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
-                break;
-            case 2: submitButton.setClickable(false);
-                    submitButton.setEnabled(false);
-                    submitButton.setVisibility(View.GONE);
-                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
-                    submitButtonImage.setVisibility(View.VISIBLE);
-                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp); //arrow down
-                break;
-            case 3: submitButton.setClickable(true);
-                    submitButton.setEnabled(true);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setPadding(submitButtonPadding,0,submitButtonPadding,0); // no arrow image
-                    submitButtonText.setText(getResources().getIdentifier("button_text_lastq_"+oChar,"string",getPackageName()));
-                    submitButtonImage.setVisibility(View.GONE); // no arrow image
-                break;
-            case 4: submitButton.setClickable(false);
-                    submitButton.setEnabled(false);
-                    submitButton.setVisibility(View.VISIBLE);
-                    submitButton.setPadding(submitButtonPadding,0,0,0); //like in activity_main.xml
-                    submitButtonText.setText(getResources().getIdentifier("button_text_end_"+oChar,"string",getPackageName()));
-                    submitButtonImage.setVisibility(View.VISIBLE);
-                    submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_bottom_black_24dp); //arrow up
-                break;
-        }
-    }
-    private void allQuestionsAnswered() {
-        changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
-    }
-    private void setOnClickListenerOnActiveSubmitButton() {
-        // buttonState =
-        // 0 SUBMIT_BUTTON_DISABLE                      (ACTIVE)
-        // 1 SUBMIT_BUTTON_ACTIVE                       (ACTIVE)
-        // 2 SUBMIT_BUTTON_INVISIBLE
-        // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION     (ACTIVE)
-        // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED
-        final LinearLayout submitButton = (LinearLayout) ((ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
-        final TextView submitButtonText = (TextView) submitButton.getChildAt(0);
-
-        //char oChar; if (isDeviceLandscape())  oChar='L'; else  oChar='P'; //orientation letter L or P
-        // String  myString = getString(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
-        // All are active which have text "SUBMIT"
-        if (((String) submitButtonText.getText()).contains("SUBMIT")) { // the button is ACTIVE
-            // TODO sth
-        }
-    }
-
-    // sets selection state of the compound button to its counterpart (twin) in other orientation mode
-    // e.g.: when the state of A12L checkbox is changed (/un/checked) in landscape mode,
-    // the same state is set for "twin" checkbox A12P visible in portrait mode.
-    private void twinCompoundButtonSelectionSynchro(View theCompoundButton) {
-        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
-        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
-        // but for changing orientation they have to have the same state
-        // (there is 4 answers, but 6 compound buttons)
-        // ------------------------------------------------------------------------------------
-        // |1|2|     |1|     |1|2|            2: (i,j): (0,1)->(2,0)
-        // |3|4| ==> |3|  or |3|4|@Landscape  4: (i,j): (1,1)->(3,0)
-        // |2|       |2|                      2: (i,j): (2,0)->(0,1)
-        // |4|       |4|@Portrait             4: (i,j): (3,0)->(1,1)
-        //                                              (i,j)-------->( (i+6)mod 4,(j+3)mod 2 )
-        // METHOD FOR NON-DUPLICATED BUTTONS DOES NOTHING, SO IT CAN BE USED FOR ALL CB'S
-        // ------------------------------------------------------------------------------------
-        boolean isSelected = ((CompoundButton)theCompoundButton).isChecked();
-        // finds its parent and grandparent view:
-        TableRow tableRow = (TableRow) theCompoundButton.getParent();
-        TableLayout tableLayout = (TableLayout) tableRow.getParent();
-
-        int j = tableRow.indexOfChild(theCompoundButton);
-        int i = tableLayout.indexOfChild(tableRow);
-
-        if((i<2) && (j==0)) return; //buttons for answers #1 & #3 don't have duplicates
-
-        TableRow tableRowO = (TableRow) tableLayout.getChildAt((i+6)%4);
-        CompoundButton theCompoundButtonO = (CompoundButton) tableRowO.getChildAt((j+3)%2);
-        theCompoundButtonO.setChecked(isSelected);
-    }
-
-    private void uncheckOtherRadioButtons(View theRadioButton) {
-        // finds its parent and grandparent view:
-        TableRow tableRow = (TableRow) theRadioButton.getParent();
-        TableLayout tableLayout = (TableLayout) tableRow.getParent();
-        // Loops search through the grandchildren od the tableLayout:
-        TableRow  loopTableRow;
-        RadioButton loopRadioButton;
-        for (int i=0; i<tableLayout.getChildCount(); i++) {
-            loopTableRow = (TableRow) tableLayout.getChildAt(i);
-            for (int j=0; j<loopTableRow.getChildCount(); j++) {
-                 loopRadioButton = (RadioButton) loopTableRow.getChildAt(j);
-                //unchecks all other radioButtons than theRadioButton.
-                loopRadioButton.setChecked((loopRadioButton == theRadioButton));
-            }
-        }
-    }
-
     public void onCheckboxClicked(View view) {
         // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
         // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
@@ -869,42 +852,299 @@ public class MainActivity extends AppCompatActivity {
         twinCompoundButtonSelectionSynchro(view);
     }
 
+    /*END OF:** Build-in Listeners: ****************************************************************/
+
+    /********** Scrollview Text & CompoundButton Input Methods: ************************************/
+
+    // sets selection state of the compound button to its counterpart (twin) in other orientation mode
+
+    private void twinCompoundButtonSelectionSynchro(View theCompoundButton) {
+        // e.g.: when the state of A12L checkbox is changed (/un/checked) in landscape mode,
+        // the same state is set for "twin" checkbox A12P visible in portrait mode.
+        //
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
+        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
+        // but for changing orientation they have to have the same state
+        // (there is 4 answers, but 6 compound buttons)
+        // ------------------------------------------------------------------------------------
+        // |1|2|     |1|     |1|2|            2: (i,j): (0,1)->(2,0)
+        // |3|4| ==> |3|  or |3|4|@Landscape  4: (i,j): (1,1)->(3,0)
+        // |2|       |2|                      2: (i,j): (2,0)->(0,1)
+        // |4|       |4|@Portrait             4: (i,j): (3,0)->(1,1)
+        //                                              (i,j)-------->( (i+6)mod 4,(j+3)mod 2 )
+        // METHOD FOR NON-DUPLICATED BUTTONS DOES NOTHING, SO IT CAN BE USED FOR ALL CB'S
+        // ------------------------------------------------------------------------------------
+        boolean isSelected = ((CompoundButton)theCompoundButton).isChecked();
+        // finds its parent and grandparent view:
+        TableRow tableRow = (TableRow) theCompoundButton.getParent();
+        TableLayout tableLayout = (TableLayout) tableRow.getParent();
+
+        int j = tableRow.indexOfChild(theCompoundButton);
+        int i = tableLayout.indexOfChild(tableRow);
+
+        if((i<2) && (j==0)) return; //buttons for answers #1 & #3 don't have duplicates
+
+        TableRow tableRowO = (TableRow) tableLayout.getChildAt((i+6)%4);
+        CompoundButton theCompoundButtonO = (CompoundButton) tableRowO.getChildAt((j+3)%2);
+        theCompoundButtonO.setChecked(isSelected);
+    }
+
+    private void uncheckOtherRadioButtons(View theRadioButton) {
+        // finds its parent and grandparent view:
+        TableRow tableRow = (TableRow) theRadioButton.getParent();
+        TableLayout tableLayout = (TableLayout) tableRow.getParent();
+        // Loops search through the grandchildren od the tableLayout:
+        TableRow  loopTableRow;
+        RadioButton loopRadioButton;
+        for (int i=0; i<tableLayout.getChildCount(); i++) {
+            loopTableRow = (TableRow) tableLayout.getChildAt(i);
+            for (int j=0; j<loopTableRow.getChildCount(); j++) {
+                loopRadioButton = (RadioButton) loopTableRow.getChildAt(j);
+                //unchecks all other radioButtons than theRadioButton.
+                loopRadioButton.setChecked((loopRadioButton == theRadioButton));
+            }
+        }
+    }
+
+    private void setAllCompoundButtonsEnabled(int tableLayoutResId, boolean isEnabled) {
+        // finds its parent and grandparent view:
+        TableLayout tableLayout = (TableLayout) findViewById(tableLayoutResId);
+        // Loops search through the grandchildren od the tableLayout:
+        TableRow  loopTableRow;
+        CompoundButton loopCompoundButton;
+        for (int i=0; i<tableLayout.getChildCount(); i++) {
+            loopTableRow = (TableRow) tableLayout.getChildAt(i);
+            for (int j=0; j<loopTableRow.getChildCount(); j++) {
+                loopCompoundButton = (CompoundButton) loopTableRow.getChildAt(j);
+                //enables all compoundButtons in tableLayout.
+                loopCompoundButton.setClickable(isEnabled);
+            }
+        }
+    }
+
+    private void setEditViewEnabled(int editTextResId, boolean isEnabled) {
+        EditText editText = (EditText) findViewById(editTextResId);
+        if (isEnabled)
+            //disables text-autocomplete not to suggest the answer
+            editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        else
+            editText.setInputType(InputType.TYPE_NULL);
+    }
+
+    public void setAllInputsEnabled (boolean isEnabled) {
+        // if  ANSWERED_QUESTION[N-1] is TRUE (question finally answered by pressin submit button)
+        //     then editable part of Nth Q-layout cannot be edited/(un)checked/toggled
+        if (!$answeredQuestion[0]) setAllCompoundButtonsEnabled(chkbox_table,isEnabled);
+        if (!$answeredQuestion[1]) setEditViewEnabled(edit_text_2,isEnabled);
+        if (!$answeredQuestion[2]) setAllCompoundButtonsEnabled(rbutton_table,isEnabled);
+        if (!$answeredQuestion[3]) setEditViewEnabled(edit_text_4,isEnabled);
+    }
+    /*END OF:** Scrollview Text & CompoundButton Input Methods: ************************************/
+
+    /********** The Submit Button Methods **********************************************************/
+    private void changeSubmitButtonState(int buttonState){
+        // 0 SUBMIT_BUTTON_DISABLED                     (no editing)(Even Numbers)
+        // 1 SUBMIT_BUTTON_ACTIVE                       (Listener)  (Odd numbers)
+        // 2 SUBMIT_BUTTON_INVISIBLE                    (no editing)
+        // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION     (Listener)
+        // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED       (no editing)
+        // 5 SUBMIT_BUTTON_EXIT                         (Listener)
+        //
+        // SubmitButton IS LINEAR LAYOUT !!!
+        //
+        final LinearLayout submitButton = (LinearLayout)findViewById(R.id.submit_button);
+        final TextView submitButtonText    =  (TextView) submitButton.getChildAt(0);
+        final ImageView submitButtonImage  = (ImageView) submitButton.getChildAt(1);
+        final int submitButtonPadding=getResources().getDimensionPixelSize(R.dimen.margin);
+
+        //setEnabled(false) makes a View non-clickable AND non-focusable = completely locked
+        // padding: (Left, Top, Right, Bottom)
+
+
+        // 1. Button locked/unlocked state:
+
+        submitButtonImage.setVisibility(ImageView.VISIBLE);//recovering visibility after GONE
+        submitButton.setPadding(submitButtonPadding,0,0,0); // with image, no R-padding
+
+        submitButton.setClickable((buttonState!=SUBMIT_BUTTON_DISABLED)); //locked for that 0 state.
+
+        if (buttonState==SUBMIT_BUTTON_INVISIBLE)
+            submitButton.setVisibility(LinearLayout.GONE);
+        else
+            submitButton.setVisibility(LinearLayout.VISIBLE);
+
+        if (buttonState==SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION){
+            submitButton.setPadding(submitButtonPadding,0,submitButtonPadding,0); // no arrow image, R-padding
+            submitButton.setMinimumHeight(submitButton.getHeight());//keeps the old height with no image.
+            submitButtonImage.setVisibility(ImageView.GONE);
+        }
+        if (buttonState==SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED) {
+            submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp);//arrow up
+            //submitButtonImage.setPadding(0,submitButtonPadding, 0, 0); //top padding to center the arrow ic.
+        }
+
+        // 2. Button landscape orientation text change to longer strings:
+        switch (buttonState) {
+            case SUBMIT_BUTTON_DISABLED://0
+                submitButtonText.setText(landscapeEnable(button_text_disabled_P));
+                break;
+            case SUBMIT_BUTTON_ACTIVE://1
+                submitButtonText.setText(landscapeEnable(button_text_active_P));
+                break;
+            case SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION://3
+                submitButtonText.setText(landscapeEnable(button_text_lastq_P));
+                break;
+            case SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED://4
+                submitButtonText.setText(landscapeEnable(button_text_end_P));
+                break;
+            case SUBMIT_BUTTON_EXIT://5
+                submitButtonText.setText(landscapeEnable(button_text_exit_P));
+                break;
+        }//endswitch
+
+        // 3. When the submit button is disabled, all input views are disabled too:
+        //    When the submit button is enabled, all input views are enabled too:
+        //    Disabling happens for odd changeSubmitButtonState's numbers,enabling for even.
+        setAllInputsEnabled(buttonState%2 != 0);
+    }
+
+    private void setOnClickListenerOnActiveSubmitButton() {
+        // buttonState =
+        // 0 SUBMIT_BUTTON_DISABLED                     (no editing)(Even Numbers)
+        // 1 SUBMIT_BUTTON_ACTIVE                       (Listener)  (Odd numbers)
+        // 2 SUBMIT_BUTTON_INVISIBLE                    (no editing)
+        // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION     (Listener)
+        // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED       (no editing)
+        // 5 SUBMIT_BUTTON_EXIT                         (Listener)
+        final LinearLayout submitButton = (LinearLayout) ((ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
+        final TextView submitButtonText = (TextView) submitButton.getChildAt(0);
+
+        //char oChar; if (isDeviceLandscape())  oChar='L'; else  oChar='P'; //orientation letter L or P
+        // String  myString = getString(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
+        // All are active which have text "SUBMIT"
+        if (((String) submitButtonText.getText()).contains("SUBMIT")) { // the button is ACTIVE
+            // TODO sth
+        }
+    }
+    /*END OF:** The Submit Button Methods **********************************************************/
+
+    private void allQuestionsAnswered() {
+        //TODO: needed?
+        changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+    }
+
+    private void setScrollViewVerticalPosition(int verticalPosition) {
+        final ScrollView scrollView = (ScrollView) findViewById(scroll_view);
+        scrollView.scrollTo(0,verticalPosition);
+    }
+
+    public int $verticalPosition=0;
+    public float $dimRatio=0;
+    // todo: has to be used to keep scroll pos, NO LET'S REMOVE IT!!!, KEEP ONLY $rect & $questionNo & $answeredQuestion .
+     //
+
+
+    // GLOBAL VARIABLES ($var) of Main Activity:
+    private static Rect $rect = RECT; // all zeros
+    //                          $rect = (0   ,0  , theWidth, theHeight)
+    //                          $rect = (left,top, right   , bottom   )
+    // $rect.width() = THE_WIDTH ; $rect.height() = THE_HEIGHT (scrollView)
+    private static int $theWidth  =0; //$theWidth is the height of the scrollView.
+    private static int $theHeight =0; //$theHeight is the height of the scrollView.
+    private static int $questionNo=0; //$questionNo is a current Question#, depends on scrollView position.
+
+    private static boolean[] $answeredQuestion = INIT_ANSWERED_QUESTION;
+    //                $answeredQuestion[index] is TRUE
+    //                          when (index +1) is a number od answered question ( index = 0..3 ).
+
+
+
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(THE_WIDTH, $theWidth);
+        outState.putInt(THE_HEIGHT, $theHeight);
+        outState.putInt(QUESTION_NO, $questionNo);
+        outState.putBooleanArray(ANSWERED_QUESTION, $answeredQuestion);
+    }//END_OF onSaveInstanceState
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        $theWidth = savedInstanceState.getInt(THE_WIDTH);
+        $theHeight = savedInstanceState.getInt(THE_HEIGHT);
+        $questionNo = savedInstanceState.getInt(QUESTION_NO);
+        $answeredQuestion = savedInstanceState.getBooleanArray(ANSWERED_QUESTION);
+    }//END_OF onRestoreInstanceState
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // sets main_activity layout
         setContentView(activity_main);
+        //           $rect = (0   ,0  , $theWidth, $theHeight) ; $rect.getWidth()  = $theWidth
+        //           $rect = (left,top, right    , bottom    ) ; $rect.getHeight() = $theHeight
+        $rect = new   Rect    (0   ,0  , $theWidth, $theHeight);
 
         setActionBarParams( ResourcesCompat.getColor(getResources(),R.color.actionBarText, null),   //sets text color, can be set to 0 as black
-                            ResourcesCompat.getColor(getResources(),R.color.colorEven, null),       //sets background color
+                            ResourcesCompat.getColor(getResources(),R.color.color_even, null),       //sets background color
                             getResources().getString(R.string.Q0) // "Quiz App: Welcome!"
         );
-        Rect rect = calculateAndSetQlayoutDims();                   // rect is width & height of every Q-layout.
-        if (isDeviceLandscape()) {setViewDimsOnLandscape(rect);}    // tableLayouts width recalculated
-        // Listener On scrollview to calculate its height position and and use the scroll movement as main argument for other actions as choosing Q-layout or colors...
-        setScrollViewListener(rect);
-        //changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+
+        // todo check what have to be passed really... (W x H) : calculateAndSetQlayoutDims()
+        $rect = calculateAndSetQlayoutDims();  // $rect is width & height of every Q-layout.
+        $dimRatio = (float)$rect.width()/$rect.height();
+
+        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);}    // tableLayouts width recalculated
+        setScrollViewListener($rect);// $rect = (width & height)
+//todo: FINISH:
+
+        // If we have a saved state then we can restore it now
+        if (savedInstanceState != null) {
+            $questionNo = savedInstanceState.getInt(QUESTION_NO, 0);
+        }
+
+        String viewStringId = "Qlayout_" + $questionNo;
+
+        Toast.makeText(getApplicationContext(),viewStringId, Toast.LENGTH_SHORT).show();
+
+        View theView =findViewById(getResources().getIdentifier(viewStringId,"string",getPackageName()));
+
+
+        //.requestFocus();
+        //theView.requestFocus();
+
+        //Listeners:
+
+        // Listener On scrollview to calculate its height position
+        // and and use the scroll movement as main argument for other actions
+        // as choosing Q-layout or colors...
+
+        //showSoftKeyboard(findViewById(R.id.edit_text_4)); //                          (Question #4)
+
+        RadioButton A31 = (RadioButton) findViewById(R.id.A31); // first radiobutton
+        onRadioButtonClicked(               A31 ); // Listener on rbutton_table         (Question #3)
+        A31.setChecked(false);
+//      ^
+        // firstRadioButton A31 is then automatically on before focus,
+        // so it is had to be unchecked to have all radiobuttons off.
+        // all unchecked radiobuttons don't suggest any answer.
+
+        //showSoftKeyboard(findViewById(R.id.edit_text_2)); //                          (Question #2)
+        onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table          (Question #1)
+        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
         //allQuestionsAnswered();
-        onCheckboxClicked(findViewById(R.id.A11));      // Question #1
-        onRadioButtonClicked(findViewById(R.id.A31));   // Question #3
 
-        // "1" or "3": checks which question checkbox or radiobutton.
-        Toast.makeText(getApplicationContext(),((EditText) findViewById(R.id.edit_text_2)).getText(),Toast.LENGTH_LONG).show();
-    }
-}
+
+    }//END_OF OnCreate
+}//END_OF MainActivity
  /*
-
-       ViewGroup.LayoutParams layoutParams = mDescriptionScrollView.getLayoutParams();
-            layoutParams.height = scrollViewHeight;
-
-rootLayout.getHeight() < rootLayout.getRootView().getHeight() - getStatusBarHeight()
 
        int questionNumber=1;
                 if ((questionNumber & 1) == 0)
                 //  if questionNumber is even
-                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorEven))); }
-                //  then actionBar has colorEven
+                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.color_even))); }
+                //  then actionBar has color_even
                 else
-                //  else actionBar has colorOdd
-                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorOdd)));  }
+                //  else actionBar has color_odd
+                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.color_odd)));  }
+
 */
