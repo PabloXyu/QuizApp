@@ -18,7 +18,8 @@
         <item name="android:gravity">bottom</item>
         <item name="android:clickable">true</item>
         <item name="android:focusableInTouchMode">true</item>
-        <item name="android:focusable">false</item>
+        <item name="android:focusable">true</item>
+        <item name="android:duplicateParentState">true</item>
         <item name="android:orientation">vertical</item>
     </style>
     <style name="TableLayoutStyle">
@@ -63,11 +64,13 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:inputType">textVisiblePassword</item>
-        <item name="android:singleLine">true</item>
+        <item name="android:singleLine">false</item>
         <item name="android:privateImeOptions">nm</item>
         <item name="android:hint">@string/H2</item>
         <!--item name="android:textColor">@color/color_select</item -->
         <item name="android:orientation">vertical</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:selectAllOnFocus">false</item>
     </style>
     <style name="theButtonStyle" parent="@style/Widget.AppCompat.Button">
         <item name="android:layout_alignParentBottom">true</item>

@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.support.v7.app.ActionBar;
 import android.widget.Toast;
 
+import static android.os.Build.VERSION_CODES.N;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_CB_ANSWERS;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_ET_ANSWERS;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
@@ -118,8 +119,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String THE_WIDTH  ="$theWidth";
     private static final String THE_HEIGHT ="$theHeight";
     private static final String QUESTION_NO="$questionNo";
+    private static final String QUESTION_FLOAT="$questionFloat";
     private static final String ANSWERED_QUESTION="$answeredQuestion";
-
+    private static final String VERTICAL_POSITION="$verticaPosition";
     public static final int[] SCORES_Q1 = {1,1,1,1};//4 checkboxes, 4 right answers
     public static final int[] SCORES_Q2 = {2,2};    //2 right answers editable
     public static final int[] SCORES_Q3 = {0,3,0,0};//4 radiobuttons, 1 right answer
@@ -377,12 +379,12 @@ public class MainActivity extends AppCompatActivity {
      * @see #isDeviceLandscape()                                                @returns boolean
      * @see #printTextOnTextView(String textView_id_name, String text)
      * @see #printTextNameOnTextView(String textView_id_name, String text_name)
-     * @see #calculateAndSetQlayoutDims()                                                      @returns $rect
+     * @see #calculateAndSetQlayoutDims()                                       @returns $rect
      * @see #setMyActionBar(String linearLayoutIdName)
      * @see #setAllViewDims()
-     * @see #setTableLayoutOnLandscape(String tableLayout_id_name, $rect $rect)
+     * @see #setTableLayoutOnLandscape(String tableLayout_id_name, Rect $rect)
      * @see #setTextSizeOnTextView(String textView_id_name, String dimen_name)
-     * @see #setViewDimsOnLandscape($rect $rect)
+     * @see #setViewDimsOnLandscape(Rect $rect)
      */
 
     /**{@linkplain #isDeviceLandscape
@@ -398,11 +400,11 @@ public class MainActivity extends AppCompatActivity {
      *  A weight method for proportional children under ScrollView not possible.
      *  ScrollView must have one child, Q-layouts (of the same size) are grandchildren.
      *  After calculation equal height for each Q-layout is set. 
-     *  Later, the width of Q-layout in $rect is used to set othe views values in landscape mode. 
+     *  Later, the width of Q-layout in $rect is used to set other view values in landscape mode.
      */
     private Rect calculateAndSetQlayoutDims() {
         //
-        // 1.: $rect (0,
+        // 1.: $rect 0,
         // 2.:       0,
         // 3.:       Q-layout width,
         // 4.:       Q-layout height)
@@ -435,6 +437,7 @@ public class MainActivity extends AppCompatActivity {
             layoutParams.height = qLayoutHeight;                        // gets the height
             linearLayout.getChildAt(i).setLayoutParams(layoutParams);   // sets the height
         }
+
         return new  Rect(0,0, qLayoutWidth, qLayoutHeight);
     }
 
@@ -554,6 +557,14 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setTitle(Html.fromHtml(htmlText));
         actionBar.setBackgroundDrawable(new ColorDrawable(backgroundColor));
     }
+
+    private int setQcolor(int questionNo) {
+        //questionNo #0 is "Welcome"
+        if(questionNo%2==0)
+            return  ResourcesCompat.getColor(getResources(), R.color.color_even, null);
+        else
+            return  ResourcesCompat.getColor(getResources(), R.color.color_odd, null);
+    }
     private int colourBetween(int color0_ResId, int color1_ResId, float propotion){
         //calculates the colour between color0 and color1 depending on propotion  and gives integer value of colour between.
         int color0 = ResourcesCompat.getColor(getResources(),color0_ResId, null);
@@ -565,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
                             (int)((1-propotion)*Color.blue(color0) + propotion*Color.blue(color1))
         );
     }
-    private String qlayoutTitle(int questionNo){
+    private String qLayoutTitle(int questionNo){
         //shows second part of Quiz App title.
         switch (questionNo) {
             case     0: return getResources().getString(R.string.Q0);
@@ -586,12 +597,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /********** Build-in Listeners: ***************************************************************/
+    //Listeners:
+
+    // Listener On scrollview to calculate its height position
+    // and and use the scroll movement as main argument for other actions
+    // as choosing Q-layout or colors...
+
     //  0.
     //  1. setScrollViewListener
     //  2. onCheckboxClicked(View)
     //  3. onRadioButtonClicked(View)
     //  4. showSoftKeyboard(View)
-
 
     public void submitAnswer(View view) {
         Toast.makeText(getApplicationContext(),"the answer for Question #"+ $questionNo + "\n has been submitted.", Toast.LENGTH_SHORT).show();
@@ -608,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
 
             String IdAsString = focusedView.getResources().getResourceName(focusedView.getId());
 
-            Toast.makeText(getApplicationContext(),IdAsString, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),IdAsString, Toast.LENGTH_SHORT).show();
 
             //if (inputText!="") {
              //   InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -674,15 +690,10 @@ public class MainActivity extends AppCompatActivity {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-            // todo: set verical pos?
-
-            // setScrollViewVerticalPosition(($questionNo-1)*$rect.height());
         }
     }
 
-
-    private void setScrollViewListener(final Rect $rect){
+    private void setScrollViewListener(){
         // This Listener on scrollview's height determines:
         // - color of actionBar
         // - number of question (Q-layout) for test answer process
@@ -690,36 +701,60 @@ public class MainActivity extends AppCompatActivity {
 
         final ScrollView scrollView = (ScrollView) findViewById(scroll_view);
 
-        final int theHeight= $rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
+        $theHeight= $rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
 
         final int visibleQLayoutQuantity = ((LinearLayout)scrollView.getChildAt(0)).getChildCount()- 1; // ONE LESS!
         //from all Q-layouts (W+A + n*Q ) one Welcome, one Answer/(Results), n Questions  (layouts) [n = number of questions]
         // there is always one layout invisible: At the beginning answer-layout, then at the end - welcome-layout.
 
-        final int theDenominator = visibleQLayoutQuantity - 1; //(Scrolling Y-coordinate position have always offset=-theHeight)
+        final int theDenominator = visibleQLayoutQuantity - 1; //(Scrolling Y-coordinate position have always offset=-$theHeight)
         // Here the denominator is always equal to number of questions.(only because one Welcome/Answer layout is always GONE/VISIBLE)
         // This case: 6 vertical layouts in scrollview: only 5 always visible, but counted from 0 to 4.
         // 6 = getChildCount(), 5=visibleQLayoutQuantity, 4=theDenominator
 
-        // height of "pink" bottom view (@+id/empty_view_xB) being "a background" for submit_button.
+        // height of the lowest, bottom view of Q-layout(@+id/empty_view_xB) being "a background" for submit_button.
         final int emptyBottomViewHeightPx = (int)getResources().getDimension(R.dimen.bottom_view_height);
+        final float offset = (float) emptyBottomViewHeightPx/$theHeight;
 
         //Setting ScrollView Listener:
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            boolean wasntUsedBefore = true;
 
-
+            // this method used only once at the beginning in onScrollChanged listener.
+            // before setScrollViewListener()
+            public void showAllQlayouts() {
+                ScrollView scrollView = (ScrollView) findViewById(scroll_view);
+                LinearLayout linearLayout = (LinearLayout)scrollView.getChildAt(0);
+                // 0 = Answer Qlayout   -1
+                // 1 = Welcome Qlayout   0
+                // i = Qlayout Question #N --> index = N+1 (childView no)
+                // 5 = Qlayout Question #4
+                // ^                     ^------Question Number
+                // |--------------------------- index if a childView.
+                for (int i=1;i<NUMBER_OF_QUESTIONS+2;i++)
+                {(linearLayout.getChildAt(i)).setVisibility(View.VISIBLE);}
+                // all views except  A-layout are VISIBLE !.
+            }
             @Override
             public void onScrollChanged() {
+                if (wasntUsedBefore) {
+                    $theHeight = $rect.height();
+                //^todo: check if ^^^ that line is needed...
+                    showAllQlayouts(); // all layouts (except Answer-layout) are visible
+                }// ^ that stuff is executed only once at the beginning in onScrollChanged listener.
+                 else
+                    wasntUsedBefore = false;
+
                 $verticalPosition = scrollView.getScrollY();
                 // $questionNo is a question number depending on the scrollview position:
                 // OFFSET: the question number [n] changes to higher number [n+1] earlier
                 // when scrolled up Q[n]-layout have still emptyBottomView visible on the screen top
                 $questionNo =(int)Math.floor(($verticalPosition       // scrollViewHeight
                                 +emptyBottomViewHeightPx  // offset
-                                )/theHeight               // scrollViewVerticalPosition
+                        )/$theHeight               // scrollViewVerticalPosition
                 );
                 //    questionFloat = <0;N> "continuous question number" ; N=number of questions =4
-                float questionFloat = (float)$verticalPosition/theHeight;
+                float questionFloat = (float)$verticalPosition/$theHeight;
                 //    relativePos   = <0;1>      (relative Scrollview position)
                 float relativePos   = questionFloat/theDenominator;                  // x=  0...1
                 float sawWave       = questionFloat -(int)Math.floor(questionFloat);// x - floor(x)
@@ -738,45 +773,43 @@ public class MainActivity extends AppCompatActivity {
                 ////////////////////////////////////////////////////////////////////////////////////
                 float minOdd  = 0.05f;
                 float minEven = 0.15f;
-                float maxOdd  = 0.90f;//for Even Questions (CompoundButton)
-                float maxEven = 0.60f;//for Odd  Questions (EditText)
+                float maxOdd  = 0.90f;//for Even Questions (EditText)
+                float maxEven = 0.60f;//for Odd  Questions (CompoundButton)
 
+                //not working for $questionNo=0, but not needed for zero.
                 float min;      if($questionNo%2 == 0) min=minEven; else min=minOdd;
                 float max;      if($questionNo%2 == 0) max=maxEven; else max=maxOdd;
 
                 boolean isInvisible = (sawWave>min)&&(sawWave<max);
-                boolean disableForWelcome = (questionFloat<=0.9f);
+                boolean disableForWelcome = ($questionFloat<=0.9f);
                 boolean theLastQuestion =($questionNo==NUMBER_OF_QUESTIONS);
-                boolean keyboardAppears= ($verticalPosition!=theHeight);
                 //todo: ^ check if needed
                 //  FURTHER TEST CALCULATIONS:
-                String theText = answerQ1.questionScore() +" + "+ answerQ3.questionScore()+ " = " +String.valueOf(answerQ1.questionScore()+ answerQ3.questionScore());
                 //  END OF FURTHER TEST CALCULATIONS:
 
                 setActionBarParams( 0,                                                  // text color = #00000000 = black = 0
-                        colourBetween(R.color.color_even,R.color.color_odd,triangleWave)  // action bar color
-                        ,qlayoutTitle($questionNo)                                      // "Quiz App: Question #N
+                        colourBetween(R.color.color_even,R.color.color_odd,triangleWave)// action bar color
+                        ,qLayoutTitle($questionNo)                                      // "Quiz App: Question #N
                                 //+" :"+String.format("%.2f",sawWave)                   // further text
-                                //+" :"+String.format("%.2f",questionFloat)
-                                //+" :"+theText
                                 +" :"+$verticalPosition
-                                +" :"+String.format("%.2f",$dimRatio)
-
-                        //                  ^ LAST LINE FOR SHOW UP VAR ON ACTION BAR (+string)
+                                +"/" +$theHeight
+                                +":"+String.format("%.2f",$questionFloat)
+                                // ^ LAST LINE FOR SHOW UP VAR ON ACTION BAR (+string)
                 );
+
                 // Submit Button Appearance Rules:
                 if (disableForWelcome) changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);    //"Scroll up" info in "Welcome" Q-layout
                 else {
                     if (isInvisible) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //Active button appeares only when Q-layout is well visible.
                     else
-                    if (false)
-                        changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);
-                    else
-                        changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
-                }
+                        if (false)
+                            changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);
+                        else
+                            changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
+                    }
                 //if (keyboardAppears) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE);
                     //TODO: sth else ????
-            }
+            }//ENDOF onScrollChanged()
         });
     }
     public void onCheckboxClicked(View view) {
@@ -960,7 +993,6 @@ public class MainActivity extends AppCompatActivity {
         //setEnabled(false) makes a View non-clickable AND non-focusable = completely locked
         // padding: (Left, Top, Right, Bottom)
 
-
         // 1. Button locked/unlocked state:
 
         submitButtonImage.setVisibility(ImageView.VISIBLE);//recovering visibility after GONE
@@ -1026,45 +1058,100 @@ public class MainActivity extends AppCompatActivity {
             // TODO sth
         }
     }
-    /*END OF:** The Submit Button Methods **********************************************************/
+    /*END OF:** The Submit Button Methods *********************************************************/
 
     private void allQuestionsAnswered() {
         //TODO: needed?
         changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
     }
+    /****************************** show-and-hide Q-layout methods: *******************************/
 
-    private void setScrollViewVerticalPosition(int verticalPosition) {
-        final ScrollView scrollView = (ScrollView) findViewById(scroll_view);
-        scrollView.scrollTo(0,verticalPosition);
+    // 1. Leaves only one Q-layout for given questionNo
+    private void showOneQlayout(int questionNo) {
+        ScrollView scrollView = (ScrollView) findViewById(scroll_view);
+        LinearLayout linearLayout = (LinearLayout)scrollView.getChildAt(0);
+        // 0 = Answer Qlayout   -1
+        // 1 = Welcome Qlayout   0
+        // i = Qlayout Question #N --> index = N+1 (childView no)
+        // 5 = Qlayout Question #4
+        // ^                     ^------Question Number
+        // |--------------------------- index if a childView.
+        for (int N=-1;N<=NUMBER_OF_QUESTIONS;N++)
+        {if (N!=questionNo) (linearLayout.getChildAt(N+1)).setVisibility(View.GONE);}
+        for (int N=0;N<=NUMBER_OF_QUESTIONS;N++)
+        {(linearLayout.getChildAt(N+1)).setVisibility(View.VISIBLE);}
+        // all views except Q-layout #N are GONE !.
+    }
+    // 2. All Q-layouts except A-layout (Answer-l.) are VISIBLE within scrollview grandparent.
+    //   showAllQlayouts(); THAT METHOD IS USED ONLY ONCE IN OnScrollChangedListener();
+
+
+    /***END OF: ******************* show-and-hide Q-layout methods ********************************/
+
+    private void focusViewOnQuestion(int questionNo) {
+        String viewStringId = "Qlayout_" + questionNo;
+        int resId = getResources().getIdentifier(viewStringId, "id", getPackageName());
+        View targetView =findViewById(resId);
+
+        viewStringId =getResources().getResourceEntryName(targetView.getId());
+
+        //targetView.getParent().requestChildFocus(targetView,targetView);
+        targetView.requestFocus();
+
+        //Toast.makeText(getApplicationContext(),"*"+viewStringId+"*", Toast.LENGTH_SHORT).show();
+
+        //View focusedView = getCurrentFocus();
+
+        LinearLayout parentView = (LinearLayout) targetView.getParent();
+
+        ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
+
+        //scrollView.requestChildFocus(parentView,targetView);
+
+
+        // parentView.requestChildFocus();
+
+
+
+        //viewStringId =getResources().getResourceEntryName(parentView.getId());
+
+        //Toast.makeText(getApplicationContext(),"*"+viewStringId+"*", Toast.LENGTH_SHORT).show();
+
+
+
+        //targetView.requestFocus();
+
+
+
+        // focusedView = getCurrentFocus();
     }
 
-    public int $verticalPosition=0;
-    public float $dimRatio=0;
-    // todo: has to be used to keep scroll pos, NO LET'S REMOVE IT!!!, KEEP ONLY $rect & $questionNo & $answeredQuestion .
-     //
 
 
     // GLOBAL VARIABLES ($var) of Main Activity:
     private static Rect $rect = RECT; // all zeros
-    //                          $rect = (0   ,0  , theWidth, theHeight)
+    //                          $rect = (0   ,0  , $theWidth, $theHeight)
     //                          $rect = (left,top, right   , bottom   )
     // $rect.width() = THE_WIDTH ; $rect.height() = THE_HEIGHT (scrollView)
     private static int $theWidth  =0; //$theWidth is the height of the scrollView.
     private static int $theHeight =0; //$theHeight is the height of the scrollView.
-    private static int $questionNo=0; //$questionNo is a current Question#, depends on scrollView position.
+    private static int $questionNo; //$questionNo is a current Question#, depends on scrollView position.
+    private static int $verticalPosition=0; //
+    private static boolean $qLayoutInitiallyFocused = false; //before OnCreate, used in setScrollViewListener
 
-    private static boolean[] $answeredQuestion = INIT_ANSWERED_QUESTION;
+    private static float $questionFloat=0; //= <0;N> "continuous question number" ; N=number of questions =4
+    private static boolean[] $answeredQuestion = INIT_ANSWERED_QUESTION; //all FALSE
     //                $answeredQuestion[index] is TRUE
     //                          when (index +1) is a number od answered question ( index = 0..3 ).
-
-
-
+    private static float $oldQuestionFloat;
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(THE_WIDTH, $theWidth);
         outState.putInt(THE_HEIGHT, $theHeight);
         outState.putInt(QUESTION_NO, $questionNo);
+        outState.putInt(VERTICAL_POSITION, $verticalPosition);
+        outState.putFloat(QUESTION_FLOAT, $questionFloat);
         outState.putBooleanArray(ANSWERED_QUESTION, $answeredQuestion);
     }//END_OF onSaveInstanceState
 
@@ -1074,49 +1161,86 @@ public class MainActivity extends AppCompatActivity {
         $theWidth = savedInstanceState.getInt(THE_WIDTH);
         $theHeight = savedInstanceState.getInt(THE_HEIGHT);
         $questionNo = savedInstanceState.getInt(QUESTION_NO);
+        $verticalPosition = savedInstanceState.getInt(VERTICAL_POSITION);
+        $questionFloat = savedInstanceState.getFloat(QUESTION_FLOAT);
         $answeredQuestion = savedInstanceState.getBooleanArray(ANSWERED_QUESTION);
     }//END_OF onRestoreInstanceState
+
+    /********************* ON CREATE **************************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_main);
-        //           $rect = (0   ,0  , $theWidth, $theHeight) ; $rect.getWidth()  = $theWidth
-        //           $rect = (left,top, right    , bottom    ) ; $rect.getHeight() = $theHeight
-        $rect = new   Rect    (0   ,0  , $theWidth, $theHeight);
-
-        setActionBarParams( ResourcesCompat.getColor(getResources(),R.color.actionBarText, null),   //sets text color, can be set to 0 as black
-                            ResourcesCompat.getColor(getResources(),R.color.color_even, null),       //sets background color
-                            getResources().getString(R.string.Q0) // "Quiz App: Welcome!"
-        );
-
-        // todo check what have to be passed really... (W x H) : calculateAndSetQlayoutDims()
-        $rect = calculateAndSetQlayoutDims();  // $rect is width & height of every Q-layout.
-        $dimRatio = (float)$rect.width()/$rect.height();
-
-        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);}    // tableLayouts width recalculated
-        setScrollViewListener($rect);// $rect = (width & height)
-//todo: FINISH:
-
-        // If we have a saved state then we can restore it now
         if (savedInstanceState != null) {
-            $questionNo = savedInstanceState.getInt(QUESTION_NO, 0);
+            $questionNo     = savedInstanceState.getInt(QUESTION_NO, 0);
+            $questionFloat  = savedInstanceState.getFloat(QUESTION_FLOAT, 0);
+            $verticalPosition = savedInstanceState.getInt(VERTICAL_POSITION, 0);
+            $theHeight = savedInstanceState.getInt(THE_HEIGHT, 0);
+            //focusViewOnQuestion($questionNo);
         }
 
-        String viewStringId = "Qlayout_" + $questionNo;
+        int $oldVerticalPosition=(int)$questionFloat*$theHeight;
+        $rect = calculateAndSetQlayoutDims();  // $rect is width & height of every Q-layout.
+        $theHeight=$rect.height();
+        $verticalPosition=(int)($questionFloat*$theHeight);
 
-        Toast.makeText(getApplicationContext(),viewStringId, Toast.LENGTH_SHORT).show();
+        setActionBarParams( ResourcesCompat.getColor(getResources(),R.color.actionBarText, null),   //sets text color, can be set to 0 as black
+                setQcolor($questionNo),     //sets background color
+                qLayoutTitle($questionNo)   // "Quiz App: Welcome!"
+                +" :"+$verticalPosition
+                +"/" +$theHeight
+                +":"+String.format("%.2f",$questionFloat)
+        );
+        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);}    // tableLayouts width recalculated
+        Toast.makeText(getApplicationContext(),$questionNo+"", Toast.LENGTH_SHORT).show();
+        showOneQlayout($questionNo);
 
-        View theView =findViewById(getResources().getIdentifier(viewStringId,"string",getPackageName()));
+        showSoftKeyboard(findViewById(R.id.edit_text_2)); //                          (Question #2)
+        onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table          (Question #1)
+        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
+        setScrollViewListener();
+        //allQuestionsAnswered();
+
+    }//END_OF OnCreate
+}//END_OF MainActivity
+ /*
+        //focusViewOnQuestion($questionNo);
+        //findViewById(R.id.Qlayout_3).requestFocus();
+
+        //setScrollViewVerticalPosition(($questionNo+1)*$theHeight);
+        //Toast.makeText(getApplicationContext(),($questionNo+1)+"*"+$theHeight+"="+($questionNo+1)*$theHeight+"", Toast.LENGTH_LONG).show();
+        // todo check what have to be passed really... (W x H) : calculateAndSetQlayoutDims()
+        //((View) findViewById(R.id.Qlayout_3).getParent()).requestFocus();
+        //findViewById(R.id.Qlayout_3).getParent().requestChildFocus(findViewById(R.id.Qlayout_3),findViewById(R.id.Qlayout_3));
+
+       // View targetView = findViewById(R.id.Qlayout_3);
+       // View parentView = findViewById(R.id.parent_of_qlayouts);
+
+           // findViewById(R.id.Qlayout_3).requestFocus();
 
 
-        //.requestFocus();
-        //theView.requestFocus();
+       //final Rect rect = new Rect(0, 0, targetView.getWidth(), targetView.getHeight());
+       // targetView.requestRectangleOnScreen(rect, false);
 
-        //Listeners:
+       // parentView.requestRectangleOnScreen(rect, false);
 
-        // Listener On scrollview to calculate its height position
-        // and and use the scroll movement as main argument for other actions
-        // as choosing Q-layout or colors...
+    //    do {
+//
+  //          targetView.requestFocus();
+    //        focusedView = getCurrentFocus();
+      //  } while (focusedView == null);
+        //String viewStringId =getResources().getResourceEntryName(focusedView.getId());
+        //Toast.makeText(getApplicationContext(),viewStringId, Toast.LENGTH_LONG).show();
+
+
+        $oldQuestionFloat = $questionFloat;
+
+        //if ($questionNo==0) verticalPosition = 0; else $questionNo = ($questionNo)*$theHeight;
+        //Toast.makeText(getApplicationContext(),verticalPosition+"", Toast.LENGTH_SHORT).show();
+                //setScrollViewVerticalPosition(verticalPosition);
+       //todo: if focus works change   verticalPosition to local;
+        setScrollViewListener();// sets new values of $questionFloat & $theHeight.
+
 
         //showSoftKeyboard(findViewById(R.id.edit_text_4)); //                          (Question #4)
 
@@ -1128,23 +1252,17 @@ public class MainActivity extends AppCompatActivity {
         // so it is had to be unchecked to have all radiobuttons off.
         // all unchecked radiobuttons don't suggest any answer.
 
-        //showSoftKeyboard(findViewById(R.id.edit_text_2)); //                          (Question #2)
-        onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table          (Question #1)
-        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
-        //allQuestionsAnswered();
 
 
-    }//END_OF OnCreate
-}//END_OF MainActivity
- /*
 
-       int questionNumber=1;
-                if ((questionNumber & 1) == 0)
-                //  if questionNumber is even
-                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.color_even))); }
-                //  then actionBar has color_even
-                else
-                //  else actionBar has color_odd
-                { actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.color_odd)));  }
+
+
+        //scrollView.fullScroll(ScrollView.FOCUS_UP);
+        //scrollView.scrollTo(0,$theHeight*3);
+        //Toast.makeText(getApplicationContext(),"*"+verticalPosition+"*", Toast.LENGTH_LONG).show();
+        //scrollView.getScrollY()
+        //Toast.makeText(getApplicationContext(),"["+verticalPosition+"]", Toast.LENGTH_LONG).show();
+
+
 
 */
