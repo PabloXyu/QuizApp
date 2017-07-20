@@ -30,6 +30,13 @@
         <item name="android:shrinkColumns">*</item>
         <item name="android:collapseColumns">1</item>
     </style>
+    <style name="AnswerTableLayoutStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">5</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:stretchColumns">0</item>
+    </style>
     <style name="TableRowStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
@@ -63,14 +70,20 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textSize">@dimen/medium</item>
+        <item name="android:hint">@string/H2</item>
+        <item name="android:orientation">vertical</item>
         <item name="android:inputType">textVisiblePassword</item>
         <item name="android:singleLine">false</item>
         <item name="android:privateImeOptions">nm</item>
-        <item name="android:hint">@string/H2</item>
-        <!--item name="android:textColor">@color/color_select</item -->
-        <item name="android:orientation">vertical</item>
         <item name="android:focusableInTouchMode">true</item>
-        <item name="android:selectAllOnFocus">false</item>
+        <item name="android:focusable">true</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:onClick">editTextOnClick</item>
+        <!-- color_select gives black color for edited answer -->
+        <!-- in editText when it's disabled for editing...    -->
+        <!-- Normally it turns gray and is not well visible   -->
+        <item name="android:textColor">@color/color_select</item>
     </style>
     <style name="theButtonStyle" parent="@style/Widget.AppCompat.Button">
         <item name="android:layout_alignParentBottom">true</item>
@@ -81,6 +94,23 @@
         <item name="android:paddingTop">@dimen/small_margin</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
-        <item name="android:onClick">submitAnswer</item>
+        <item name="android:onClick">submitButtonOnClick</item>
+    </style>
+    <style name="ImageStyle">
+        <item name="android:layout_width">@dimen/xxlarge_margin</item>
+        <item name="android:layout_height">@dimen/xxxlarge_margin</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">@dimen/small_margin</item>
+        <item name="android:paddingRight">@dimen/small_margin</item>
+        <item name="android:paddingTop">@dimen/small_margin</item>
+        <item name="android:paddingBottom">@dimen/small_margin</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+    <style name="ImageStyleTop" parent="ImageStyle">
+        <item name="android:src">@mipmap/ic_vertical_align_top_black_24dp</item>
+    </style>
+    <style name="ImageStyleBottom" parent="ImageStyle">
+        <item name="android:src">@mipmap/ic_vertical_align_bottom_black_24dp</item>
     </style>
 </resources>

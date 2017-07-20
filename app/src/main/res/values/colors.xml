@@ -13,6 +13,11 @@
     <color name="color_odd">#FFD6D7</color>
     <color name="color_even">#C0D6E4</color>
 
+    <!--color name="color_odd">##d7a4a7</color>
+    <color name="color_even">##52a4b4</color -->
+
+    <!--todo: change colors?-->
+
     <color name="RedPigColorLogo">#da1b5b</color>
 
     <color name="enabled_color">#000000</color>
@@ -54,6 +59,4 @@
     <color name="t0D">#f43f59</color>
     <color name="t0E">#4BDC62</color>
     <color name="t0F">#05c4ef</color>
-
-
 </resources>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:id="@+id/main_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:isScrollContainer="true">
+    android:isScrollContainer="true"
     android:orientation="vertical">
 
 <!--  test colours: <android:background="@color/t0N"/> as 1st attribute in every View            -->
@@ -37,15 +38,11 @@
             android:textSize="@dimen/small"/>
         <ImageView
             android:background="@color/t0F"
-            android:src="@mipmap/ic_vertical_align_top_black_24dp"
-            android:layout_width="@dimen/xxlarge_margin"
-            android:layout_height="@dimen/xxxlarge_margin"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:paddingLeft="@dimen/small_margin"
-            android:paddingRight="@dimen/small_margin"
-            android:paddingBottom="@dimen/margin"
-            android:scaleType="fitXY"/>
+            style="@style/ImageStyleTop"/>
+        <ImageView
+            android:background="@color/t0F"
+            android:visibility="gone"
+            style="@style/ImageStyleBottom"/>
     </LinearLayout>
 <!-- ScrollView contains N Q-layouts of equal height.                  N = NUMBER_OF_QUESTIONS   -->
     <ScrollView
@@ -63,8 +60,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin">
         <!--<LinearLayout/>:  A-Layout #A: description in MainActivity.java -->
@@ -78,7 +73,7 @@
                 <!--                 INFO: MainActivity.java                                     -->
                 <TableLayout
                     android:background="@color/t01"
-                    style="@style/TableLayoutStyle"
+                    style="@style/AnswerTableLayoutStyle"
                     android:id="@+id/textview_table"
                     android:orientation="vertical">
                     <!-- TableRow#0 for answers: AA1 & SA1 -->

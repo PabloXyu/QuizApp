@@ -1,5 +1,6 @@
 package com.example.android.quizapp;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -8,11 +9,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import android.text.Html;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +34,6 @@ import android.widget.TextView;
 import android.support.v7.app.ActionBar;
 import android.widget.Toast;
 
-import static android.os.Build.VERSION_CODES.N;
-import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_CB_ANSWERS;
-import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_ET_ANSWERS;
 import static com.example.android.quizapp.MainActivity.Constants.NUMBER_OF_QUESTIONS;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE;
 import static com.example.android.quizapp.MainActivity.Constants.SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION;
@@ -50,20 +48,13 @@ import static com.example.android.quizapp.R.id.parent_of_qlayouts;
 import static com.example.android.quizapp.R.id.question_textview_1;
 import static com.example.android.quizapp.R.id.rbutton_table;
 import static com.example.android.quizapp.R.id.scroll_view;
+import static com.example.android.quizapp.R.id.submit_button;
 import static com.example.android.quizapp.R.layout.activity_main;
 import static com.example.android.quizapp.R.string.button_text_active_P;
 import static com.example.android.quizapp.R.string.button_text_disabled_P;
 import static com.example.android.quizapp.R.string.button_text_end_P;
 import static com.example.android.quizapp.R.string.button_text_exit_P;
 import static com.example.android.quizapp.R.string.button_text_lastq_P;
-
-/**
- *      TODO: SUBMIT BUTTON MUST DISSAPEAR WHEN TEXT ENTERED AND KEYBOARD APPEARS
-         THEN QUESTION TEXT VIEW MUST GO UP
- */
-
-// TODO: q-TEXT VIEw
-
 
 /**
  * todo: NON-REALISTIC
@@ -74,87 +65,186 @@ import static com.example.android.quizapp.R.string.button_text_lastq_P;
  */
 
 public class MainActivity extends AppCompatActivity {
-    public class Answers {
-        //fields:
-        private int[] score;
-        private boolean[] isSelected;
-        //constructor:
-        public Answers(int[] score, boolean[] isSelected) {
-            this.score = score;
-            this.isSelected = isSelected;
-        }
-        //methods:
-        //getters:
-        public int[]        getScores()                     {return score;}
-        public boolean[]    getSelections()                 {return isSelected;}
-        public int          getScore(       int index)      {return score[index];}
-        public boolean      getSelection(   int index)      {return isSelected[index];}
-        public int          questionScore(){
-            int x = 0;
-            for(int i=0;i<getSelections().length;i++) x=x+(getSelection(i)?1:0)*getScore(i);
-                                                             return x;}
-        //setters:
-        public void         setSelection(   int     index,
-                                            boolean newSelection
-        ){isSelected[index] = newSelection;}
-
-        // sets isSelected=TRUE for Answers[index]
-        // sets for other indexes'  isSelected=FALSE
-        public void         toggleSelection(int    index)
-        {for(int i=0;i<isSelected.length ;i++) setSelection(i,(i==index));}
-    }
-
-    class Constants {
+    // todo: written class description
+    public class Constants {
         public static final int NUMBER_OF_QUESTIONS = 4;
-        public static final int NUMBER_OF_ET_ANSWERS = 2; //ET = Edit Text
-        public static final int NUMBER_OF_CB_ANSWERS = 4; //CB = Compound Button
         public static final int SUBMIT_BUTTON_DISABLED = 0;
         public static final int SUBMIT_BUTTON_ACTIVE = 1;
         public static final int SUBMIT_BUTTON_INVISIBLE = 2;
         public static final int SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION = 3;
         public static final int SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED = 4;
         public static final int SUBMIT_BUTTON_EXIT = 5;
-
     }
+
     private static final String THE_WIDTH  ="$theWidth";
-    private static final String THE_HEIGHT ="$theHeight";
+    private static final String THE_HEIGHT ="theHeight";
     private static final String QUESTION_NO="$questionNo";
     private static final String QUESTION_FLOAT="$questionFloat";
-    private static final String ANSWERED_QUESTION="$answeredQuestion";
+    private static final String ANSWERED_QUESTION="$quizedQuestion";
     private static final String VERTICAL_POSITION="$verticaPosition";
-    public static final int[] SCORES_Q1 = {1,1,1,1};//4 checkboxes, 4 right answers
-    public static final int[] SCORES_Q2 = {2,2};    //2 right answers editable
-    public static final int[] SCORES_Q3 = {0,3,0,0};//4 radiobuttons, 1 right answer
-    public static final int[] SCORES_Q4 = {2,2};    //2 right answers editable
-    public static final boolean[] INIT_ANSWERED_QUESTION = {false,false,false,false};
 
-    public static final Rect RECT = new Rect(0,0,0,0);
+    public  static final boolean[] FALSEx4 =   {false,false,false,false};   // Q1&Q3
+    public  static final boolean[] FALSEx2 =   {false,false};               // Q2&Q4
 
-    /**{@linkplain #initAnswers(int[], int)}
-     *
-     * @param SCORES_Qn
-     * @param NUMBER_OF_xx_ANSWERS
-     * @return
-     *
-     * initiate Answers class table where:
-     * - score is SCORES_Qn table
-     * - all of isSelected table elements are FALSE
-     * Answers.length = NUMBER_OF_xx_ANSWERS
-     * xx= CB|ET  //                                          //ET = Edit Text, CB = Compound Button
-     * n=1..NUMBER_OF_QUESTIONS ; for CB n=1,3 ; for ET n=2,4
-     */
-    public Answers initAnswers(int[] SCORES_Qn,int NUMBER_OF_xx_ANSWERS ) {
-        boolean[] isSelected = new boolean[NUMBER_OF_xx_ANSWERS];
-        for (int i=0; i<NUMBER_OF_xx_ANSWERS; i++) {isSelected[i]=false;}
-        return new Answers(SCORES_Qn,isSelected);
-    }
-    // initialisation of Answers tables filling in with score point values
-    // all isSelected elements set to FALSE.
-    public Answers answerQ1 = initAnswers(SCORES_Q1,NUMBER_OF_CB_ANSWERS);
-    public Answers answerQ2 = initAnswers(SCORES_Q2,NUMBER_OF_ET_ANSWERS);
-    public Answers answerQ3 = initAnswers(SCORES_Q3,NUMBER_OF_CB_ANSWERS);
-    public Answers answerQ4 = initAnswers(SCORES_Q4,NUMBER_OF_ET_ANSWERS);
+    public  static final  int[] SCORES_Q1 = {1,1,1,1};//4 checkboxes, 4 right answers
+    public  static final  int[] SCORES_Q2 = {3,2};    //2 right answers editable
+    public  static final  int[] SCORES_Q3 = {0,3,0,0};//4 radiobuttons, 1 right answer
+    public  static final  int[] SCORES_Q4 = {3,2};    //2 right answers editable
 
+    public  Question QUESTION_1 = new Question(SCORES_Q1,FALSEx4,false);
+    public  Question QUESTION_2 = new Question(SCORES_Q2,FALSEx2,false);
+    public  Question QUESTION_3 = new Question(SCORES_Q3,FALSEx4,false);
+    public  Question QUESTION_4 = new Question(SCORES_Q4,FALSEx2,false);
+
+    public  Question[] ALL_QUESTIONS = {QUESTION_1,QUESTION_2,QUESTION_3,QUESTION_4};
+
+    public  Quiz INIT_QUIZ= new Quiz(ALL_QUESTIONS);
+
+    public static final Rect INIT_RECT = new Rect(0,0,0,0);
+
+    // GLOBAL VARIABLES ($var) of Main Activity:
+    public Rect $rect = INIT_RECT; // all zeros
+    //                          $rect = (0   ,0  , $theWidth, theHeight)
+    //                          $rect = (left,top, right   , bottom   )
+    // $rect.width() = THE_WIDTH ; $rect.height() = THE_HEIGHT (scrollView)
+    public int $questionNo; //$questionNo is a current Question#, depends on scrollView position.
+    // classes:
+    //
+    // Quiz = (Question[questionNumber])
+    // Question = (int[answerNumber] score, boolean[answerNumber] isSelected, boolean isAnswered)
+
+    public Quiz $quiz=INIT_QUIZ; //gets score values and all boolean values FALSE
+
+    public static class Question {
+        //fields:
+        private int[] score;
+        private boolean[] isSelected;
+        private boolean isAnswered;
+        //constructor:
+        public Question(int[] score, boolean[] isSelected, boolean isAnswered) {
+            this.score = score;
+            this.isSelected = isSelected;
+            this.isAnswered = isAnswered;
+        }
+        //getters:
+        public int          numOfAnswers()                  {return score.length;}
+        public int          questionScore(){
+            int x = 0;
+            for(int i=0;i<numOfAnswers();i++) x=x+(isSelected[i]?1:0)*score[i];
+            return x;
+        }
+        public int          maxScore(){
+            int x = 0;
+            for(int i=0;i<numOfAnswers();i++) if(score[i]>x) x=score[i];
+            return x;
+        }
+        public int          sumScore(){
+            int x = 0;
+            for(int i=0;i<numOfAnswers();i++) x=x+score[i];
+            return x;
+        }
+        //setters:
+        public void         setSelection(   boolean[] newSelection){
+            //isSelected = newSelection;
+            for (int i=0;i<numOfAnswers();i++) isSelected[i]=newSelection[i];
+        }
+        public void         setSelection(   int     index,
+                                            boolean newSelection){
+            isSelected[index]=newSelection;
+        }
+        // toggle selection:    one answer selection cancels the others:
+        public void         toggleSelection( int    index){
+            for(int i=0;i<numOfAnswers();i++) isSelected[index]=(i==index);
+        }
+    }//END_OF Question
+
+    public final static class Quiz {
+        //fields:
+        private Question[]  question;
+        //constructor:
+        public Quiz(Question[] question) {
+            this.question = question;
+        }
+        //getters:
+        public int          numOfQuestions()            {return question.length;}
+        public int          numOfAnswers(   int index)  {return question[index].numOfAnswers();}//possible answers
+        public boolean      isAnswered(     int index)  {return question[index].isAnswered;}
+
+        public int          getScore(       int index){
+            return question[index].questionScore();
+        }
+        public int          getMaxScore(    int index){
+            if (index==0)
+                return question[0].sumScore(); //Question #1 more than one answer to choose
+            else
+                return question[index].maxScore();
+        }
+        public int          getScore(){//total
+            int x = 0;
+            for(int i=0;i<numOfQuestions();i++) x=x+this.getScore(i);
+            return x;
+        }
+        public int          getMaxScore(){//total
+            int x = 0;
+            for(int i=0;i<numOfQuestions();i++) x=x+this.getMaxScore(i);
+            return x;
+        }
+        public boolean      allAnswered(){
+            boolean x = true;
+            for (int i=0;i<numOfQuestions();i++) x=x&question[i].isAnswered;
+            return x;
+        }
+        private boolean lastQuestionLeft() {
+            // TRUE if all (N-1)questions of N are answered.
+            int x = 0;
+            int numberOfQuestions = this.numOfQuestions();
+            for (int i=0;i<numberOfQuestions;i++) if (question[i].isAnswered) x++;
+            return (x==(numberOfQuestions-1));
+        }
+        //setters:
+        public void         setSelection(   int     questionNumber,
+                                            boolean[] newSelection){
+            //  question[questionNumber].setSelection(index,newSelection);
+            question[questionNumber].setSelection(newSelection);
+        }
+        public void         setSelection(   int     questionNumber,
+                                            int     index,
+                                            boolean newSelection){
+            //  question[questionNumber].setSelection(index,newSelection);
+            question[questionNumber].isSelected[index]=newSelection;
+        }
+        public void         toggleSelection(int     questionNumber,
+                                            int     index){
+            question[questionNumber].toggleSelection(index);
+        }
+        public void         setIsAnswered(    int     index)      {question[index].isAnswered=true;}
+        //test methods:
+        //
+        // shows boolean values for questionNumber in pattern "{N:XXXX.Y}" | "{XX.Y}" or
+        // where XXX are boolean values for answer selection and Y is IsAnswered value.
+        // e.g.:"{0:TFFT:T}"
+        //        ^ ^  ^ ^     T=TRUE, F=FALSE.
+        //        | |  | |---- the question is Answered
+        //        | |  |------ Answer #4 (3) is chosen
+        //        | |--------- Answer #1 (2) is chosen
+        //        |----------- Question #1 (0)
+        // : answer #1 & #4 are chosen from [TFFT], question #1 [0:] is answered.
+        public String printStatus(int i) { // question number
+            String theString="{";
+            if (i!=-1) theString=theString+i+":";
+            for (int j=0; j<(numOfAnswers(i)); j++) {
+                theString =theString+(question[i].isSelected[j]?"T":"F");
+            }
+            theString=theString+":"+(question[i].isAnswered?"T":"F")+"}";
+            return theString;
+        }
+        public String printStatus() { // all questions
+            String theString="";
+            for (int i=0; i<(numOfQuestions()); i++) theString=theString+printStatus(-1);
+            return theString;
+        }
+
+    }//END_OF Quiz
 
     /*====================================== ViewGroupTree: ========================================
      *
@@ -203,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
      *        2:    |A12P|               |    P           |     2:    |A32P|
      *        3:    |A14P|               |    P           |     3:    |A34P|
      *----------------------------------------------------------------------------------------------
-     *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
+     *  CheckBox A14P = Question #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
      *
      *   A12P & A12L        <android:onClick="onCheckBoxClicked_A12"/>
      *   A14P & A14L        <android:onClick="onCheckBoxClicked_A14"/>
@@ -307,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
      *        2:          |  0 |----           |     P            |     2:    |An2P|----
      *        3:          |  0 |----           |     P            |     3:    |An4P|----
      *----------------------------------------------------------------------------------------------
-     *  RadioButton A32L = Answer #2, for Question #3 in Q1-Layout Checkable in Landscape Mode
+     *  RadioButton A32L = Question #2, for Question #3 in Q1-Layout Checkable in Landscape Mode
      *  TableView is a grandparent of CheckBox/RadioButton.
      *
      *  |[ 0]|[ 1]| <-- widths of those chkboxes/rbuttons will be taken as Col #0,1
@@ -323,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
      *        2:    |Ax2P|               ||    P            |     2:    |AA3 |SA3 |
      *        3:    |Ax4P|               ||    P            |     3:    |AA4 |SA4 |
      *----------------------------------------------------------------------------------------------
-     *  CheckBox A14P = Answer #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
+     *  CheckBox A14P = Question #4, for Question #1 in Q1-Layout Checkable in Portrait Mode
     /*
     /*   A12P & A12L        <android:onClick="onCheckBoxClicked"/>
      *   A14P & A14L        <android:onClick="onCheckBoxClicked"/>
@@ -343,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
      *        2:          |  0 |----           |     P            |     2:    |An2P|----
      *        3:          |  0 |----           |     P            |     3:    |An4P|----
      *----------------------------------------------------------------------------------------------
-     *  RadioButton A32L = Answer #2, for Question #3 in Q1-Layout Checkable in Landscape Mode
+     *  RadioButton A32L = Question #2, for Question #3 in Q1-Layout Checkable in Landscape Mode
      * TableView is a grandparent of CheckBox/RadioButton.
      *
      * |[ 0]|[ 1]| <-- widths of those chkboxes/rbuttons will be taken as Col #0,1
@@ -362,8 +452,8 @@ public class MainActivity extends AppCompatActivity {
      * QuestION #
      * ViewIndexId
      * Q-LayoutName
-     * Answer Options
-     * Right Answer #
+     * Question Options
+     * Right Question #
      * Possible Input #
      * Weight Score for Answer
      * Possible Score
@@ -436,8 +526,11 @@ public class MainActivity extends AppCompatActivity {
             android.view.ViewGroup.LayoutParams layoutParams = linearLayout.getChildAt(i).getLayoutParams();
             layoutParams.height = qLayoutHeight;                        // gets the height
             linearLayout.getChildAt(i).setLayoutParams(layoutParams);   // sets the height
-        }
-
+            }
+        // sets Left/Right margins in A-layout:
+        int AnswerLayoutMargin = qLayoutWidth/6;
+        ViewGroup.MarginLayoutParams layoutMarginParams = (ViewGroup.MarginLayoutParams) (findViewById(R.id.textview_table)).getLayoutParams();
+        layoutMarginParams.setMargins(AnswerLayoutMargin,0,AnswerLayoutMargin,0);
         return new  Rect(0,0, qLayoutWidth, qLayoutHeight);
     }
 
@@ -577,13 +670,17 @@ public class MainActivity extends AppCompatActivity {
         );
     }
     private String qLayoutTitle(int questionNo){
-        //shows second part of Quiz App title.
-        switch (questionNo) {
-            case     0: return getResources().getString(R.string.Q0);
-            case    -1: return getResources().getString(R.string.QA);
-            default   : return "Question #"+questionNo;
+        //For ActionBar: second part of Quiz App title.(Question #N|"Welcome!"|"YOUR SCORES")
+        if (questionNo>0)
+            return "Question #"+questionNo;
+        else {
+            if($quiz.allAnswered())
+                return getResources().getString(R.string.QA);
+            else
+                return getResources().getString(R.string.Q0);
         }
     }
+
     private int landscapeEnable(int portraitText){
         // portraitText's entry name ends with "_P", this will change to "_L"
         final char oChar; // orientation letter character = L|P
@@ -595,6 +692,10 @@ public class MainActivity extends AppCompatActivity {
         }
         else  return portraitText;
     }
+    private void changeWelcomeToAnswerLayout() {
+        findViewById(R.id.Qlayout_0).setVisibility(View.GONE);
+        findViewById(R.id.Qlayout_A).setVisibility(View.VISIBLE);
+    }
 
     /********** Build-in Listeners: ***************************************************************/
     //Listeners:
@@ -603,95 +704,11 @@ public class MainActivity extends AppCompatActivity {
     // and and use the scroll movement as main argument for other actions
     // as choosing Q-layout or colors...
 
-    //  0.
     //  1. setScrollViewListener
     //  2. onCheckboxClicked(View)
     //  3. onRadioButtonClicked(View)
-    //  4. showSoftKeyboard(View)
-
-    public void submitAnswer(View view) {
-        Toast.makeText(getApplicationContext(),"the answer for Question #"+ $questionNo + "\n has been submitted.", Toast.LENGTH_SHORT).show();
-        // Check-in that the question is answered:
-        $answeredQuestion[$questionNo - 1] = true;
-        // submit for Question 2 & 4 (EditText):
-        //if ($questionNo % 2 == 0) {
-        if (true) {
-            String viewStringId = "question_textview_" + $questionNo;
-            EditText editText = (EditText) findViewById(getResources().getIdentifier(viewStringId, "string", getPackageName()));
-           // String inputText = editText.getText().toString();
-
-            View focusedView = getCurrentFocus();
-
-            String IdAsString = focusedView.getResources().getResourceName(focusedView.getId());
-
-            //Toast.makeText(getApplicationContext(),IdAsString, Toast.LENGTH_SHORT).show();
-
-            //if (inputText!="") {
-             //   InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-              //  imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            //}
-        }
-
-
-        /*if ($questionNo % 2 == 0) {
-            String viewStringId = "question_textview_" + $questionNo;
-            EditText editText = (EditText) findViewById(getResources().getIdentifier(viewStringId, "string", getPackageName()));
-
-            findViewById(android.R.id.content).setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    Utils.hideSoftKeyboard(activity);
-                    return false;
-                }
-            });
-
-            if (editText.requestFocus()) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        }/*
-
-
-/*        LinearLayout submitButton = (LinearLayout) view;
-        EditText editText = (EditText) view;
-          if (editText.requestFocus()) {
-             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                   inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-          }
-
-/*        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        });
-
-        */
-        //editText.clearComposingText();
-        // EditText editText = (EditText) view;
-         //hides the softKeyboard
-//         editText.setFocusable(false);
-  //       editText.setFocusableInTouchMode(true);
-
-
-
- //       view.setFocusable(false);
-         //view.setEnabled(false);
-        //editText.clearComposingText();
-
-    }
-
-    //Show the Input Method On Demand
-    public void showSoftKeyboard(View view) {
-        if (view.requestFocus()) {
-            InputMethodManager inputMethodManager = (InputMethodManager)
-                    getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
+    //  4. editTextOnClick(View)
+    //  5. submitButtonOnClick
 
     private void setScrollViewListener(){
         // This Listener on scrollview's height determines:
@@ -701,31 +718,26 @@ public class MainActivity extends AppCompatActivity {
 
         final ScrollView scrollView = (ScrollView) findViewById(scroll_view);
 
-        $theHeight= $rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
+        final int theHeight = $rect.height(); // the same height for each Q-layout: calculated before by calculateAndSetQlayoutDims().
 
         final int visibleQLayoutQuantity = ((LinearLayout)scrollView.getChildAt(0)).getChildCount()- 1; // ONE LESS!
         //from all Q-layouts (W+A + n*Q ) one Welcome, one Answer/(Results), n Questions  (layouts) [n = number of questions]
         // there is always one layout invisible: At the beginning answer-layout, then at the end - welcome-layout.
 
-        final int theDenominator = visibleQLayoutQuantity - 1; //(Scrolling Y-coordinate position have always offset=-$theHeight)
-        // Here the denominator is always equal to number of questions.(only because one Welcome/Answer layout is always GONE/VISIBLE)
+        final int theDenominator = visibleQLayoutQuantity - 1; //(Scrolling Y-coordinate position have always offset=-theHeight)
+        // Here the denominator is always equal to number of questions.(only because one Welcome/Question layout is always GONE/VISIBLE)
         // This case: 6 vertical layouts in scrollview: only 5 always visible, but counted from 0 to 4.
         // 6 = getChildCount(), 5=visibleQLayoutQuantity, 4=theDenominator
 
         // height of the lowest, bottom view of Q-layout(@+id/empty_view_xB) being "a background" for submit_button.
         final int emptyBottomViewHeightPx = (int)getResources().getDimension(R.dimen.bottom_view_height);
-        final float offset = (float) emptyBottomViewHeightPx/$theHeight;
 
         //Setting ScrollView Listener:
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            boolean wasntUsedBefore = true;
-
-            // this method used only once at the beginning in onScrollChanged listener.
-            // before setScrollViewListener()
             public void showAllQlayouts() {
                 ScrollView scrollView = (ScrollView) findViewById(scroll_view);
                 LinearLayout linearLayout = (LinearLayout)scrollView.getChildAt(0);
-                // 0 = Answer Qlayout   -1
+                // 0 = Question Qlayout   -1
                 // 1 = Welcome Qlayout   0
                 // i = Qlayout Question #N --> index = N+1 (childView no)
                 // 5 = Qlayout Question #4
@@ -735,31 +747,23 @@ public class MainActivity extends AppCompatActivity {
                 {(linearLayout.getChildAt(i)).setVisibility(View.VISIBLE);}
                 // all views except  A-layout are VISIBLE !.
             }
+            boolean readyToExit=false;
             @Override
             public void onScrollChanged() {
-                if (wasntUsedBefore) {
-                    $theHeight = $rect.height();
-                //^todo: check if ^^^ that line is needed...
-                    showAllQlayouts(); // all layouts (except Answer-layout) are visible
-                }// ^ that stuff is executed only once at the beginning in onScrollChanged listener.
-                 else
-                    wasntUsedBefore = false;
 
-                $verticalPosition = scrollView.getScrollY();
+                int verticalPosition = scrollView.getScrollY();
                 // $questionNo is a question number depending on the scrollview position:
                 // OFFSET: the question number [n] changes to higher number [n+1] earlier
                 // when scrolled up Q[n]-layout have still emptyBottomView visible on the screen top
-                $questionNo =(int)Math.floor(($verticalPosition       // scrollViewHeight
-                                +emptyBottomViewHeightPx  // offset
-                        )/$theHeight               // scrollViewVerticalPosition
-                );
-                //    questionFloat = <0;N> "continuous question number" ; N=number of questions =4
-                float questionFloat = (float)$verticalPosition/$theHeight;
+                $questionNo =(int)Math.floor((verticalPosition+emptyBottomViewHeightPx)/theHeight);
+
+                //   $questionFloat = <0;N> "continuous question number" ; N=number of questions =4
+                     float $questionFloat = (float)verticalPosition/theHeight;
                 //    relativePos   = <0;1>      (relative Scrollview position)
-                float relativePos   = questionFloat/theDenominator;                  // x=  0...1
-                float sawWave       = questionFloat -(int)Math.floor(questionFloat);// x - floor(x)
+                float relativePos   = $questionFloat/theDenominator; //x=  0...1
+                float sawWave       = $questionFloat -(int)Math.floor($questionFloat);//x - floor(x)
                 //    triangleWave  : 0 for Even, 1 for Odd but continuously.
-                float triangleWave  = 1 - Math.abs((questionFloat%2) - 1);       //  1-|(x mod 2)-1|
+                float triangleWave  = 1 - Math.abs(($questionFloat%2) - 1);      //  1-|(x mod 2)-1|
                 ////////////////////////////////////////////////////////////////////////////////////
                 //  triangleWave:                        //  sawWave:                             //
                 //  ^                                    //  ^                                    //
@@ -776,7 +780,6 @@ public class MainActivity extends AppCompatActivity {
                 float maxOdd  = 0.90f;//for Even Questions (EditText)
                 float maxEven = 0.60f;//for Odd  Questions (CompoundButton)
 
-                //not working for $questionNo=0, but not needed for zero.
                 float min;      if($questionNo%2 == 0) min=minEven; else min=minOdd;
                 float max;      if($questionNo%2 == 0) max=maxEven; else max=maxOdd;
 
@@ -789,32 +792,57 @@ public class MainActivity extends AppCompatActivity {
 
                 setActionBarParams( 0,                                                  // text color = #00000000 = black = 0
                         colourBetween(R.color.color_even,R.color.color_odd,triangleWave)// action bar color
-                        ,qLayoutTitle($questionNo)                                      // "Quiz App: Question #N
+                       // ,qLayoutTitle($questionNo)                                      // "Quiz App: Question #N
+                    // TODO ***********REMOVE AFTER TEST !!!!!!!!!!!!**************************
+                        ,""
                                 //+" :"+String.format("%.2f",sawWave)                   // further text
-                                +" :"+$verticalPosition
-                                +"/" +$theHeight
-                                +":"+String.format("%.2f",$questionFloat)
+                                //+" :"+verticalPosition
+                                //+"/" +theHeight
+                                //+":"+String.format("%.2f",$questionFloat)
+                                  +" :"+$quiz.printStatus(1)+$quiz.printStatus(3)
                                 // ^ LAST LINE FOR SHOW UP VAR ON ACTION BAR (+string)
                 );
+                // readyToExit initiated to FALSE;
 
                 // Submit Button Appearance Rules:
-                if (disableForWelcome) changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);    //"Scroll up" info in "Welcome" Q-layout
-                else {
-                    if (isInvisible) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE); //Active button appeares only when Q-layout is well visible.
-                    else
-                        if (false)
-                            changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);
-                        else
-                            changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
+                if ($quiz.allAnswered()) {
+                    changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+                    changeWelcomeToAnswerLayout();
+                    AnswerQlayoutScoreDisplay();
+                    if ($questionNo==0||readyToExit) {
+                        changeSubmitButtonState(SUBMIT_BUTTON_EXIT);
+                        readyToExit=true;
                     }
-                //if (keyboardAppears) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE);
-                    //TODO: sth else ????
-            }//ENDOF onScrollChanged()
+                }
+                else {
+                    //"Scroll up" info in "Welcome" Q-layout or...
+                    if (disableForWelcome) {
+                        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
+                    }
+                    else { //Submit Button disappears when not needed or the question is answered.
+                        if (isInvisible||($quiz.isAnswered($questionNo - 1))) changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE);
+                        else { //or Submit (Active) buttons appear only when Q-layout is well visible.
+                            //stop Q-layout when scrolling
+                            focusViewOnQuestion($questionNo);
+                            //additional stop Q-layout when scrolling for EditText
+                            if($questionNo%2 != 0) scrollView.smoothScrollBy(0,0);
+                            //other options
+                            if ($quiz.lastQuestionLeft())
+                                changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION);
+                            else
+                                changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
+                        }
+                    }
+
+                }
+
+            }//END_OF onScrollChanged()
         });
-    }
-    public void onCheckboxClicked(View view) {
-        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
-        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
+    }//END_OF setScrollViewListener()
+
+    public void onCheckboxClicked(View checkBox) {
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Question #2 & #4:
+        // Two compound buttons for Question #2 & #4 each are seen only once in the table,
         // but for changing orientation they have to have the same state
         // (there is 4 answers, but 6 compound buttons)
         // ------------------------------------------------------------------------------------
@@ -824,35 +852,31 @@ public class MainActivity extends AppCompatActivity {
         // |4|       |4|@Portrait
         // ------------------------------------------------------------------------------------
 
+        boolean[] answerArray= $quiz.question[0].isSelected;
         // Is the view now checked?
-        boolean isSelected = ((CheckBox) view).isChecked();
-        //Toast.makeText(
-        //        getApplicationContext(),
-        //        "You "+ (isSelected ? "":"un")+"selected \""+
-        //                ((CompoundButton) view).getText()+
-        //                "\" answer",
-        //        Toast.LENGTH_SHORT
-        //).show();
-
+        boolean isSelected = ((CheckBox) checkBox).isChecked();
         // Check which checkbox was clicked
-        switch (view.getId()) {
-            case R.id.A11:  answerQ1.setSelection(0,isSelected);break;
-            case R.id.A12P: answerQ1.setSelection(1,isSelected);break;
-            case R.id.A12L: answerQ1.setSelection(1,isSelected);break;
-            case R.id.A13:  answerQ1.setSelection(2,isSelected);break;
-            case R.id.A14P: answerQ1.setSelection(3,isSelected);break;
-            case R.id.A14L: answerQ1.setSelection(3,isSelected);break;
-            // The method onCheckboxClicked() above works if:
-            // - is public
-            // - returns void
-            // - defines a View as its only parameter (any of compound button that was clicked)
+        switch (checkBox.getId()) {
+            case R.id.A11:  answerArray[0]=isSelected;break;
+            case R.id.A12P: answerArray[1]=isSelected;break;
+            case R.id.A12L: answerArray[1]=isSelected;break;
+            case R.id.A13:  answerArray[2]=isSelected;break;
+            case R.id.A14P: answerArray[3]=isSelected;break;
+            case R.id.A14L: answerArray[3]=isSelected;break;
         }
         //Synchronisation with twin button (see method description)
-        twinCompoundButtonSelectionSynchro(view);
-    }
-    public void onRadioButtonClicked(View view) {
-        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
-        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
+        twinCompoundButtonSelectionSynchro(checkBox);
+        //$quiz.setSelection(0,answerArray);
+        $quiz.question[0].isSelected=answerArray;
+    // The method onCheckboxClicked() above works if:
+    // - is public
+    // - returns void
+    // - defines a View as its only parameter (any of compound button that was clicked)
+    }//END_OF onCheckboxClicked()
+
+    public void onRadioButtonClicked(View radioButton) {
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Question #2 & #4:
+        // Two compound buttons for Question #2 & #4 each are seen only once in the table,
         // but for changing orientation they have to have the same state
         // (there is 4 answers, but 6 compound buttons)
         // ------------------------------------------------------------------------------------
@@ -862,41 +886,92 @@ public class MainActivity extends AppCompatActivity {
         // |4|       |4|@Portrait
         // ------------------------------------------------------------------------------------
 
+        boolean[] answerArray= new boolean[$quiz.numOfAnswers(0)];
         // Is the view now checked?
-        boolean isSelected = ((RadioButton) view).isChecked();
+        boolean isSelected = ((RadioButton) radioButton).isChecked();
         // Check which radiobutton was clicked
-        uncheckOtherRadioButtons(view);
-        switch (view.getId()) {
-            case R.id.A31:  answerQ3.toggleSelection(0);break;
-            case R.id.A32P: answerQ3.toggleSelection(1);break;
-            case R.id.A32L: answerQ3.toggleSelection(1);break;
-            case R.id.A33:  answerQ3.toggleSelection(2);break;
-            case R.id.A34P: answerQ3.toggleSelection(3);break;
-            case R.id.A34L: answerQ3.toggleSelection(3);break;
+        uncheckOtherRadioButtons(radioButton);
+        switch (radioButton.getId()) {
+            case R.id.A31:  answerArray[0]=isSelected;break;
+            case R.id.A32P: answerArray[1]=isSelected;break;
+            case R.id.A32L: answerArray[1]=isSelected;break;
+            case R.id.A33:  answerArray[2]=isSelected;break;
+            case R.id.A34P: answerArray[3]=isSelected;break;
+            case R.id.A34L: answerArray[3]=isSelected;break;
             // Unfortunately setup of the RadioGroup on TableLayout including RadioButtons is impossible. :(
             // RadioButtons here are grandchildren of layout.
-
-            // The method onCheckboxClicked() above works if:
-            // - is public
-            // - returns void
-            // - defines a View as its only parameter (any of compound button that was clicked)
         }
         //Synchronisation with twin button (see method description)
-        twinCompoundButtonSelectionSynchro(view);
-    }
+        twinCompoundButtonSelectionSynchro(radioButton);
+        //$quiz.setSelection(2,answerArray);
+        $quiz.question[2].isSelected=answerArray;
+        // The method onRadioButtonClicked() above works if:
+    // - is public
+    // - returns void
+    // - defines a View as its only parameter (any of compound button that was clicked)
+    }//END_OF onRadioButtonClicked()
 
-    /*END OF:** Build-in Listeners: ****************************************************************/
+    // softKeyboard on-listener for EditText (Question 2&4):
+    public void editTextOnClick(View view) {
+        //gets resource id name string of the editText
+        String viewName = getResources().getResourceEntryName(view.getId());
+        // calculates the last char of it's name to know question number:
+        String questionNum = viewName.substring(viewName.length()-1);
+        // finds question_textview_N where N is a question number
+        final TextView questionTextView = (TextView) findViewById(getResources().getIdentifier("question_textview_" + questionNum, "id", getPackageName()));
+        // finds rootView layout to measure the actual height of Q-layout which smaller than Q-layout height when the softKeyboard appeares.
+        final View rootLayout = findViewById(android.R.id.content);
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // when the keyboard is ON the question text moves up, when it's off goes back to center alignment.
+                if (rootLayout.getHeight()==$rect.height())                 //softKeyboard is off
+                    questionTextView.setGravity(Gravity.CENTER);
+                else                                                        //softKeyboard is on
+                    questionTextView.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP);
+            }
+        });
+    }//END_OF editTextOnClick
 
-    /********** Scrollview Text & CompoundButton Input Methods: ************************************/
+    public void submitButtonOnClick(View view) {
+        if (!$quiz.allAnswered()) { //Info while submitting a question
+            Toast.makeText(
+                    getApplicationContext(),
+                    "the answer for Question #"
+                    + $questionNo
+                    + "\n has been submitted.",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        else // for SUBMIT_BUTTON_EXIT // exits the application!!!
+             // simply kills itself :)))))))
+            android.os.Process.killProcess(android.os.Process.myPid());
 
-    // sets selection state of the compound button to its counterpart (twin) in other orientation mode
+        // Check-in in table $quiz[] that the question is answered:
+        $quiz.setIsAnswered($questionNo - 1);
+        //SUBMITTING INPUT TEXT (EditText):
+        trimAndEvaluateEditText($questionNo);//even questions
+        // disabling the question view for editing:
+        switch ($questionNo) {
+            case 1: setAllCompoundButtonsEnabled(chkbox_table,false);   break;
+            case 2: setEditViewEnabled(edit_text_2,false);              break;
+            case 3: setAllCompoundButtonsEnabled(rbutton_table,false);  break;
+            case 4: setEditViewEnabled(edit_text_4,false);              break;
+        }//endswitch
+    }//END_OF submitButtonOnClick
+
+    /*END OF:** Build-in Listeners: ***************************************************************/
+
+    /********** Scrollview Text, CompoundButton & EditText Input Methods **************************/
+
+    //sets selection state of the compound button to its counterpart (twin) in other orientation mode
 
     private void twinCompoundButtonSelectionSynchro(View theCompoundButton) {
         // e.g.: when the state of A12L checkbox is changed (/un/checked) in landscape mode,
         // the same state is set for "twin" checkbox A12P visible in portrait mode.
         //
-        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Answer #2 & #4:
-        // Two compound buttons for Answer #2 & #4 each are seen only once in the table,
+        // A2L=A2P, A4L=A4P synchronisation of compound buttons for Question #2 & #4:
+        // Two compound buttons for Question #2 & #4 each are seen only once in the table,
         // but for changing orientation they have to have the same state
         // (there is 4 answers, but 6 compound buttons)
         // ------------------------------------------------------------------------------------
@@ -957,22 +1032,90 @@ public class MainActivity extends AppCompatActivity {
 
     private void setEditViewEnabled(int editTextResId, boolean isEnabled) {
         EditText editText = (EditText) findViewById(editTextResId);
-        if (isEnabled)
+        //set on/off softkeyboard listener:
+        //RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.main_view); // root layout
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        if (isEnabled){
             //disables text-autocomplete not to suggest the answer
             editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        else
+            editText.setEnabled(true);
+            inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+        }
+        else{
             editText.setInputType(InputType.TYPE_NULL);
+            //todo: check^ if needed
+            editText.setEnabled(false);
+            inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            //changeSubmitButtonState(SUBMIT_BUTTON_ACTIVE);
+            //todo: more active options function
+        }
     }
 
-    public void setAllInputsEnabled (boolean isEnabled) {
-        // if  ANSWERED_QUESTION[N-1] is TRUE (question finally answered by pressin submit button)
+    public void disableAllAnsweredInputs() {
+        // if  $quiz.isAnswered(N-1) is TRUE (question finally answered by pressing submit button)
         //     then editable part of Nth Q-layout cannot be edited/(un)checked/toggled
-        if (!$answeredQuestion[0]) setAllCompoundButtonsEnabled(chkbox_table,isEnabled);
-        if (!$answeredQuestion[1]) setEditViewEnabled(edit_text_2,isEnabled);
-        if (!$answeredQuestion[2]) setAllCompoundButtonsEnabled(rbutton_table,isEnabled);
-        if (!$answeredQuestion[3]) setEditViewEnabled(edit_text_4,isEnabled);
+        setAllCompoundButtonsEnabled(chkbox_table,!$quiz.question[0].isAnswered);
+        setEditViewEnabled(edit_text_2,!$quiz.question[1].isAnswered);
+        setAllCompoundButtonsEnabled(rbutton_table,!$quiz.question[2].isAnswered);
+        setEditViewEnabled(edit_text_4,!$quiz.question[3].isAnswered);
     }
-    /*END OF:** Scrollview Text & CompoundButton Input Methods: ************************************/
+    /**
+     * {@linkplain #trimAndEvaluateEditText}
+     * @param questionNum
+     *
+     *  Description with example:
+     *
+     *  The question #4 has two possible right answers: "the Moon" or "Moon"
+     *  The scores for those answers are: $quiz.question[3].score = {3,2}
+     *  Before evaluation $quiz.question[3].isSelected = {false,false} = FALSEx2 .
+     *  After the user finished text edition the input text may be like <"  tHe   mooN    ">
+     *  the trimmed text is "tHe mooN" , then converted to Caps as "THE MOON".
+     *  for this question ($questionNo%2!=0) is FALSE, so the code down there is executed for i=3
+     *  Edited text from the textView  R.id.edit_text_4 is found.
+     *  In the loop for j=0|1 Resource strings: R.string.A41 and R.string.A42 are compared.
+     *  these are: "THE MOON" (3 score points) and "MOON" (2 score points)
+     *  answerArray after comparison gets values {TRUE,FALSE}.
+     *  then it's copied to $quiz.question[3].isSelected.
+     *  The question score is later calculated as:
+     *  {3,2} * {true,false}= 3*1.true+2*0.false = 3.
+     */
+    private void trimAndEvaluateEditText(int questionNum) {
+        if(questionNum%2!=0) return;
+        //finds the EditText
+        EditText editText = (EditText) findViewById(getResources().getIdentifier("edit_text_" + questionNum, "id", getPackageName()));
+        //gets the input text
+        String theAnswer =  editText.getText().toString();
+        // trims left/right spaces and sets spacing between words to one space...
+        String[] array = theAnswer.split("\\s+");
+        theAnswer="";
+        for(int i=0; i<array.length; i++) theAnswer = theAnswer + array[i] + " ";
+        theAnswer = theAnswer.trim();
+        editText.setText(theAnswer);
+        // compares with two possible answers (An1 & An2) (n = question);
+        // for right answer index sets isSelected field to TRUE
+        theAnswer=theAnswer.toUpperCase();
+
+        String theString;
+        int resId;
+        boolean[][] answerArray={FALSEx2,FALSEx2};
+
+        for (int j=0;j<$quiz.question[questionNum-1].numOfAnswers();j++) {//j= alternative answer index, for ET j=0,1
+            theString = "A" + questionNum + (j+1);//A21,A22 or A41,A42
+            resId = getResources().getIdentifier(theString, "string", getPackageName());
+            theString = getResources().getString(resId); // value of string: A21/A22 or A41/A42);
+            switch (questionNum){
+                case 2: answerArray[0][j]=theString.equals(theAnswer);break;//j=0,1 # of answers
+                case 4: answerArray[1][j]=theString.equals(theAnswer);break;
+            }
+        }
+        if($quiz.question[1].isAnswered && $quiz.question[3].isAnswered){
+            $quiz.question[1].setSelection(answerArray[0]);
+            $quiz.question[3].setSelection(answerArray[1]);
+        }
+
+    }//END_OF trimAndEvaluateEditText()
+
+    /*END OF:***************** Scrollview Text & CompoundButton Input Methods: ********************/
 
     /********** The Submit Button Methods **********************************************************/
     private void changeSubmitButtonState(int buttonState){
@@ -985,17 +1128,19 @@ public class MainActivity extends AppCompatActivity {
         //
         // SubmitButton IS LINEAR LAYOUT !!!
         //
-        final LinearLayout submitButton = (LinearLayout)findViewById(R.id.submit_button);
+        final LinearLayout submitButton = (LinearLayout)findViewById(submit_button);
         final TextView submitButtonText    =  (TextView) submitButton.getChildAt(0);
-        final ImageView submitButtonImage  = (ImageView) submitButton.getChildAt(1);
+        final ImageView submitButtonImageTop  = (ImageView) submitButton.getChildAt(1);
+        final ImageView submitButtonImageBottom  = (ImageView) submitButton.getChildAt(2);
         final int submitButtonPadding=getResources().getDimensionPixelSize(R.dimen.margin);
+        final int submitButtonPaddingSmall=getResources().getDimensionPixelSize(R.dimen.small_margin);
 
         //setEnabled(false) makes a View non-clickable AND non-focusable = completely locked
         // padding: (Left, Top, Right, Bottom)
 
         // 1. Button locked/unlocked state:
-
-        submitButtonImage.setVisibility(ImageView.VISIBLE);//recovering visibility after GONE
+        submitButton.setClickable(true);
+        submitButtonImageTop.setVisibility(ImageView.VISIBLE);//recovering visibility after GONE
         submitButton.setPadding(submitButtonPadding,0,0,0); // with image, no R-padding
 
         submitButton.setClickable((buttonState!=SUBMIT_BUTTON_DISABLED)); //locked for that 0 state.
@@ -1008,11 +1153,16 @@ public class MainActivity extends AppCompatActivity {
         if (buttonState==SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION){
             submitButton.setPadding(submitButtonPadding,0,submitButtonPadding,0); // no arrow image, R-padding
             submitButton.setMinimumHeight(submitButton.getHeight());//keeps the old height with no image.
-            submitButtonImage.setVisibility(ImageView.GONE);
+            submitButtonImageTop.setVisibility(ImageView.GONE);
         }
         if (buttonState==SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED) {
-            submitButtonImage.setImageResource(R.mipmap.ic_vertical_align_top_black_24dp);//arrow up
-            //submitButtonImage.setPadding(0,submitButtonPadding, 0, 0); //top padding to center the arrow ic.
+            submitButton.setClickable(false);
+            submitButtonImageTop.setVisibility(ImageView.GONE);
+            submitButtonImageBottom.setVisibility(ImageView.VISIBLE);
+        }
+        if (buttonState==SUBMIT_BUTTON_EXIT) {
+            submitButtonImageTop.setVisibility(ImageView.VISIBLE);
+            submitButtonImageBottom.setVisibility(ImageView.GONE);
         }
 
         // 2. Button landscape orientation text change to longer strings:
@@ -1034,11 +1184,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }//endswitch
 
-        // 3. When the submit button is disabled, all input views are disabled too:
+        /*/ 3. When the submit button is disabled, all input views are disabled too:
         //    When the submit button is enabled, all input views are enabled too:
         //    Disabling happens for odd changeSubmitButtonState's numbers,enabling for even.
-        setAllInputsEnabled(buttonState%2 != 0);
-    }
+        disableAllAnsweredInputs(buttonState%2 != 0); // for Q 1&3
+        //todo: needed ^? */
+    }//END_OF changeSubmitButtonState()
 
     private void setOnClickListenerOnActiveSubmitButton() {
         // buttonState =
@@ -1048,221 +1199,91 @@ public class MainActivity extends AppCompatActivity {
         // 3 SUBMIT_BUTTON_ACTIVE_FOR_LAST_QUESTION     (Listener)
         // 4 SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED       (no editing)
         // 5 SUBMIT_BUTTON_EXIT                         (Listener)
-        final LinearLayout submitButton = (LinearLayout) ((ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0)).getChildAt(0);
+        final LinearLayout submitButton = (LinearLayout)findViewById(submit_button);
         final TextView submitButtonText = (TextView) submitButton.getChildAt(0);
 
         //char oChar; if (isDeviceLandscape())  oChar='L'; else  oChar='P'; //orientation letter L or P
         // String  myString = getString(getResources().getIdentifier("button_text_active_"+oChar,"string",getPackageName()));
         // All are active which have text "SUBMIT"
         if (((String) submitButtonText.getText()).contains("SUBMIT")) { // the button is ACTIVE
-            // TODO sth
+            // TODO sth THIS DOES NOTHING
         }
     }
     /*END OF:** The Submit Button Methods *********************************************************/
 
-    private void allQuestionsAnswered() {
-        //TODO: needed?
-        changeSubmitButtonState(SUBMIT_BUTTON_ALL_QUESTIONS_ANSWERED);
+    private void fillInAnswerQlayoutTable() {
+        // finds its parent and grandparent view:
+        TableLayout tableLayout = (TableLayout) findViewById(R.id.textview_table);
+        // Loops search through the grandchildren od the tableLayout:
+        TableRow  loopTableRow; //i=row
+        TextView loopTextView;
+        for (int i=0; i<tableLayout.getChildCount(); i++) {
+            loopTableRow = (TableRow) tableLayout.getChildAt(i);
+            loopTextView = (TextView) loopTableRow.getChildAt(1);//2nd col
+            //writes in TextViews in 2nd col of the tableLayout.
+            $quiz.numOfAnswers(i);
+            String theString =$quiz.getScore(i)
+                    +"/"+$quiz.getMaxScore(i);
+                    loopTextView.setText(theString);
+        }
     }
-    /****************************** show-and-hide Q-layout methods: *******************************/
 
-    // 1. Leaves only one Q-layout for given questionNo
-    private void showOneQlayout(int questionNo) {
-        ScrollView scrollView = (ScrollView) findViewById(scroll_view);
-        LinearLayout linearLayout = (LinearLayout)scrollView.getChildAt(0);
-        // 0 = Answer Qlayout   -1
-        // 1 = Welcome Qlayout   0
-        // i = Qlayout Question #N --> index = N+1 (childView no)
-        // 5 = Qlayout Question #4
-        // ^                     ^------Question Number
-        // |--------------------------- index if a childView.
-        for (int N=-1;N<=NUMBER_OF_QUESTIONS;N++)
-        {if (N!=questionNo) (linearLayout.getChildAt(N+1)).setVisibility(View.GONE);}
-        for (int N=0;N<=NUMBER_OF_QUESTIONS;N++)
-        {(linearLayout.getChildAt(N+1)).setVisibility(View.VISIBLE);}
-        // all views except Q-layout #N are GONE !.
+    private void AnswerQlayoutScoreDisplay() {
+        fillInAnswerQlayoutTable();
+        // finds its parent and grandparent view:
+        TextView textView = (TextView) findViewById(R.id.answer_textview_0);
+        // Loops search through the grandchildren od the tableLayout:
+
+        textView.setText(getResources().getString(R.string.answer_text0)+" "+$quiz.getScore()+"/"+$quiz.getMaxScore());
     }
-    // 2. All Q-layouts except A-layout (Answer-l.) are VISIBLE within scrollview grandparent.
-    //   showAllQlayouts(); THAT METHOD IS USED ONLY ONCE IN OnScrollChangedListener();
-
-
-    /***END OF: ******************* show-and-hide Q-layout methods ********************************/
 
     private void focusViewOnQuestion(int questionNo) {
+        //does nothing (exits) if the question is answered
+        if ($quiz.isAnswered($questionNo - 1)) return;
         String viewStringId = "Qlayout_" + questionNo;
         int resId = getResources().getIdentifier(viewStringId, "id", getPackageName());
         View targetView =findViewById(resId);
-
-        viewStringId =getResources().getResourceEntryName(targetView.getId());
-
-        //targetView.getParent().requestChildFocus(targetView,targetView);
-        targetView.requestFocus();
-
-        //Toast.makeText(getApplicationContext(),"*"+viewStringId+"*", Toast.LENGTH_SHORT).show();
-
-        //View focusedView = getCurrentFocus();
-
-        LinearLayout parentView = (LinearLayout) targetView.getParent();
-
-        ScrollView scrollView = (ScrollView) findViewById(R.id.scroll_view);
-
-        //scrollView.requestChildFocus(parentView,targetView);
-
-
-        // parentView.requestChildFocus();
-
-
-
-        //viewStringId =getResources().getResourceEntryName(parentView.getId());
-
-        //Toast.makeText(getApplicationContext(),"*"+viewStringId+"*", Toast.LENGTH_SHORT).show();
-
-
-
-        //targetView.requestFocus();
-
-
-
-        // focusedView = getCurrentFocus();
+        targetView.getParent().requestChildFocus(targetView,targetView);
     }
-
-
-
-    // GLOBAL VARIABLES ($var) of Main Activity:
-    private static Rect $rect = RECT; // all zeros
-    //                          $rect = (0   ,0  , $theWidth, $theHeight)
-    //                          $rect = (left,top, right   , bottom   )
-    // $rect.width() = THE_WIDTH ; $rect.height() = THE_HEIGHT (scrollView)
-    private static int $theWidth  =0; //$theWidth is the height of the scrollView.
-    private static int $theHeight =0; //$theHeight is the height of the scrollView.
-    private static int $questionNo; //$questionNo is a current Question#, depends on scrollView position.
-    private static int $verticalPosition=0; //
-    private static boolean $qLayoutInitiallyFocused = false; //before OnCreate, used in setScrollViewListener
-
-    private static float $questionFloat=0; //= <0;N> "continuous question number" ; N=number of questions =4
-    private static boolean[] $answeredQuestion = INIT_ANSWERED_QUESTION; //all FALSE
-    //                $answeredQuestion[index] is TRUE
-    //                          when (index +1) is a number od answered question ( index = 0..3 ).
-    private static float $oldQuestionFloat;
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(THE_WIDTH, $theWidth);
-        outState.putInt(THE_HEIGHT, $theHeight);
-        outState.putInt(QUESTION_NO, $questionNo);
-        outState.putInt(VERTICAL_POSITION, $verticalPosition);
-        outState.putFloat(QUESTION_FLOAT, $questionFloat);
-        outState.putBooleanArray(ANSWERED_QUESTION, $answeredQuestion);
+         //outState.putBooleanArray(ANSWERED_QUESTION, "$quizedQuestion");
+// TODO: check if needed^
     }//END_OF onSaveInstanceState
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        $theWidth = savedInstanceState.getInt(THE_WIDTH);
-        $theHeight = savedInstanceState.getInt(THE_HEIGHT);
-        $questionNo = savedInstanceState.getInt(QUESTION_NO);
-        $verticalPosition = savedInstanceState.getInt(VERTICAL_POSITION);
-        $questionFloat = savedInstanceState.getFloat(QUESTION_FLOAT);
-        $answeredQuestion = savedInstanceState.getBooleanArray(ANSWERED_QUESTION);
+        //$quizedQuestion = savedInstanceState.getBooleanArray(ANSWERED_QUESTION);
+        // TODO: check if needed^
+
     }//END_OF onRestoreInstanceState
 
-    /********************* ON CREATE **************************************************************/
+    /****************************************** ON CREATE *****************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_main);
-        if (savedInstanceState != null) {
-            $questionNo     = savedInstanceState.getInt(QUESTION_NO, 0);
-            $questionFloat  = savedInstanceState.getFloat(QUESTION_FLOAT, 0);
-            $verticalPosition = savedInstanceState.getInt(VERTICAL_POSITION, 0);
-            $theHeight = savedInstanceState.getInt(THE_HEIGHT, 0);
-            //focusViewOnQuestion($questionNo);
-        }
 
-        int $oldVerticalPosition=(int)$questionFloat*$theHeight;
+        //int $oldVerticalPosition=(int)$questionFloat*theHeight;
         $rect = calculateAndSetQlayoutDims();  // $rect is width & height of every Q-layout.
-        $theHeight=$rect.height();
-        $verticalPosition=(int)($questionFloat*$theHeight);
+        //theHeight=$rect.height();
+        //verticalPosition=(int)($questionFloat*theHeight);
 
-        setActionBarParams( ResourcesCompat.getColor(getResources(),R.color.actionBarText, null),   //sets text color, can be set to 0 as black
+        setActionBarParams(ResourcesCompat.getColor(getResources(),R.color.actionBarText, null),   //sets text color, can be set to 0 as black
                 setQcolor($questionNo),     //sets background color
-                qLayoutTitle($questionNo)   // "Quiz App: Welcome!"
-                +" :"+$verticalPosition
-                +"/" +$theHeight
-                +":"+String.format("%.2f",$questionFloat)
+                qLayoutTitle($questionNo)   // "Quiz App: Welcome!",etc.
         );
-        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);}    // tableLayouts width recalculated
-        Toast.makeText(getApplicationContext(),$questionNo+"", Toast.LENGTH_SHORT).show();
-        showOneQlayout($questionNo);
+        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);} // tableLayouts width recalculated
 
-        showSoftKeyboard(findViewById(R.id.edit_text_2)); //                          (Question #2)
-        onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table          (Question #1)
-        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
+        onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table        (Question #1)
+        changeSubmitButtonState(SUBMIT_BUTTON_DISABLED); /// ? todo? needed?
+        disableAllAnsweredInputs();
         setScrollViewListener();
-        //allQuestionsAnswered();
 
     }//END_OF OnCreate
 }//END_OF MainActivity
- /*
-        //focusViewOnQuestion($questionNo);
-        //findViewById(R.id.Qlayout_3).requestFocus();
 
-        //setScrollViewVerticalPosition(($questionNo+1)*$theHeight);
-        //Toast.makeText(getApplicationContext(),($questionNo+1)+"*"+$theHeight+"="+($questionNo+1)*$theHeight+"", Toast.LENGTH_LONG).show();
-        // todo check what have to be passed really... (W x H) : calculateAndSetQlayoutDims()
-        //((View) findViewById(R.id.Qlayout_3).getParent()).requestFocus();
-        //findViewById(R.id.Qlayout_3).getParent().requestChildFocus(findViewById(R.id.Qlayout_3),findViewById(R.id.Qlayout_3));
-
-       // View targetView = findViewById(R.id.Qlayout_3);
-       // View parentView = findViewById(R.id.parent_of_qlayouts);
-
-           // findViewById(R.id.Qlayout_3).requestFocus();
-
-
-       //final Rect rect = new Rect(0, 0, targetView.getWidth(), targetView.getHeight());
-       // targetView.requestRectangleOnScreen(rect, false);
-
-       // parentView.requestRectangleOnScreen(rect, false);
-
-    //    do {
-//
-  //          targetView.requestFocus();
-    //        focusedView = getCurrentFocus();
-      //  } while (focusedView == null);
-        //String viewStringId =getResources().getResourceEntryName(focusedView.getId());
-        //Toast.makeText(getApplicationContext(),viewStringId, Toast.LENGTH_LONG).show();
-
-
-        $oldQuestionFloat = $questionFloat;
-
-        //if ($questionNo==0) verticalPosition = 0; else $questionNo = ($questionNo)*$theHeight;
-        //Toast.makeText(getApplicationContext(),verticalPosition+"", Toast.LENGTH_SHORT).show();
-                //setScrollViewVerticalPosition(verticalPosition);
-       //todo: if focus works change   verticalPosition to local;
-        setScrollViewListener();// sets new values of $questionFloat & $theHeight.
-
-
-        //showSoftKeyboard(findViewById(R.id.edit_text_4)); //                          (Question #4)
-
-        RadioButton A31 = (RadioButton) findViewById(R.id.A31); // first radiobutton
-        onRadioButtonClicked(               A31 ); // Listener on rbutton_table         (Question #3)
-        A31.setChecked(false);
-//      ^
-        // firstRadioButton A31 is then automatically on before focus,
-        // so it is had to be unchecked to have all radiobuttons off.
-        // all unchecked radiobuttons don't suggest any answer.
-
-
-
-
-
-
-        //scrollView.fullScroll(ScrollView.FOCUS_UP);
-        //scrollView.scrollTo(0,$theHeight*3);
-        //Toast.makeText(getApplicationContext(),"*"+verticalPosition+"*", Toast.LENGTH_LONG).show();
-        //scrollView.getScrollY()
-        //Toast.makeText(getApplicationContext(),"["+verticalPosition+"]", Toast.LENGTH_LONG).show();
-
-
-
-*/
+//InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);

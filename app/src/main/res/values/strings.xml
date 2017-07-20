@@ -3,32 +3,32 @@
 
     <string name="QA">"YOUR SCORES"</string>
     <string name="Q0">"Welcome!   "</string>
-    <string name="Q1">"Question #1"</string>
-    <string name="Q2">"Question #2"</string>
-    <string name="Q3">"Question #3"</string>
-    <string name="Q4">"Question #4"</string>
+    <string name="Q1">"Question #1:"</string>
+    <string name="Q2">"Question #2:"</string>
+    <string name="Q3">"Question #3:"</string>
+    <string name="Q4">"Question #4:"</string>
 
     <string name="question_text0">"Welcome to the Quiz App!\r\n\r\n\r\nPlease answer four questions below:"</string>
     <string name="question_text1_P">"Which of\u00A0the\u00A0substances listed above are\u00A0carbohydrates?"</string>
     <string name="question_text1_L">"Which of\u00A0the\u00A0substances are\u00A0carbohydrates?"</string>
-    <string name="question_text2">"What is the\u00A0biggest celestial object in\u00A0our Solar System?\r\n\r\n\r\n"</string>
+    <string name="question_text2">"What is the\u00A0biggest celestial object in\u00A0our Solar System?"</string>
     <string name="question_text3">"How old is the\u00A0Universe?"</string>
-    <string name="question_text4">"What is the\u00A0name of\u00A0the\u00A0natural satellite of\u00A0the\u00A0Earth?\r\n"</string>
+    <string name="question_text4">"What is the\u00A0name of\u00A0the\u00A0natural satellite of\u00A0the\u00A0Earth?"</string>
 
     <string name="H1">"You can choose more than one answer."</string>
     <string name="H2">"Please type the answer"</string>
 
-    <string name="AA1">"Question #1"</string>
-    <string name="AA2">"Question #2"</string>
-    <string name="AA3">"Question #3"</string>
-    <string name="AA4">"Question #4"</string>
+    <string name="AA1">"Question #1:"</string>
+    <string name="AA2">"Question #2:"</string>
+    <string name="AA3">"Question #3:"</string>
+    <string name="AA4">"Question #4:"</string>
     <string name="AAT">"TOTAL"</string>
     <string name="SA1">"SA1"</string>
     <string name="SA2">"SA2"</string>
     <string name="SA3">"SA3"</string>
     <string name="SA4">"SA4"</string>
     <string name="SAT">"SAT"</string>
-    <string name="answer_text0">"answer_text0"</string>
+    <string name="answer_text0">"TOTAL SCORE: "</string>
 
     <string name="A11">"galactose"</string>
     <string name="A12">"fructose"</string>
@@ -60,6 +60,6 @@
     <string name="button_text_lastq_L">"READY TO SEE THE RESULTS?  SUBMIT THE LAST ANSWER"</string>
     <string name="button_text_end_P">"SCROLL DOWN"</string>
     <string name="button_text_end_L">"PLEASE SCROLL DOWN TO SEE THE RESULTS"</string>
-    <string name="button_text_exit_P">"EXIT"</string>
-    <string name="button_text_exit_L">"EXIT QUIZ APPLICATION"</string>
+    <string name="button_text_exit_P">"PRESS TO EXIT"</string>
+    <string name="button_text_exit_L">"EXIT OR SCROLL UP TO SEE THE RIGHT ANSWERS"</string>
 </resources>
