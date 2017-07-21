@@ -13,8 +13,12 @@
     <color name="color_odd">#FFD6D7</color>
     <color name="color_even">#C0D6E4</color>
 
-    <!--color name="color_odd">##d7a4a7</color>
-    <color name="color_even">##52a4b4</color -->
+    <color name="color_odd_new">#d7a4a7</color>
+    <color name="color_even_new">#52a4b4</color>
+
+    <color name="color_bad_red">#FF4000</color>
+    <color name="color_good_green">#4BDC62</color>
+
 
     <!--todo: change colors?-->
 
@@ -26,23 +30,6 @@
     <color name="t00">#C0D6E4</color>
 
     <!-- real -->
-    <color name="t001">#C0D6E4</color>
-    <color name="t002">#C0D6E4</color>
-    <color name="t003">#C0D6E4</color>
-    <color name="t004">#C0D6E4</color>
-    <color name="t005">#C0D6E4</color>
-    <color name="t006">#C0D6E4</color>
-    <color name="t007">#C0D6E4</color>
-    <color name="t008">#C0D6E4</color>
-    <color name="t00A">#C0D6E4</color>
-    <color name="t00C">#C0D6E4</color>
-    <color name="t00D">#C0D6E4</color>
-    <color name="t00E">#C0D6E4</color>
-
-    <color name="t009">#C0D6E4</color>
-    <color name="t00B">#C0D6E4</color>
-    <color name="t00F">#C0D6E4</color>
-
 
     <color name="t01">#FF4000</color>
     <color name="t02">#33B5E5</color>
