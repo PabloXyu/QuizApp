@@ -1279,8 +1279,8 @@ public class MainActivity extends AppCompatActivity {
             }
             else { //The answer is false.
                 htmlText =  "<font color=\'"+hexTextColorBad+"\'><strike>"+theAnswer+"</strike></font>" +
-                        "<font color=#000000> "+theHtmlArrowCode+" </font>" +
-                        "<font color=\'"+hexTextColorGood+"\'>"+rightAnswer+"</font>";
+                            "<font color=#000000> "+theHtmlArrowCode+" </font>" +
+                            "<font color=\'"+hexTextColorGood+"\'>"+rightAnswer+"</font>";
             }
             editText.setText(Html.fromHtml(htmlText));
         }
