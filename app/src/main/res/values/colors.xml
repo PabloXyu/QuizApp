@@ -8,19 +8,14 @@
     <color name="actionBarText">@color/colorPrimaryDark</color>
     <color name="colorPrimary">@color/color_even</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#FFD700</color>
+    <color name="colorAccent">#fa9602</color>
 
     <color name="color_odd">#FFD6D7</color>
     <color name="color_even">#C0D6E4</color>
 
-    <color name="color_odd_new">#d7a4a7</color>
-    <color name="color_even_new">#52a4b4</color>
-
-    <color name="color_bad_red">#FF4000</color>
-    <color name="color_good_green">#4BDC62</color>
-
-
-    <!--todo: change colors?-->
+    <color name="color_bad">#FF4000</color>
+    <color name="color_ok">#fa9602</color>
+    <color name="color_good">#1b9b2e</color>
 
     <color name="RedPigColorLogo">#da1b5b</color>
 
@@ -29,7 +24,7 @@
 
     <color name="t00">#C0D6E4</color>
 
-    <!-- real -->
+    <!-- for layout test: -->
 
     <color name="t01">#FF4000</color>
     <color name="t02">#33B5E5</color>

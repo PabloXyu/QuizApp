@@ -52,10 +52,10 @@
         <item name="android:layout_width">match_parent</item>
     </style>
     <style name="EmptyTopViewStyle" parent="EmptyViewStyle">
-        <item name="android:layout_height">@dimen/top_view_height</item>
+        <item name="android:layout_height">@dimen/top_view_height_P</item>
     </style>
     <style name="EmptyBottomViewStyle" parent="EmptyViewStyle">
-        <item name="android:layout_height">@dimen/bottom_view_height</item>
+        <item name="android:layout_height">@dimen/bottom_view_height_P</item>
     </style>
     <style name="MainTextViewStyle">
         <item name="android:layout_width">match_parent</item>
@@ -64,11 +64,14 @@
         <item name="android:textSize">@dimen/xlarge</item>
         <item name="android:paddingTop">@dimen/margin</item>
         <item name="android:paddingBottom">@dimen/margin</item>
+        <item name="android:paddingLeft">@dimen/margin</item>
+        <item name="android:paddingRight">@dimen/margin</item>
     </style>
     <style name="EditTextViewStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:hint">@string/H2</item>
         <item name="android:orientation">vertical</item>
@@ -78,14 +81,14 @@
         <item name="android:focusableInTouchMode">true</item>
         <item name="android:focusable">true</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:onClick">editTextOnClick</item>
+        <item name="android:imeOptions">actionDone|flagNoFullscreen</item>
         <!-- color_select gives black color for edited answer -->
         <!-- in editText when it's disabled for editing...    -->
         <!-- Normally it turns gray and is not well visible   -->
         <item name="android:textColor">@color/color_select</item>
     </style>
     <style name="theButtonStyle" parent="@style/Widget.AppCompat.Button">
+        <item name="android:colorBackground">@color/color_odd</item>
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_gravity">center</item>
@@ -94,7 +97,6 @@
         <item name="android:paddingTop">@dimen/small_margin</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
-        <item name="android:onClick">submitButtonOnClick</item>
     </style>
     <style name="ImageStyle">
         <item name="android:layout_width">@dimen/xxlarge_margin</item>

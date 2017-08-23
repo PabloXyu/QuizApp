@@ -19,14 +19,13 @@
 
 <!-- LinearLayout is a static submit_button in the bottom-center of the display screen           -->
     <LinearLayout
-        android:background="@color/t09"
         style="@style/theButtonStyle"
         android:id="@+id/submit_button"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="submitButtonOnClick">
         <TextView
-            android:background="@color/t0B"
             android:id="@+id/button_text_id"
             android:textColor="@color/colorPrimaryDark"
             android:layout_width="wrap_content"
@@ -37,10 +36,8 @@
             android:text="@string/button_text_disabled_P"
             android:textSize="@dimen/small"/>
         <ImageView
-            android:background="@color/t0F"
             style="@style/ImageStyleTop"/>
         <ImageView
-            android:background="@color/t0F"
             android:visibility="gone"
             style="@style/ImageStyleBottom"/>
     </LinearLayout>
@@ -52,16 +49,12 @@
         android:fillViewport="false"
         android:isScrollContainer="false"
         android:orientation="vertical">
-
     <!--LinearLayout as "Einzelkind" (only 1) of the ScrollView -->
         <LinearLayout
-            android:background="@color/t09"
             android:id="@+id/parent_of_qlayouts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/margin"
-            android:paddingRight="@dimen/margin">
+            android:orientation="vertical">
         <!--<LinearLayout/>:  A-Layout #A: description in MainActivity.java -->
             <LinearLayout
                 android:background="@color/t06"
@@ -71,67 +64,58 @@
                 android:orientation="vertical">
                 <!--<TableLayout/> is <TexViewTable/>:    HERE 2x4 for BOTH ORIENTATIONS         -->
                 <!--                 INFO: MainActivity.java                                     -->
+                <View
+                    style="@style/EmptyTopViewStyle"/>
                 <TableLayout
-                    android:background="@color/t01"
                     style="@style/AnswerTableLayoutStyle"
                     android:id="@+id/textview_table"
+                    android:paddingLeft="@dimen/xxlarge_margin"
+                    android:paddingRight="@dimen/xxlarge_margin"
                     android:orientation="vertical">
                     <!-- TableRow#0 for answers: AA1 & SA1 -->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <TextView
-                            android:background="@color/t08"
                             android:id="@+id/AA1"
                             style="@style/TableCellStyle"
                             android:text="@string/AA1"/>
                         <TextView
-                            android:background="@color/t07"
                             android:id="@+id/SA1"
                             style="@style/TableCellStyle"
                             android:text="@string/SA1"/>
                     </TableRow>
                     <!-- TableRow#1 for answers: AA2 & SA2 -->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <TextView
-                            android:background="@color/t08"
                             android:id="@+id/AA2"
                             style="@style/TableCellStyle"
                             android:text="@string/AA2"/>
                         <TextView
-                            android:background="@color/t07"
                             android:id="@+id/SA2"
                             style="@style/TableCellStyle"
                             android:text="@string/SA2"/>
                     </TableRow>
                     <!-- TableRow#2 for answers: AA3 & SA3 -->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <TextView
-                            android:background="@color/t08"
                             android:id="@+id/AA3"
                             style="@style/TableCellStyle"
                             android:text="@string/AA3"/>
                         <TextView
-                            android:background="@color/t07"
                             android:id="@+id/SA3"
                             style="@style/TableCellStyle"
                             android:text="@string/SA3"/>
                     </TableRow>
                     <!-- TableRow#3 for answers: AA4 & SA4 -->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <TextView
-                            android:background="@color/t08"
                             android:id="@+id/AA4"
                             style="@style/TableCellStyle"
                             android:text="@string/AA4"/>
                         <TextView
-                            android:background="@color/t07"
                             android:id="@+id/SA4"
                             style="@style/TableCellStyle"
                             android:text="@string/SA4"/>
@@ -139,58 +123,51 @@
                 </TableLayout>
                 <!--answerTextview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="0dp"
                     android:id="@+id/answer_textview_0"
                     android:text="@string/answer_text0"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #0: (Welcome Layout), see MainActivity.java -->
             <LinearLayout
-                android:background="@color/t06"
                 style="@style/QlayoutStyle"
                 android:id="@+id/Qlayout_0">
                 <!--WELCOME Textview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="match_parent"
                     android:id="@+id/question_textview_0"
                     android:text="@string/question_text0"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #1: description in MainActivity.java -->
             <LinearLayout
-                android:background="@color/t06"
                 style="@style/QlayoutStyle"
                 android:id="@+id/Qlayout_1"
                 android:orientation="vertical">
 <!--            <TableLayout/>  is <CheckBoxTable/>: 1x4 for Portrait, 2x2 for Landscape.        -->
 <!--                            INFO: setTableLayoutToLandscape                                  -->
+                <View
+                    android:id="@+id/empty_topview_1"
+                    style="@style/EmptyTopViewStyle"/>
                 <TableLayout
-                    android:background="@color/t01"
                     style="@style/TableLayoutStyle"
                     android:id="@+id/chkbox_table"
                     android:orientation="vertical">
                 <!-- TableRow#0 for answers: A11 & A12L -->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <CheckBox
-                            android:background="@color/t08"
                             android:id="@+id/A11"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
                             android:text="@string/A11"/>
                         <CheckBox
-                            android:background="@color/t07"
                             android:id="@+id/A12L"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
@@ -198,16 +175,13 @@
                     </TableRow>
                 <!-- TableRow#1 for answers: A13 & A14L -->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <CheckBox
-                            android:background="@color/t07"
                             android:id="@+id/A13"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
                             android:text="@string/A13"/>
                         <CheckBox
-                            android:background="@color/t08"
                             android:id="@+id/A14L"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
@@ -215,10 +189,8 @@
                     </TableRow>
                 <!-- TableRow#2 for answer: A12P (repeated for Portrait Mode, for Landscape mode not used)-->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <CheckBox
-                            android:background="@color/t08"
                             android:id="@+id/A12P"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
@@ -226,10 +198,8 @@
                     </TableRow>
                 <!-- TableRow#3 for answer: A14P (repeated for Portrait Mode, for Landscape mode not used)-->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <CheckBox
-                            android:background="@color/t07"
                             android:id="@+id/A14P"
                             android:onClick="onCheckboxClicked"
                             style="@style/TableCellStyle"
@@ -238,7 +208,6 @@
                 </TableLayout>
                 <!--hintText-->
                 <TextView
-                    android:background="@color/t0B"
                     android:id="@+id/hint_view_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -249,65 +218,58 @@
                     android:textSize="@dimen/small" />
                 <!--questionTextview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="0dp"
                     android:id="@+id/question_textview_1"
                     android:text="@string/question_text1_P"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
+                    android:id="@+id/empty_bottomview_1"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #2: description in MainActivity.java -->
             <LinearLayout
-                android:background="@color/t06"
                 style="@style/QlayoutStyle"
                 android:id="@+id/Qlayout_2"
                 android:orientation="vertical">
                 <View
-                    android:background="@color/t01"
                     style="@style/EmptyTopViewStyle"/>
                 <EditText
                     style="@style/EditTextViewStyle"
+                    android:onClick="editTextOnClick"
                     android:id="@+id/edit_text_2"/>
                 <!--questionTextview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="match_parent"
                     android:id="@+id/question_textview_2"
                     android:text="@string/question_text2"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #3: description in MainActivity.java -->
             <LinearLayout
-                android:background="@color/t06"
                 style="@style/QlayoutStyle"
                 android:id="@+id/Qlayout_3"
                 android:orientation="vertical">
            <!--<TableLayout/> is <RadioButtonTable/>: 1x4 for Portrait, 2x2 for Landscape.      -->
             <!--                INFO: setTableLayoutToLandscape                                  -->
+                <View
+                    style="@style/EmptyTopViewStyle"/>
                 <TableLayout
-                    android:background="@color/t01"
                     style="@style/TableLayoutStyle"
                     android:id="@+id/rbutton_table"
                     android:orientation="vertical">
                     <!-- TableRow#0 for answers: A31 & A32L -->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <RadioButton
-                            android:background="@color/t08"
                             android:id="@+id/A31"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
                             android:text="@string/A31"/>
                         <RadioButton
-                            android:background="@color/t07"
                             android:id="@+id/A32L"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
@@ -315,16 +277,13 @@
                     </TableRow>
                     <!-- TableRow#1 for answers: A33 & A34L -->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <RadioButton
-                            android:background="@color/t07"
                             android:id="@+id/A33"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
                             android:text="@string/A33"/>
                         <RadioButton
-                            android:background="@color/t08"
                             android:id="@+id/A34L"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
@@ -332,10 +291,8 @@
                     </TableRow>
                     <!-- TableRow#2 for answer: A32P (repeated for Portrait Mode, for Landscape mode not used)-->
                     <TableRow
-                        android:background="@color/t03"
                         style="@style/TableRowStyle">
                         <RadioButton
-                            android:background="@color/t08"
                             android:id="@+id/A32P"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
@@ -343,10 +300,8 @@
                     </TableRow>
                     <!-- TableRow#3 for answer: A34P (repeated for Portrait Mode, for Landscape mode not used)-->
                     <TableRow
-                        android:background="@color/t02"
                         style="@style/TableRowStyle">
                         <RadioButton
-                            android:background="@color/t07"
                             android:id="@+id/A34P"
                             android:onClick="onRadioButtonClicked"
                             style="@style/TableCellStyle"
@@ -355,38 +310,33 @@
                 </TableLayout>
                 <!--questionTextview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="0dp"
                     android:id="@+id/question_textview_3"
                     android:text="@string/question_text3"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         <!--<LinearLayout/>:  Q-Layout #4: description in MainActivity.java -->
             <LinearLayout
-                android:background="@color/t06"
                 style="@style/QlayoutStyle"
                 android:id="@+id/Qlayout_4"
                 android:orientation="vertical">
                 <View
-                    android:background="@color/t01"
                     style="@style/EmptyTopViewStyle"/>
                 <EditText
                     style="@style/EditTextViewStyle"
+                    android:onClick="editTextOnClick"
                     android:id="@+id/edit_text_4"/>
                 <!--questionTextview-->
                 <TextView
-                    android:background="@color/t04"
                     style="@style/MainTextViewStyle"
                     android:layout_height="match_parent"
                     android:id="@+id/question_textview_4"
                     android:text="@string/question_text4"/>
                 <!--emptyView as background for qSubmit_button-->
                 <View
-                    android:background="@color/t08"
                     style="@style/EmptyBottomViewStyle"/>
             </LinearLayout>
         </LinearLayout>
