@@ -61,7 +61,11 @@ import static java.lang.Integer.parseInt;
 
 /**
  * Pawel Zygmunciak
- * QuizApp Android Basics Udacity UE scholarship (Project (3/10))
+ * QuizApp Android Basics  (Project (4/10))
+ *
+ * The landscape/portrait Q-layout view structure screenshots
+ * ARE HERE: https://photos.app.goo.gl/iGNRWcz3TlFg9hSr1
+ * (vertical "yellow" margins were removed in final version)
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -233,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
         //        | |--------- Answer #1 (2) is chosen
         //        |----------- Question #1 (0)
         // : answer #1 & #4 are chosen from [TFFT], question #1 [0:] is answered.
+        // (for tests only)
+        //
         public String printStatus(int i) { // question number
             String theString="{";
             if (i!=-1) theString=theString+i+":";
@@ -250,7 +256,13 @@ public class MainActivity extends AppCompatActivity {
 
     }//END_OF Quiz
 
-    /******************* OVERALL LAYOUT DESIGN AND DIMENTIONING CONCEPT: **************************/
+    /******************* OVERALL LAYOUT DESIGN AND DIMENSIONING CONCEPT: **************************
+     *
+     * The landscape/portrait Q-layout view structure screenshots
+     * ARE HERE: https://photos.app.goo.gl/iGNRWcz3TlFg9hSr1
+     * (vertical "yellow" margins were removed in final version)
+     *
+     */
 
     //NAMING CONVENTION: all numbers preceded with hush are described as  #N are non-zero indexed
     // e.g: Col #2 is second column but this is column 1 zero-indexed.
@@ -317,10 +329,10 @@ public class MainActivity extends AppCompatActivity {
      * 0. Portrait default (defined in activity_main.xml): (BEFORE CHANGE TO LANDSCAPE)
      * --------------------------------------------------------------------------------
      *
-     * 0A. All columns are shrunk and all tableLayout grandchildren have layout_width="wrap_content"
-     * 0B. All tableRows have the same height weight, to have equal horizontal spacing.
-     * 0C. The table is vertically centered.
-     * 0D. 2nd column #1 is invisible by <android:collapseColumns="1"/>
+     * 0.1. All columns are shrunk and all tableLayout grandchildren have layout_width="wrap_content"
+     * 0.2. All tableRows have the same height weight, to have equal horizontal spacing.
+     * 0.3. The table is vertically centered.
+     * 0.4. 2nd column #1 is invisible by <android:collapseColumns="1"/>
      *
      *  This helps "1x4"-portrait-mode table nice vertical alignment in the center of the screen.
      *
@@ -363,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
      *      |<aaaaaaaaaaaaaaaaa/>| Col #0 text (A=width of col#0)
      *      |<bbbbb/>|             Col #1 text (B=width of col#1)
      *
-     *      |<-------------------------------------------------------/>|
+     *      |<--------------------------------------------------------/>|
      *      |stretched-A---------------------------------------|shrunk-B|
      *      |<------------------ <Q-layout width = W/> ---------------->|
      *      |<----------------------<col_0/>-----------------/>|<col_1 >|   A= 1st Col #0
@@ -377,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
      *
      *      |<------------------ <Q-layout width = W/> ---------------->|
      *                |<----------<col_0/>---------/>|<col_1>|
-     *      |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbbb/>|<-- m ---|
+     *      |--- m -->|<aaaaaaaaaaaaaaaaa/>|--- m -->|<bbbbb/>|<-- m ---| <-- THIS LOOKS NICE!!!
      *
      *      3m+A+B=W; m=(W-A-B)/3; A=A+m; A+=m;  new A width = old A width + m :)
      *
@@ -628,7 +640,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 3.1  Unhiding 2nd Column (#1):
         tableLayoutAD.setColumnCollapsed(1,false);
-        // 3.2  Removing 3rd and 4th Row (#2 & #3):
+        // 3.2  Hiding 3rd and 4th Row (#2 & #3):
         tableLayoutAD.getChildAt(2).setVisibility(tableLayoutAD.getChildAt(2).GONE);
         tableLayoutAD.getChildAt(3).setVisibility(tableLayoutAD.getChildAt(3).GONE);
     }
@@ -638,7 +650,7 @@ public class MainActivity extends AppCompatActivity {
      * if device orientation is in landscape mode.}
      */
     private void setViewDimsOnLandscape(Rect $rect){
-        // IN ORDER OF APPERANCE IN ROOT LAYOUT:
+        // IN ORDER OF APPEARANCE IN ROOT LAYOUT:
         //                                                Q-Layout Structure -------|
         //                                                Q-Layout--------------> Q.V. childView:
         //                                                ==============================================
@@ -676,7 +688,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int setQuestionColor(int questionNo) {
         //questionNo #0 is "Welcome"
-        if(questionNo%2==0)
+        if(questionNo%2==0) //question is even
             return  ResourcesCompat.getColor(getResources(), R.color.color_even, null);
         else
             return  ResourcesCompat.getColor(getResources(), R.color.color_odd, null);
@@ -691,10 +703,12 @@ public class MainActivity extends AppCompatActivity {
         // min propotion=0 ==> colourBetween = color0;
         // max propotion=1 ==> colourBetween = color1;
         return Color.rgb((int) ((1 - propotion) * Color.red(color0) + propotion * Color.red(color1)),
-                (int) ((1 - propotion) * Color.green(color0) + propotion * Color.green(color1)),
-                (int) ((1 - propotion) * Color.blue(color0) + propotion * Color.blue(color1))
+                         (int) ((1 - propotion) * Color.green(color0) + propotion * Color.green(color1)),
+                         (int) ((1 - propotion) * Color.blue(color0) + propotion * Color.blue(color1))
         );
     }
+    // sets "even" colour for even question number.
+    // sets "odd"  colour for odd  question number.
     private void setQlayoutColor() {
         int colorId;
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.parent_of_qlayouts);
@@ -703,11 +717,13 @@ public class MainActivity extends AppCompatActivity {
             linearLayout.getChildAt(i).setBackgroundColor(ResourcesCompat.getColor(getResources(),colorId,null));
         }
     }
+    // sets dynamic colour for "Submit Button" layout
     private void setSubmitButtonColor(int color) {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.submit_button);
         linearLayout.setBackgroundColor(color);
     }
     //For ActionBar: second part of Quiz App title.(Question #N|"Welcome!"|"YOUR SCORES")
+    // Q-layout #0 is "replaced" after answering question "Welcome"-->"YOUR SCORES"
     private String setActionBarTitle(int questionNo){
         if (questionNo>0)
             return "Question #"+questionNo;
@@ -718,6 +734,7 @@ public class MainActivity extends AppCompatActivity {
                 return getResources().getString(R.string.Q0);
         }
     }
+    // replacing "welcome" Q-layout #0 to "answer layout"
     private void changeWelcomeToAnswerLayout() {
         findViewById(R.id.Qlayout_0).setVisibility(View.GONE);
         findViewById(R.id.Qlayout_A).setVisibility(View.VISIBLE);
@@ -764,19 +781,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Setting ScrollView Listener:
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            public void showAllQlayouts() {
-                ScrollView scrollView = (ScrollView) findViewById(scroll_view);
-                LinearLayout linearLayout = (LinearLayout)scrollView.getChildAt(0);
-                // 0 = Answer  Qlayout   A
-                // 1 = Welcome Qlayout   0
-                // i = Qlayout Question #N --> index = N+1 (childView no)
-                // 5 = Qlayout Question #4
-                // ^                     ^------Question Number
-                // |--------------------------- index if a childView.
-                for (int i=1;i<NUMBER_OF_QUESTIONS+2;i++)
-                {(linearLayout.getChildAt(i)).setVisibility(View.VISIBLE);}
-                // all views except  A-layout are VISIBLE !.
-            }
             //stops Q-layout when scrolling, to focus on Q-layout
             private void stopScrolling(){
                 if  (!$quiz.isAnswered($questionNo - 1)) {//if question is not answered then scroll stop
@@ -815,6 +819,12 @@ public class MainActivity extends AppCompatActivity {
                 //  0     2     4|    6     8            //  0    1    2    3    4|               //
                 //                                       //                                       //
                 ////////////////////////////////////////////////////////////////////////////////////
+                //
+                // triangleWave function is used for smooth color change
+                // of the Q-layout background and Submit Button
+                //
+                // sawWave function is used for (dis)appearance of the Submit Button
+                //
                 float minOdd  = 0.05f;
                 float minEven = 0.15f;
                 float maxOdd  = 0.90f;//for Even Questions (EditText)
@@ -843,7 +853,7 @@ public class MainActivity extends AppCompatActivity {
 
                     quizSummary();//executed once
                     if ( ($questionNo==0) || readyToExit) {//initially readyToExit is FALSE
-                        changeSubmitButtonState(SUBMIT_BUTTON_EXIT);//final quiz review with EXIT button which appeares when scroll down to A-layout
+                        changeSubmitButtonState(SUBMIT_BUTTON_EXIT);//final quiz review with EXIT button which appears when scroll down to A-layout
                         readyToExit=true;
                     }
                 }
@@ -851,7 +861,7 @@ public class MainActivity extends AppCompatActivity {
                     if (disableForWelcome) { //arrow up to to scroll down from first "Welcome"-layout to Q-layouts
                         changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
                     }
-                    else { //Submit Button disappears when not interupting with question visibility or  when the question is answered.
+                    else { //Submit Button disappears when not interrupting with question visibility or when the question is answered.
                         if (isInvisible||($quiz.isAnswered($questionNo - 1))) {
                             changeSubmitButtonState(SUBMIT_BUTTON_INVISIBLE);
                         }
@@ -1357,6 +1367,8 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         //^ this locks orientation when all questions are answered,
         // otherwise with device orientation change $quiz resets its values (see AndroidManifest.xml note)
+        // I thought by those settings in the Manifest file the values will be not reset
+        // but that solution didn't work :(
         showQuizScores();
         for (int i=1;i<=NUMBER_OF_QUESTIONS;i++) showQuizAnswers(i);
         $quizSummaryDone = true;
@@ -1388,11 +1400,16 @@ public class MainActivity extends AppCompatActivity {
                 setQuestionColor($questionNo),                                       //sets background color
                 setActionBarTitle($questionNo)                                       // "Quiz App: Welcome!",etc.
         );
+        //initial state amd color for Submit Button:
         changeSubmitButtonState(SUBMIT_BUTTON_DISABLED);
         setSubmitButtonColor(colourBetween(R.color.color_odd,R.color.color_even,0));
-        if (isDeviceLandscape()) {setViewDimsOnLandscape($rect);} // tableLayouts width recalculated
+
+        if (isDeviceLandscape()) setViewDimsOnLandscape($rect); // tableLayouts width recalculated
         onCheckboxClicked(findViewById(R.id.A11)); // Listener on chkbox_table (Question #1)
-        disableAllAnsweredInputs();
+        disableAllAnsweredInputs();//initial
+
+        // Choosing,answering,submitting question and quiz result display
+        // depends on the ScrollView vertical position:
         setScrollViewListener();
 
     }//END_OF OnCreate
