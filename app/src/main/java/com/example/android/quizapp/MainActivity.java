@@ -994,9 +994,11 @@ public class MainActivity extends AppCompatActivity {
         if (!$quiz.allAnswered()) {
             Toast.makeText(
                     getApplicationContext(),
-                    "the answer for Question #"
+                    "Question #"
                     + $questionNo
-                    + "\n has been submitted.",
+                    + " has been submitted.\n"+"Score:"
+                    + (($questionNo%2==0) ? (stringAnswerIsCorrect($questionNo) ? $quiz.getMaxScore($questionNo-1):"0"):$quiz.getScore($questionNo-1))
+                    +"/"+$quiz.getMaxScore($questionNo-1),
                     Toast.LENGTH_SHORT
             ).show();
         }
